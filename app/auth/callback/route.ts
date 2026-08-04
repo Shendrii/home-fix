@@ -1,19 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isClientBookingPath, safeReturnTo } from "@/lib/auth-return";
+import { postAuthDestination, safeReturnTo } from "@/lib/auth-return";
 import {
   isRecentlyCreatedAuthUser,
   oauthNoAccountSignInPath,
   parseOAuthIntent,
 } from "@/lib/oauth-callback";
-import { profileNeedsPersonalDetails } from "@/lib/profile";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-function roleHome(role: string | null | undefined) {
-  if (role === "partner") return "/partner";
-  if (role === "admin" || role === "superadmin") return "/admin";
-  return "/dashboard";
-}
 
 async function rejectOAuthSignIn(
   request: NextRequest,
@@ -84,19 +77,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const role = profile?.role;
-
-  let destination: string;
-  if (next) {
-    const allowNext = role === "client" && isClientBookingPath(next);
-    destination = allowNext ? next : roleHome(role);
-  } else if (!profile) {
-    destination = "/account";
-  } else if (role === "client" && profileNeedsPersonalDetails(profile)) {
-    destination = "/account";
-  } else {
-    destination = roleHome(role);
-  }
+  const destination = postAuthDestination(profile, next);
 
   response.headers.set("Location", new URL(destination, url.origin).toString());
   return response;

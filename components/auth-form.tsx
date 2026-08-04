@@ -9,9 +9,9 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { authPathWithReturn, isClientBookingPath, safeReturnTo } from "@/lib/auth-return";
+import { authPathWithReturn, isClientBookingPath, postAuthDestination, safeReturnTo } from "@/lib/auth-return";
+import { getAppOrigin } from "@/lib/app-origin";
 import { buildAuthCallbackUrl, OAUTH_NO_ACCOUNT_ERROR } from "@/lib/oauth-callback";
-import { profileNeedsPersonalDetails } from "@/lib/profile";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -57,7 +57,6 @@ export function AuthForm({
   /** From `?ref=CODE` on the sign-up link — attribution only, no incentive is granted. */
   referralCode?: string | null;
 }) {
-  const router = useRouter();
   const resumePath = safeReturnTo(returnTo);
   const emailId = useId();
   const passwordId = useId();
@@ -131,34 +130,16 @@ export function AuthForm({
       .select("role, full_name, phone, default_address")
       .eq("id", userId)
       .single();
-    if (resumePath && profile?.role === "client" && isClientBookingPath(resumePath)) {
-      router.push(resumePath);
-      router.refresh();
-      return;
-    }
-    if (
-      options?.afterSignUp &&
-      profile?.role === "client" &&
-      profileNeedsPersonalDetails(profile)
-    ) {
-      router.push("/account");
-      router.refresh();
-      return;
-    }
-    const destination = profile?.role === "partner"
-      ? "/partner"
-      : profile?.role === "admin" || profile?.role === "superadmin"
-        ? "/admin"
-        : "/dashboard";
-    router.push(destination);
-    router.refresh();
+    const destination = postAuthDestination(profile, resumePath, options);
+    window.location.assign(destination);
   }
 
   async function signInWithGoogle() {
     const supabase = createClient();
     if (!supabase) return toast.error("Supabase is not configured");
     setLoading("google");
-    const redirectTo = buildAuthCallbackUrl(location.origin, {
+    const origin = getAppOrigin();
+    const redirectTo = buildAuthCallbackUrl(origin, {
       intent: signUp ? "signup" : "signin",
       next: resumePath,
     });
@@ -199,7 +180,8 @@ export function AuthForm({
     const supabase = createClient();
     if (!supabase) return toast.error("Supabase is not configured");
     setLoading("email");
-    const emailRedirectTo = buildAuthCallbackUrl(location.origin, {
+    const origin = getAppOrigin();
+    const emailRedirectTo = buildAuthCallbackUrl(origin, {
       intent: "signup",
       next: resumePath,
     });
