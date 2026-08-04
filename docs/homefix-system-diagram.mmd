@@ -1,0 +1,130 @@
+flowchart TB
+  classDef role fill:#0d9488,stroke:#0f766e,color:#fff
+  classDef proc fill:#f0fdfa,stroke:#99f6e4,color:#134e4a
+  classDef store fill:#1e293b,stroke:#475569,color:#f8fafc
+  classDef ext fill:#fef3c7,stroke:#f59e0b,color:#78350f
+  classDef new fill:#e0e7ff,stroke:#6366f1,color:#312e81
+
+  TITLE["HomeFix — Features & Processes (post-roadmap)"]
+
+  subgraph EXT["External"]
+    GMAP["Google Maps / Places (PH) · live tracking map"]
+    GOAUTH["Google OAuth"]
+    WPUSH["Browser Web Push + service worker"]
+  end
+
+  subgraph STACK["Platform"]
+    NEXT["Next.js app · API routes"]
+    SB["Supabase Auth · Postgres · RLS · Realtime · Storage"]
+    RPC["RPCs: dispatch · metrics · earnings · heatmap"]
+    PGNET["pg_net → /api/push/send"]
+  end
+
+  subgraph PUBLIC["Public"]
+    P1["Landing · services · terms · privacy"]
+    P4["Sign in / up · forgot / reset · ?ref= referral"]
+  end
+
+  subgraph AUTH["Auth & access"]
+    A1["Email/password or Google → callback"]
+    A2["Roles: client · partner · admin · superadmin"]
+    A3["Profile gate · protected routes"]
+    A5["handle_new_user · referral_code on profiles"]
+  end
+
+  subgraph CLIENT["Homeowner"]
+    C2["Request job + rough price estimate"]
+    C2P["Request photos → job-media bucket"]
+    C3["My jobs · timeline · photo gallery"]
+    C3T["Live map when partner en route"]
+    C5["Account · notifications · invite friends link"]
+  end
+
+  subgraph DISPATCH["Dispatch (automatic + ops)"]
+    D0["Insert service_request (open)"]
+    D1["start_dispatch · rank partners"]
+    D2["exclusive_offers ~45s"]
+    D3["broadcast wave"]
+    D4["claim / accept · decline + reason"]
+    D5["assigned"]
+    D6["Admin: restart · broadcast · manual reassign"]
+    D0 --> D1 --> D2 & D3
+    D2 & D3 --> D4 --> D5
+    D6 --> D1
+  end
+
+  subgraph ELIG["Match rules"]
+    E1["Verified · category · radius · capacity"]
+    E2["On duty to claim · view broadcast off duty"]
+  end
+
+  subgraph PARTNER["Partner"]
+    R2["Queue: priority offers · decline reason UI"]
+    R2P["Web push opt-in for new offers"]
+    R3["On duty toggle"]
+    R4["My jobs · list + calendar view"]
+    R5["Job detail: notes · before/after photos"]
+    R5L["En route: location broadcaster"]
+    R7["Estimated activity / earnings dashboard"]
+    R6["Company profile · superadmin invite flow"]
+  end
+
+  subgraph ADMIN["Admin / operations"]
+    O1["Overview metrics · push endpoint config"]
+    O2["Jobs · companies · users · services"]
+    O3["Live dispatch board + reassign dialog"]
+    O4["Job inspect detail"]
+    O5["Partner leaderboard · service area heatmap"]
+  end
+
+  subgraph DATA["New / extended data"]
+    DB1["job_notes · request_attachments kinds"]
+    DB2["final_price_cents · dispatch decline_reason"]
+    DB3["partner_locations · push_subscriptions"]
+    DB4["referrals · app_config"]
+  end
+
+  subgraph STATUS["Job lifecycle"]
+    S1["open"] --> S2["assigned"] --> S3["scheduled"]
+    S3 --> S4["en route"] --> S5["in progress"] --> S6["completed"]
+    S1 --> S7["cancelled"]
+  end
+
+  subgraph OUT["Not built yet"]
+    X1["Payments · in-app reviews · chat · referral rewards"]
+  end
+
+  TITLE --> PUBLIC
+  PUBLIC --> AUTH
+  GOAUTH --> AUTH
+  P4 --> A5
+  AUTH --> CLIENT & PARTNER & ADMIN
+
+  C2 --> D0
+  C2P --> DB1
+  GMAP --> C2 & C3T & R5L
+  D1 --> ELIG
+  D4 --> DB2
+  D2 --> PGNET
+  PGNET --> WPUSH
+  R2P --> WPUSH
+  R2P --> DB3
+  D5 --> R4 & C3
+  R5 --> STATUS
+  R5L --> DB3
+  C3T --> DB3
+  R7 --> RPC
+  O5 --> RPC
+  O3 --> D6
+  C5 --> DB4
+  A5 --> DB4
+
+  NEXT --> SB
+  SB --> RPC & DATA
+  CLIENT & PARTNER & ADMIN --> NEXT
+  PUBLIC --> NEXT
+
+  class CLIENT,PARTNER,ADMIN,PUBLIC proc
+  class DATA new
+  class SB,RPC store
+  class GMAP,GOAUTH,WPUSH ext

@@ -1,0 +1,142 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { LogOut, User } from "lucide-react";
+import { useAuth } from "@/components/auth-provider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import type { Profile } from "@/lib/profile";
+
+export function HeaderProfileMenu({
+  profile,
+  initials,
+  roleLabel,
+  setupLock = false,
+}: {
+  profile: Profile | null;
+  initials: string;
+  roleLabel: string;
+  setupLock?: boolean;
+}) {
+  const router = useRouter();
+  const { user, signOut } = useAuth();
+
+  const displayName =
+    profile?.full_name?.trim() ||
+    user?.email?.split("@")[0] ||
+    "HomeFix member";
+  const email = user?.email ?? "";
+
+  async function logout() {
+    await signOut();
+    router.push("/");
+    router.refresh();
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          "group flex size-10 shrink-0 items-center justify-center rounded-full",
+          "bg-gradient-to-br from-slate-800 to-slate-950 text-xs font-bold tracking-wide text-white",
+          "shadow-[0_4px_14px_rgba(15,23,42,0.25)] ring-2 ring-white",
+          "transition-all duration-200 hover:shadow-[0_6px_20px_rgba(15,23,42,0.28)]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf8f3]",
+          "data-popup-open:ring-teal-400/60 data-popup-open:shadow-[0_0_0_3px_rgba(45,212,191,0.25)]",
+        )}
+        aria-label="Open account menu"
+      >
+        <span aria-hidden="true">{initials}</span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        align="end"
+        sideOffset={10}
+        className={cn(
+          "w-[min(100vw-2rem,17.5rem)] overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-0",
+          "shadow-[0_24px_60px_rgba(15,23,42,0.14)]",
+        )}
+      >
+        <DropdownMenuGroup className="p-0">
+          <div className="border-b border-slate-100 bg-gradient-to-br from-teal-50/90 via-white to-[#faf8f3] px-4 py-4">
+            <div className="flex items-start gap-3">
+              <span
+                className={cn(
+                  "grid size-11 shrink-0 place-items-center rounded-full",
+                  "bg-gradient-to-br from-teal-600 to-emerald-700 text-sm font-bold text-white",
+                  "shadow-inner shadow-teal-900/20 ring-2 ring-white",
+                )}
+              >
+                {initials}
+              </span>
+              <div className="min-w-0 flex-1 pt-0.5">
+                <p className="truncate text-[15px] font-semibold leading-tight text-slate-900">
+                  {displayName}
+                </p>
+                {email && (
+                  <p className="mt-0.5 truncate text-xs text-slate-500">{email}</p>
+                )}
+                <span className="mt-2 inline-flex rounded-full bg-white/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-teal-800 ring-1 ring-teal-100">
+                  {roleLabel}
+                </span>
+              </div>
+            </div>
+          </div>
+        </DropdownMenuGroup>
+
+        <DropdownMenuGroup className="space-y-0.5 p-2">
+          {!setupLock && (
+            <DropdownMenuItem
+              className={cn(
+                "cursor-pointer gap-3 rounded-xl px-2 py-2.5",
+                "text-slate-800 focus:bg-teal-50/80 focus:text-teal-950",
+              )}
+              onClick={() => router.push("/account")}
+            >
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-600 ring-1 ring-slate-200/60">
+                <User className="size-4" strokeWidth={2} />
+              </span>
+              <span className="min-w-0 flex-1 text-left">
+                <span className="block text-sm font-semibold leading-tight">My profile</span>
+                <span className="mt-0.5 block text-xs font-normal text-slate-500">
+                  Account & preferences
+                </span>
+              </span>
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator className="mx-2 my-0 bg-slate-100" />
+
+        <DropdownMenuGroup className="p-2 pt-1">
+          <DropdownMenuItem
+            variant="destructive"
+            className={cn(
+              "cursor-pointer gap-3 rounded-xl px-2 py-2.5",
+              "text-rose-700 focus:bg-rose-50 focus:text-rose-800",
+              "data-[variant=destructive]:focus:bg-rose-50",
+            )}
+            onClick={() => void logout()}
+          >
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-rose-50 text-rose-600 ring-1 ring-rose-100">
+              <LogOut className="size-4" strokeWidth={2} />
+            </span>
+            <span className="min-w-0 flex-1 text-left">
+              <span className="block text-sm font-semibold leading-tight">Log out</span>
+              <span className="mt-0.5 block text-xs font-normal text-rose-600/80">
+                Sign out of HomeFix
+              </span>
+            </span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
