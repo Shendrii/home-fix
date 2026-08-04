@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildAuthCallbackUrl,
   isRecentlyCreatedAuthUser,
+  oauthPkceCallbackUrl,
   parseOAuthIntent,
 } from "@/lib/oauth-callback";
 
@@ -24,6 +25,14 @@ describe("buildAuthCallbackUrl", () => {
       next: "/request",
     });
     expect(url).toBe("http://localhost:3000/auth/callback?intent=signin&next=%2Frequest");
+  });
+});
+
+describe("oauthPkceCallbackUrl", () => {
+  it("has no query string for Google OAuth redirect allow list", () => {
+    expect(oauthPkceCallbackUrl("https://home-fix-six.vercel.app")).toBe(
+      "https://home-fix-six.vercel.app/auth/callback",
+    );
   });
 });
 

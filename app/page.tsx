@@ -4,9 +4,19 @@ import { ArrowRight, BadgeCheck, ShieldCheck, Wrench } from "lucide-react";
 import { HomeAppointmentSection } from "@/components/home-appointment-section";
 import { PublicSiteHeader } from "@/components/public-site-header";
 import { postAuthDestination } from "@/lib/auth-return";
+import { authErrorToSignInParam } from "@/lib/oauth-callback";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; error_code?: string }>;
+}) {
+  const params = await searchParams;
+  if (params.error) {
+    redirect(`/auth/sign-in?error=${authErrorToSignInParam(params.error_code ?? params.error)}`);
+  }
+
   const supabase = await createClient();
   if (supabase) {
     const {

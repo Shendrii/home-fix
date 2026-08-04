@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { authPathWithReturn, isClientBookingPath, postAuthDestination, safeReturnTo } from "@/lib/auth-return";
 import { getAppOrigin } from "@/lib/app-origin";
-import { buildAuthCallbackUrl, OAUTH_NO_ACCOUNT_ERROR } from "@/lib/oauth-callback";
+import { buildAuthCallbackUrl, OAUTH_NO_ACCOUNT_ERROR, oauthPkceCallbackUrl, setOAuthResumeCookies } from "@/lib/oauth-callback";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,6 +41,7 @@ function FieldError({ id, message }: { id?: string; message?: string }) {
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   auth: "Google sign-in could not be completed. Please try again.",
+  oauth_retry: "That sign-in session expired or was already used. Please try Google again (don’t refresh the callback page).",
   configuration: "Sign-in is not configured correctly. Contact support if this continues.",
   [OAUTH_NO_ACCOUNT_ERROR]: "You don't have an account. Please sign up first.",
 };
@@ -139,10 +140,8 @@ export function AuthForm({
     if (!supabase) return toast.error("Supabase is not configured");
     setLoading("google");
     const origin = getAppOrigin();
-    const redirectTo = buildAuthCallbackUrl(origin, {
-      intent: signUp ? "signup" : "signin",
-      next: resumePath,
-    });
+    setOAuthResumeCookies(signUp ? "signup" : "signin", resumePath);
+    const redirectTo = oauthPkceCallbackUrl(origin);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },

@@ -1,11 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { postAuthDestination, safeReturnTo } from "@/lib/auth-return";
+import { postAuthDestination } from "@/lib/auth-return";
 import {
+  authErrorToSignInParam,
   isRecentlyCreatedAuthUser,
   oauthNoAccountSignInPath,
-  parseOAuthIntent,
 } from "@/lib/oauth-callback";
+import { clearOAuthResumeCookies, readOAuthResumeFromRequest } from "@/lib/oauth-resume-cookie";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 async function rejectOAuthSignIn(
@@ -21,6 +22,7 @@ async function rejectOAuthSignIn(
       await admin.auth.admin.deleteUser(options.deleteUserId);
     }
   }
+  clearOAuthResumeCookies(response);
   response.headers.set(
     "Location",
     oauthNoAccountSignInPath(request.nextUrl.origin, options.returnTo).toString(),
@@ -30,16 +32,21 @@ async function rejectOAuthSignIn(
 
 export async function GET(request: NextRequest) {
   const url = request.nextUrl;
+  const oauthError = url.searchParams.get("error");
+  if (oauthError) {
+    const param = authErrorToSignInParam(url.searchParams.get("error_code"));
+    return NextResponse.redirect(new URL(`/auth/sign-in?error=${param}`, url.origin));
+  }
+
+  const { intent, next } = readOAuthResumeFromRequest(request, url);
   const code = url.searchParams.get("code");
-  const next = safeReturnTo(url.searchParams.get("next"));
-  const intent = parseOAuthIntent(url.searchParams.get("intent"));
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!code || !supabaseUrl || !key) {
     return NextResponse.redirect(new URL("/auth/sign-in?error=configuration", url.origin));
   }
 
-  const response = NextResponse.redirect(new URL(next ?? "/dashboard", url.origin));
+  const response = NextResponse.redirect(new URL("/dashboard", url.origin));
   const supabase = createServerClient(supabaseUrl, key, {
     cookies: {
       getAll() {
@@ -55,7 +62,12 @@ export async function GET(request: NextRequest) {
 
   const { data: exchange, error } = await supabase.auth.exchangeCodeForSession(code);
   if (error || !exchange.user) {
-    return NextResponse.redirect(new URL("/auth/sign-in?error=auth", url.origin));
+    const param =
+      error?.code === "flow_state_already_used" ||
+      error?.message?.toLowerCase().includes("already been used")
+        ? "oauth_retry"
+        : "auth";
+    return NextResponse.redirect(new URL(`/auth/sign-in?error=${param}`, url.origin));
   }
 
   const { data: profile } = await supabase
@@ -77,8 +89,8 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const destination = postAuthDestination(profile, next);
-
-  response.headers.set("Location", new URL(destination, url.origin).toString());
+  const finalDestination = postAuthDestination(profile, next);
+  clearOAuthResumeCookies(response);
+  response.headers.set("Location", new URL(finalDestination, url.origin).toString());
   return response;
 }
