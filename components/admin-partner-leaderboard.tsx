@@ -170,23 +170,27 @@ function StarRow({ rating }: { rating: number }) {
       {Array.from({ length: 5 }, (_, i) => (
         <Star
           key={i}
-          className={cn("size-3.5", i < full ? "fill-amber-400 text-amber-400" : "fill-slate-600 text-slate-600")}
+          className={cn(
+            "size-3.5",
+            i < full ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200",
+          )}
         />
       ))}
     </div>
   );
 }
 
+/** Top-three emphasis via ring weight and neutral medal tints — aligned with admin teal/slate UI. */
 const PODIUM_RING = {
-  1: "ring-[5px] ring-amber-400 shadow-[0_0_28px_rgba(251,191,36,.45)]",
-  2: "ring-[4px] ring-slate-300 shadow-[0_0_20px_rgba(203,213,225,.35)]",
-  3: "ring-[4px] ring-amber-700 shadow-[0_0_20px_rgba(180,83,9,.35)]",
+  1: "ring-2 ring-teal-600 ring-offset-2 ring-offset-white",
+  2: "ring-2 ring-slate-300 ring-offset-2 ring-offset-white",
+  3: "ring-2 ring-amber-600/40 ring-offset-2 ring-offset-white",
 } as const;
 
 const MEDAL = {
-  1: { label: "1st", bg: "bg-gradient-to-b from-amber-300 to-amber-600", text: "text-amber-950" },
-  2: { label: "2nd", bg: "bg-gradient-to-b from-slate-200 to-slate-400", text: "text-slate-800" },
-  3: { label: "3rd", bg: "bg-gradient-to-b from-orange-300 to-amber-800", text: "text-amber-950" },
+  1: { label: "1st", className: "border border-teal-200 bg-teal-50 text-teal-800" },
+  2: { label: "2nd", className: "border border-slate-200 bg-slate-100 text-slate-700" },
+  3: { label: "3rd", className: "border border-amber-200/80 bg-amber-50 text-amber-900" },
 } as const;
 
 function PodiumAvatar({
@@ -204,7 +208,7 @@ function PodiumAvatar({
     <div className="flex flex-col items-center">
       <div
         className={cn(
-          "relative grid place-items-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 font-bold text-white",
+          "relative grid place-items-center rounded-full bg-teal-600 font-bold text-white shadow-sm",
           dim,
           PODIUM_RING[rank],
         )}
@@ -213,19 +217,19 @@ function PodiumAvatar({
       </div>
       <span
         className={cn(
-          "mt-2 grid size-8 place-items-center rounded-full text-[10px] font-black uppercase tracking-wide",
-          medal.bg,
-          medal.text,
+          "mt-2 grid size-8 place-items-center rounded-full text-[10px] font-bold uppercase tracking-wide",
+          medal.className,
         )}
       >
         {medal.label}
       </span>
-      <p className="mt-2 max-w-[7.5rem] text-center text-sm font-bold leading-tight text-white sm:max-w-[9rem] sm:text-base">
+      <p className="mt-2 max-w-[7.5rem] text-center text-sm font-bold leading-tight text-slate-900 sm:max-w-[9rem] sm:text-base">
         {row.company_name}
       </p>
-      <p className="mt-1 font-mono text-lg font-bold tabular-nums text-amber-200 sm:text-xl">
+      <p className="mt-1 text-lg font-bold tabular-nums text-slate-900 sm:text-xl">
         {performanceScore(row).toLocaleString()}
       </p>
+      <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Performance score</p>
       <div className="mt-1">
         <StarRow rating={row.average_rating} />
       </div>
@@ -235,16 +239,16 @@ function PodiumAvatar({
 
 function LeaderboardListRow({ row, rank }: { row: LeaderboardRow; rank: number }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-indigo-950/80 px-3 py-2.5 ring-1 ring-white/10 sm:gap-4 sm:px-4">
-      <span className="w-6 shrink-0 text-center text-sm font-bold text-indigo-200">{rank}</span>
-      <div className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 text-xs font-bold text-white ring-2 ring-indigo-400/50">
+    <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5 sm:gap-4 sm:px-4">
+      <span className="w-6 shrink-0 text-center text-sm font-bold text-slate-400">{rank}</span>
+      <div className="grid size-10 shrink-0 place-items-center rounded-full bg-teal-50 text-xs font-bold text-teal-700 ring-1 ring-teal-100">
         {companyInitials(row.company_name)}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-bold text-white">{row.company_name}</p>
+        <p className="truncate text-sm font-semibold text-slate-900">{row.company_name}</p>
         <StarRow rating={row.average_rating} />
       </div>
-      <p className="shrink-0 font-mono text-sm font-bold tabular-nums text-amber-200 sm:text-base">
+      <p className="shrink-0 text-sm font-bold tabular-nums text-slate-800 sm:text-base">
         {performanceScore(row).toLocaleString()}
       </p>
     </div>
@@ -297,21 +301,13 @@ export function PartnerLeaderboardPodium({
         </div>
       )}
 
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-violet-700 via-indigo-800 to-indigo-950 px-4 pb-8 pt-6 shadow-xl sm:px-8 sm:pb-10 sm:pt-8">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 20%, rgba(255,255,255,.25) 0%, transparent 55%), repeating-conic-gradient(from 0deg at 50% 30%, rgba(255,255,255,.06) 0deg 12deg, transparent 12deg 24deg)",
-          }}
-        />
-        <div className="relative mx-auto mb-8 flex justify-center">
-          <div className="rounded-xl border-2 border-amber-500/80 bg-gradient-to-b from-rose-900 to-rose-950 px-8 py-2 shadow-lg">
-            <h2 className="text-center text-xl font-black tracking-[0.2em] text-white sm:text-2xl">LEADERBOARD</h2>
-          </div>
+      <section className="rounded-3xl border border-slate-100 bg-white px-4 pb-8 pt-6 shadow-[0_16px_50px_rgba(30,41,59,.07)] sm:px-8 sm:pb-10 sm:pt-8">
+        <div className="mb-8 border-b border-slate-100 pb-4 text-center">
+          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Top partners</p>
+          <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Leaderboard</h2>
         </div>
 
-        <div className="relative mx-auto flex max-w-2xl items-end justify-center gap-2 sm:gap-6">
+        <div className="mx-auto flex max-w-2xl items-end justify-center gap-2 sm:gap-6">
           {podiumOrder[0] && (
             <div className="mb-4 flex flex-1 justify-center pb-2 sm:mb-6">
               <PodiumAvatar row={podiumOrder[0]} rank={2} />
@@ -330,7 +326,7 @@ export function PartnerLeaderboardPodium({
         </div>
 
         {rest.length > 0 && (
-          <div className="relative mx-auto mt-8 max-w-xl space-y-2">
+          <div className="mx-auto mt-8 max-w-xl space-y-2 border-t border-slate-100 pt-6">
             {rest.map((row, i) => (
               <LeaderboardListRow key={row.company_id} row={row} rank={i + 4} />
             ))}
