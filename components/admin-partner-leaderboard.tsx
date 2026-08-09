@@ -375,9 +375,7 @@ export function AdminPartnerLeaderboard({
         eyebrow="Operations"
         title="Partner performance leaderboard"
         description={
-          demoMode
-            ? "Demo data for portfolio screenshots — set NEXT_PUBLIC_LEADERBOARD_DEMO=false for live metrics only."
-            : "A live read over dispatch offers and job outcomes."
+ "A live read over dispatch offers and job outcomes."
         }
       />
 
