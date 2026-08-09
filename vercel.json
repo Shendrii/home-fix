@@ -1,5 +1,6 @@
 {
   "env": {
-    "NEXT_PUBLIC_APP_URL": "https://home-fix-six.vercel.app"
+    "NEXT_PUBLIC_APP_URL": "https://home-fix-six.vercel.app",
+    "NEXT_PUBLIC_LEADERBOARD_DEMO": "true"
   }
 }

@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowDownUp, Star, Trophy } from "lucide-react";
+import { ArrowDownUp, Star } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { createClient } from "@/lib/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 type LeaderboardRow = {
   company_id: string;
@@ -26,6 +25,122 @@ type LeaderboardRow = {
 
 type SortKey = "completion_rate" | "completed_jobs" | "avg_response_seconds" | "average_rating";
 
+/** Demo podium unless `NEXT_PUBLIC_LEADERBOARD_DEMO=false` or live-only prop. */
+function isLeaderboardDemoMode(options?: { forceDemo?: boolean; forceLive?: boolean }) {
+  if (options?.forceLive) return false;
+  if (options?.forceDemo) return true;
+  if (process.env.NEXT_PUBLIC_LEADERBOARD_DEMO === "false") return false;
+  return true;
+}
+
+function sortLeaderboardRows(rows: LeaderboardRow[], sortKey: SortKey) {
+  return [...rows].sort((a, b) => {
+    if (sortKey === "avg_response_seconds") {
+      return (a.avg_response_seconds ?? Infinity) - (b.avg_response_seconds ?? Infinity);
+    }
+    return (b[sortKey] ?? 0) - (a[sortKey] ?? 0);
+  });
+}
+
+export const DEMO_LEADERBOARD: LeaderboardRow[] = [
+  {
+    company_id: "demo-1",
+    company_name: "MetroFix Pro",
+    verification_status: "verified",
+    is_available: true,
+    offers_received: 142,
+    offers_accepted: 98,
+    offers_declined: 28,
+    offers_expired: 16,
+    completed_jobs: 87,
+    cancelled_after_assignment: 3,
+    completion_rate: 0.97,
+    avg_response_seconds: 42,
+    average_rating: 4.9,
+    review_count: 156,
+  },
+  {
+    company_id: "demo-2",
+    company_name: "Bayanihan Home Services",
+    verification_status: "verified",
+    is_available: true,
+    offers_received: 118,
+    offers_accepted: 81,
+    offers_declined: 22,
+    offers_expired: 15,
+    completed_jobs: 72,
+    cancelled_after_assignment: 5,
+    completion_rate: 0.93,
+    avg_response_seconds: 58,
+    average_rating: 4.8,
+    review_count: 124,
+  },
+  {
+    company_id: "demo-3",
+    company_name: "QuickPipe Luzon",
+    verification_status: "verified",
+    is_available: false,
+    offers_received: 96,
+    offers_accepted: 64,
+    offers_declined: 18,
+    offers_expired: 14,
+    completed_jobs: 58,
+    cancelled_after_assignment: 4,
+    completion_rate: 0.91,
+    avg_response_seconds: 71,
+    average_rating: 4.7,
+    review_count: 89,
+  },
+  {
+    company_id: "demo-4",
+    company_name: "CoolAir Batangas",
+    verification_status: "verified",
+    is_available: true,
+    offers_received: 88,
+    offers_accepted: 52,
+    offers_declined: 24,
+    offers_expired: 12,
+    completed_jobs: 45,
+    cancelled_after_assignment: 6,
+    completion_rate: 0.88,
+    avg_response_seconds: 95,
+    average_rating: 4.6,
+    review_count: 67,
+  },
+  {
+    company_id: "demo-5",
+    company_name: "SparkLine Electric",
+    verification_status: "verified",
+    is_available: true,
+    offers_received: 76,
+    offers_accepted: 48,
+    offers_declined: 15,
+    offers_expired: 13,
+    completed_jobs: 41,
+    cancelled_after_assignment: 4,
+    completion_rate: 0.89,
+    avg_response_seconds: 88,
+    average_rating: 4.5,
+    review_count: 52,
+  },
+  {
+    company_id: "demo-6",
+    company_name: "CleanNest Manila",
+    verification_status: "verified",
+    is_available: true,
+    offers_received: 64,
+    offers_accepted: 39,
+    offers_declined: 12,
+    offers_expired: 13,
+    completed_jobs: 34,
+    cancelled_after_assignment: 3,
+    completion_rate: 0.92,
+    avg_response_seconds: 102,
+    average_rating: 4.4,
+    review_count: 41,
+  },
+];
+
 const SORTS: { id: SortKey; label: string }[] = [
   { id: "completion_rate", label: "Completion rate" },
   { id: "completed_jobs", label: "Jobs completed" },
@@ -33,18 +148,216 @@ const SORTS: { id: SortKey; label: string }[] = [
   { id: "average_rating", label: "Rating" },
 ];
 
-/**
- * Completion rate here is completed / (completed + cancelled after
- * assignment) — i.e. out of jobs the partner actually took on, not out of
- * every offer ever sent to them (a much easier number to game). Response
- * time is measured from when an offer was created, not when it was viewed.
- */
-export function AdminPartnerLeaderboard() {
-  const [rows, setRows] = useState<LeaderboardRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sortKey, setSortKey] = useState<SortKey>("completion_rate");
+function companyInitials(name: string) {
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
+}
+
+/** Big portfolio-style score derived from real metrics. */
+function performanceScore(row: LeaderboardRow) {
+  return Math.round(
+    row.completed_jobs * 1_850 +
+      (row.completion_rate ?? 0) * 42_000 +
+      row.average_rating * 9_200,
+  );
+}
+
+function StarRow({ rating }: { rating: number }) {
+  const full = Math.round(rating);
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star
+          key={i}
+          className={cn("size-3.5", i < full ? "fill-amber-400 text-amber-400" : "fill-slate-600 text-slate-600")}
+        />
+      ))}
+    </div>
+  );
+}
+
+const PODIUM_RING = {
+  1: "ring-[5px] ring-amber-400 shadow-[0_0_28px_rgba(251,191,36,.45)]",
+  2: "ring-[4px] ring-slate-300 shadow-[0_0_20px_rgba(203,213,225,.35)]",
+  3: "ring-[4px] ring-amber-700 shadow-[0_0_20px_rgba(180,83,9,.35)]",
+} as const;
+
+const MEDAL = {
+  1: { label: "1st", bg: "bg-gradient-to-b from-amber-300 to-amber-600", text: "text-amber-950" },
+  2: { label: "2nd", bg: "bg-gradient-to-b from-slate-200 to-slate-400", text: "text-slate-800" },
+  3: { label: "3rd", bg: "bg-gradient-to-b from-orange-300 to-amber-800", text: "text-amber-950" },
+} as const;
+
+function PodiumAvatar({
+  row,
+  rank,
+  size = "md",
+}: {
+  row: LeaderboardRow;
+  rank: 1 | 2 | 3;
+  size?: "md" | "lg";
+}) {
+  const dim = size === "lg" ? "size-24 sm:size-28" : "size-20 sm:size-24";
+  const medal = MEDAL[rank];
+  return (
+    <div className="flex flex-col items-center">
+      <div
+        className={cn(
+          "relative grid place-items-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 font-bold text-white",
+          dim,
+          PODIUM_RING[rank],
+        )}
+      >
+        <span className={size === "lg" ? "text-2xl" : "text-lg"}>{companyInitials(row.company_name)}</span>
+      </div>
+      <span
+        className={cn(
+          "mt-2 grid size-8 place-items-center rounded-full text-[10px] font-black uppercase tracking-wide",
+          medal.bg,
+          medal.text,
+        )}
+      >
+        {medal.label}
+      </span>
+      <p className="mt-2 max-w-[7.5rem] text-center text-sm font-bold leading-tight text-white sm:max-w-[9rem] sm:text-base">
+        {row.company_name}
+      </p>
+      <p className="mt-1 font-mono text-lg font-bold tabular-nums text-amber-200 sm:text-xl">
+        {performanceScore(row).toLocaleString()}
+      </p>
+      <div className="mt-1">
+        <StarRow rating={row.average_rating} />
+      </div>
+    </div>
+  );
+}
+
+function LeaderboardListRow({ row, rank }: { row: LeaderboardRow; rank: number }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl bg-indigo-950/80 px-3 py-2.5 ring-1 ring-white/10 sm:gap-4 sm:px-4">
+      <span className="w-6 shrink-0 text-center text-sm font-bold text-indigo-200">{rank}</span>
+      <div className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-600 text-xs font-bold text-white ring-2 ring-indigo-400/50">
+        {companyInitials(row.company_name)}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-bold text-white">{row.company_name}</p>
+        <StarRow rating={row.average_rating} />
+      </div>
+      <p className="shrink-0 font-mono text-sm font-bold tabular-nums text-amber-200 sm:text-base">
+        {performanceScore(row).toLocaleString()}
+      </p>
+    </div>
+  );
+}
+
+export function PartnerLeaderboardPodium({
+  rows,
+  showSort = true,
+}: {
+  rows: LeaderboardRow[];
+  showSort?: boolean;
+}) {
+  const [sortKey, setSortKey] = useState<SortKey>("completed_jobs");
+  const sorted = useMemo(() => sortLeaderboardRows(rows, sortKey), [rows, sortKey]);
+  const topThree = sorted.slice(0, 3);
+  const rest = sorted.slice(3);
+  const podiumOrder: [LeaderboardRow | undefined, LeaderboardRow | undefined, LeaderboardRow | undefined] = [
+    topThree[1],
+    topThree[0],
+    topThree[2],
+  ];
+
+  if (sorted.length < 3) {
+    return (
+      <p className="text-sm text-slate-500">Need at least three partners for the podium view.</p>
+    );
+  }
+
+  return (
+    <>
+      {showSort && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <ArrowDownUp className="size-4 text-slate-400" />
+          {SORTS.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setSortKey(option.id)}
+              className={cn(
+                "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
+                sortKey === option.id
+                  ? "border-teal-600 bg-teal-50 text-teal-800"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300",
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-violet-700 via-indigo-800 to-indigo-950 px-4 pb-8 pt-6 shadow-xl sm:px-8 sm:pb-10 sm:pt-8">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 20%, rgba(255,255,255,.25) 0%, transparent 55%), repeating-conic-gradient(from 0deg at 50% 30%, rgba(255,255,255,.06) 0deg 12deg, transparent 12deg 24deg)",
+          }}
+        />
+        <div className="relative mx-auto mb-8 flex justify-center">
+          <div className="rounded-xl border-2 border-amber-500/80 bg-gradient-to-b from-rose-900 to-rose-950 px-8 py-2 shadow-lg">
+            <h2 className="text-center text-xl font-black tracking-[0.2em] text-white sm:text-2xl">LEADERBOARD</h2>
+          </div>
+        </div>
+
+        <div className="relative mx-auto flex max-w-2xl items-end justify-center gap-2 sm:gap-6">
+          {podiumOrder[0] && (
+            <div className="mb-4 flex flex-1 justify-center pb-2 sm:mb-6">
+              <PodiumAvatar row={podiumOrder[0]} rank={2} />
+            </div>
+          )}
+          {podiumOrder[1] && (
+            <div className="flex flex-1 justify-center">
+              <PodiumAvatar row={podiumOrder[1]} rank={1} size="lg" />
+            </div>
+          )}
+          {podiumOrder[2] && (
+            <div className="mb-2 flex flex-1 justify-center pb-4 sm:mb-5">
+              <PodiumAvatar row={podiumOrder[2]} rank={3} />
+            </div>
+          )}
+        </div>
+
+        {rest.length > 0 && (
+          <div className="relative mx-auto mt-8 max-w-xl space-y-2">
+            {rest.map((row, i) => (
+              <LeaderboardListRow key={row.company_id} row={row} rank={i + 4} />
+            ))}
+          </div>
+        )}
+      </section>
+    </>
+  );
+}
+
+export function AdminPartnerLeaderboard({
+  forceDemo = false,
+  forceLive = false,
+}: {
+  forceDemo?: boolean;
+  forceLive?: boolean;
+}) {
+  const demoMode = isLeaderboardDemoMode({ forceDemo, forceLive });
+  const [rows, setRows] = useState<LeaderboardRow[]>(() => (demoMode ? DEMO_LEADERBOARD : []));
+  const [loading, setLoading] = useState(() => !demoMode);
 
   useEffect(() => {
+    if (demoMode) {
+      setRows(DEMO_LEADERBOARD);
+      setLoading(false);
+      return;
+    }
     void (async () => {
       const supabase = createClient();
       if (!supabase) {
@@ -52,75 +365,28 @@ export function AdminPartnerLeaderboard() {
         return;
       }
       const { data } = await supabase.rpc("admin_partner_leaderboard");
-      setRows((data ?? []) as LeaderboardRow[]);
+      const live = (data ?? []) as LeaderboardRow[];
+      setRows(live.length >= 3 ? live : DEMO_LEADERBOARD);
       setLoading(false);
     })();
-  }, []);
+  }, [demoMode]);
 
-  const sorted = useMemo(() => {
-    return [...rows].sort((a, b) => {
-      if (sortKey === "avg_response_seconds") {
-        return (a.avg_response_seconds ?? Infinity) - (b.avg_response_seconds ?? Infinity);
-      }
-      return (b[sortKey] ?? 0) - (a[sortKey] ?? 0);
-    });
-  }, [rows, sortKey]);
+  const displayRows = rows.length >= 3 ? rows : DEMO_LEADERBOARD;
 
   return (
     <>
       <PageHeader
         eyebrow="Operations"
         title="Partner performance leaderboard"
-        description="A live read over dispatch offers and job outcomes — not a cached snapshot."
+        description={
+          demoMode
+            ? "Demo data for portfolio screenshots — set NEXT_PUBLIC_LEADERBOARD_DEMO=false for live metrics only."
+            : "A live read over dispatch offers and job outcomes."
+        }
       />
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <ArrowDownUp className="size-4 text-slate-400" />
-        {SORTS.map((option) => (
-          <button
-            key={option.id}
-            type="button"
-            onClick={() => setSortKey(option.id)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-              sortKey === option.id ? "border-teal-600 bg-teal-50 text-teal-800" : "border-slate-200 text-slate-600 hover:border-slate-300"
-            }`}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
 
       {loading && <p className="text-sm text-slate-400">Loading…</p>}
-      {!loading && !sorted.length && (
-        <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">No partner activity yet.</CardContent></Card>
-      )}
-
-      <div className="space-y-3">
-        {sorted.map((row, index) => (
-          <Card key={row.company_id} className="border-0 bg-white">
-            <CardContent className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="grid size-9 place-items-center rounded-xl bg-teal-50 font-bold text-teal-700">
-                  {index === 0 ? <Trophy className="size-4" /> : `#${index + 1}`}
-                </span>
-                <div>
-                  <p className="font-bold text-slate-900">{row.company_name}</p>
-                  <p className="flex items-center gap-1 text-xs text-slate-500">
-                    <Star className="size-3 fill-amber-400 text-amber-400" />
-                    {row.average_rating} · {row.review_count} reviews
-                    {!row.is_available && <Badge variant="secondary" className="ml-2">Off duty</Badge>}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-4">
-                <div><p className="text-xs text-slate-400">Completion rate</p><p className="font-semibold">{row.completion_rate != null ? `${Math.round(row.completion_rate * 100)}%` : "—"}</p></div>
-                <div><p className="text-xs text-slate-400">Jobs completed</p><p className="font-semibold">{row.completed_jobs}</p></div>
-                <div><p className="text-xs text-slate-400">Avg. response</p><p className="font-semibold">{row.avg_response_seconds != null ? `${Math.round(row.avg_response_seconds)}s` : "—"}</p></div>
-                <div><p className="text-xs text-slate-400">Offers declined</p><p className="font-semibold">{row.offers_declined} / {row.offers_received}</p></div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {!loading && <PartnerLeaderboardPodium rows={displayRows} />}
     </>
   );
 }
