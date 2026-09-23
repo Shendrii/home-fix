@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import type {
   AcceptJobResult,
   DeclineReason,
@@ -17,6 +18,7 @@ import { resolveServiceCategoryId } from "@/lib/service-category";
 import { formatRelativeTimestamp } from "@/lib/format-timestamp";
 import { formatOperatingHours } from "@/lib/company-display";
 import { formatStoredPreferredWindow } from "@/lib/preferred-window";
+import { readActingTargetFromDocument, type ActingTarget } from "@/lib/acting-as";
 
 type DatabaseCategory = {
   id: string;
@@ -159,6 +161,7 @@ function mapCompany(company: DatabaseCompany) {
     email: company.email,
     isAvailable: company.is_available,
     maxConcurrentJobs: company.max_concurrent_jobs,
+    ownerId: company.owner_id,
   };
 }
 
@@ -173,7 +176,7 @@ function mapProfile(profile: DatabaseProfile): User {
   };
 }
 
-interface AppContextValue {
+export interface AppContextValue {
   jobs: JobRequest[];
   categories: ServiceCategory[];
   companies: ReturnType<typeof mapCompany>[];
@@ -194,6 +197,9 @@ interface AppContextValue {
   markNotificationRead: (id: string) => Promise<void>;
   setCategoryActive: (categoryId: string, active: boolean) => Promise<void>;
   dataReady: boolean;
+  actingAs: ActingTarget | null;
+  /** Jobs the current homeowner screen should show. All jobs unless a superadmin is acting as a client. */
+  viewerJobs: JobRequest[];
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -209,6 +215,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [offers, setOffers] = useState<DispatchOffer[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [dataReady, setDataReady] = useState(!isSupabaseConfigured);
+  const [actingAs, setActingAs] = useState<ActingTarget | null>(null);
+  const actingRef = useRef<ActingTarget | null>(null);
+  const ownedCompanyIdRef = useRef<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const supabase = createClient();
@@ -247,13 +257,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setServiceCategories((categoryData as DatabaseCategory[]).map(mapCategory));
       }
       if (companyData) {
-        const mappedCompanies = (companyData as unknown as DatabaseCompany[]).map(mapCompany);
+        const rows = companyData as unknown as DatabaseCompany[];
+        const mappedCompanies = rows.map(mapCompany);
         setServiceCompanies(mappedCompanies);
-        const ownedCompany = (companyData as unknown as DatabaseCompany[]).find(
-          (company) => company.owner_id === user?.id,
-        );
-        setCurrentPartnerCompanyId(ownedCompany?.id ?? null);
-        setPartnerOnline(ownedCompany?.is_available ?? false);
+        const acting = readActingTargetFromDocument();
+        actingRef.current = acting;
+        setActingAs(acting);
+        const ownedCompany = rows.find((company) => company.owner_id === user?.id);
+        ownedCompanyIdRef.current = ownedCompany?.id ?? null;
+        if (acting?.role === "partner" && acting.companyId) {
+          const company = rows.find((item) => item.id === acting.companyId);
+          setCurrentPartnerCompanyId(acting.companyId);
+          setPartnerOnline(company?.is_available ?? false);
+        } else {
+          setCurrentPartnerCompanyId(ownedCompany?.id ?? null);
+          setPartnerOnline(ownedCompany?.is_available ?? false);
+        }
       }
       if (!requestError && requestData) {
         const mappedRequests = (requestData as unknown as DatabaseRequest[]).map(mapRequest);
@@ -340,6 +359,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    const next = readActingTargetFromDocument();
+    actingRef.current = next;
+    setActingAs(next);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (actingAs?.role === "partner" && actingAs.companyId) {
+      const company = serviceCompanies.find((item) => item.id === actingAs.companyId);
+      setCurrentPartnerCompanyId(actingAs.companyId);
+      setPartnerOnline(Boolean(company?.isAvailable));
+      return;
+    }
+    if (!dataReady || actingAs) return;
+    const ownedId = ownedCompanyIdRef.current;
+    const company = serviceCompanies.find((item) => item.id === ownedId);
+    setCurrentPartnerCompanyId(ownedId);
+    setPartnerOnline(Boolean(company?.isAvailable));
+  }, [actingAs, serviceCompanies, dataReady]);
+
   const createJob = useCallback(
     async (input: NewJobInput) => {
       const resolvedCategoryId = resolveServiceCategoryId(serviceCategories, input.categoryId);
@@ -372,25 +411,41 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) throw new Error("Sign in to send a request.");
-      const { data, error } = await supabase
-        .from("service_requests")
-        .insert({
-          client_id: user.id,
-          service_category_id: category.id,
-          title: `${category.name} request`,
-          description: input.description,
-          address: input.address,
-          urgency: input.urgency,
-          estimated_price_cents: Math.round(category.startingPrice * 100),
-          latitude: input.latitude,
-          longitude: input.longitude,
-          preferred_start_at: input.preferredStartAt,
-          preferred_end_at: input.preferredEndAt,
-        })
-        .select(
-          "id, reference_code, client_id, service_category_id, title, description, address, latitude, longitude, preferred_start_at, preferred_end_at, urgency, status, dispatch_phase, estimated_price_cents, final_price_cents, created_at, accepted_company_id",
-        )
-        .single();
+      const actingClientId = actingRef.current?.role === "client" ? actingRef.current.userId : null;
+      const insertPayload = {
+        client_id: actingClientId ?? user.id,
+        service_category_id: category.id,
+        title: `${category.name} request`,
+        description: input.description,
+        address: input.address,
+        urgency: input.urgency,
+        estimated_price_cents: Math.round(category.startingPrice * 100),
+        latitude: input.latitude,
+        longitude: input.longitude,
+        preferred_start_at: input.preferredStartAt,
+        preferred_end_at: input.preferredEndAt,
+      };
+      const { data, error } = actingClientId
+        ? await supabase.rpc("superadmin_create_service_request", {
+            p_client_id: actingClientId,
+            p_service_category_id: category.id,
+            p_title: insertPayload.title,
+            p_description: input.description,
+            p_address: input.address,
+            p_urgency: input.urgency,
+            p_estimated_price_cents: insertPayload.estimated_price_cents,
+            p_latitude: input.latitude,
+            p_longitude: input.longitude,
+            p_preferred_start_at: input.preferredStartAt,
+            p_preferred_end_at: input.preferredEndAt,
+          })
+        : await supabase
+            .from("service_requests")
+            .insert(insertPayload)
+            .select(
+              "id, reference_code, client_id, service_category_id, title, description, address, latitude, longitude, preferred_start_at, preferred_end_at, urgency, status, dispatch_phase, estimated_price_cents, final_price_cents, created_at, accepted_company_id",
+            )
+            .single();
       if (error || !data) throw new Error(error?.message ?? "Unable to send request.");
 
       const created = mapRequest(data as unknown as DatabaseRequest);
@@ -412,6 +467,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const { data, error } = await supabase.rpc("claim_dispatch_request", {
           p_request_id: jobId,
           p_offer_id: offerId ?? null,
+          p_company_id: actingRef.current?.role === "partner" ? actingRef.current.companyId : null,
         });
         const status = (data as { status?: string } | null)?.status;
         if (error) {
@@ -448,6 +504,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         p_offer_id: offerId,
         p_action: "decline",
         p_decline_reason: declineReason ?? null,
+        p_company_id: actingRef.current?.role === "partner" ? actingRef.current.companyId : null,
       });
       if (error || (data as { status?: string } | null)?.status !== "declined") {
         return { status: "offer_expired" as const };
@@ -461,10 +518,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const updateJobStatus = useCallback(async (jobId: string, status: JobStatus) => {
     const supabase = createClient();
     if (supabase) {
+      const acting = actingRef.current;
       const { error } = await supabase.rpc("update_service_request_status", {
         p_request_id: jobId,
         p_status: status,
         p_note: null,
+        p_company_id: acting?.role === "partner" ? acting.companyId : null,
+        p_client_id: acting?.role === "client" ? acting.userId : null,
       });
       if (error) throw new Error(error.message);
     }
@@ -476,14 +536,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     async (value: boolean) => {
       const supabase = createClient();
       if (supabase) {
-        const { error } = await supabase.rpc("set_company_availability", { p_available: value });
+        const { error } = await supabase.rpc("set_company_availability", {
+          p_available: value,
+          p_company_id: actingRef.current?.role === "partner" ? actingRef.current.companyId : null,
+        });
         if (error) throw new Error(error.message);
       }
       setPartnerOnline(value);
+      const targetId = actingRef.current?.role === "partner" && actingRef.current.companyId
+        ? actingRef.current.companyId
+        : currentPartnerCompanyId;
       setServiceCompanies((all) =>
-        all.map((company) =>
-          company.id === currentPartnerCompanyId ? { ...company, isAvailable: value } : company,
-        ),
+        all.map((company) => (company.id === targetId ? { ...company, isAvailable: value } : company)),
       );
     },
     [currentPartnerCompanyId],
@@ -513,14 +577,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const viewerJobs = useMemo(
+    () => (actingAs?.role === "client" ? jobs.filter((job) => job.userId === actingAs.userId) : jobs),
+    [actingAs, jobs],
+  );
+  const actingCompany = actingAs?.role === "partner" && actingAs.companyId
+    ? serviceCompanies.find((company) => company.id === actingAs.companyId)
+    : undefined;
+  const partnerCompanyId = actingCompany?.id ?? currentPartnerCompanyId;
+  const partnerIsOnline = actingCompany ? Boolean(actingCompany.isAvailable) : partnerOnline;
+
   const value = useMemo(
     () => ({
       jobs,
+      viewerJobs,
       categories: serviceCategories,
       companies: serviceCompanies,
       users: platformUsers,
-      currentPartnerCompanyId,
-      partnerOnline,
+      currentPartnerCompanyId: partnerCompanyId,
+      partnerOnline: partnerIsOnline,
       setPartnerOnline: setAvailability,
       createJob,
       acceptJob,
@@ -531,14 +606,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       markNotificationRead,
       setCategoryActive,
       dataReady,
+      actingAs,
     }),
     [
       jobs,
+      viewerJobs,
       serviceCategories,
       serviceCompanies,
       platformUsers,
-      currentPartnerCompanyId,
-      partnerOnline,
+      partnerCompanyId,
+      partnerIsOnline,
       createJob,
       acceptJob,
       respondToOffer,
@@ -548,6 +625,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       markNotificationRead,
       setCategoryActive,
       dataReady,
+      actingAs,
     ],
   );
 
@@ -558,4 +636,15 @@ export function useApp() {
   const value = useContext(AppContext);
   if (!value) throw new Error("useApp must be used within AppProvider");
   return value;
+}
+
+/** Static marketplace snapshot for portfolio / marketing previews (no Supabase). */
+export function AppProviderPortfolioHarness({
+  value,
+  children,
+}: {
+  value: AppContextValue;
+  children: React.ReactNode;
+}) {
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

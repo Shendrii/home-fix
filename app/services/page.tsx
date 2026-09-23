@@ -3,19 +3,24 @@ import { AppShell } from "@/components/app-shell";
 import { PublicSiteHeader } from "@/components/public-site-header";
 import { ServicesScreen } from "@/components/screens";
 import { resolveServicesPageVariant } from "@/lib/auth-display";
+import { describeActingTarget, readActingTarget } from "@/lib/acting-as-server";
 import { getOptionalProfile } from "@/lib/auth-session";
 import { profileNeedsPersonalDetails } from "@/lib/profile";
 
 export default async function ServicesPage() {
   const profile = await getOptionalProfile();
-  const variant = resolveServicesPageVariant(profile);
+  const acting = profile?.role === "superadmin" ? await readActingTarget() : null;
+  const variant = resolveServicesPageVariant(profile, acting?.role ?? null);
+
+  if (variant === "admin-only") redirect("/admin");
 
   if (variant === "client-app" && profile) {
-    if (profileNeedsPersonalDetails(profile)) {
+    if (profile.role === "client" && profileNeedsPersonalDetails(profile)) {
       redirect("/account");
     }
+    const actingLabel = acting ? await describeActingTarget(acting) : null;
     return (
-      <AppShell role="client" profile={profile}>
+      <AppShell role="client" profile={profile} actingLabel={actingLabel}>
         <ServicesScreen />
       </AppShell>
     );

@@ -39,6 +39,18 @@ describe("resolveServicesPageVariant", () => {
   it("uses the public layout for guests", () => {
     expect(resolveServicesPageVariant(null)).toBe("public");
   });
+
+  it("uses the client app shell when a superadmin is acting as a homeowner", () => {
+    expect(
+      resolveServicesPageVariant({ id: "admin-1", full_name: "Sky", role: "superadmin" }, "client"),
+    ).toBe("client-app");
+  });
+
+  it("sends a superadmin who is not acting as a homeowner back to admin", () => {
+    expect(resolveServicesPageVariant({ id: "admin-1", full_name: "Sky", role: "superadmin" }, null)).toBe(
+      "admin-only",
+    );
+  });
 });
 
 describe("canAccessClientBooking", () => {

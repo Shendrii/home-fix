@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
+import { actingPortalMatches } from "@/lib/acting-as";
+import { describeActingTarget, readActingTarget } from "@/lib/acting-as-server";
 import { authPathWithReturn } from "@/lib/auth-return";
 import { profileNeedsPersonalDetails, type Profile } from "@/lib/profile";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
@@ -12,6 +14,7 @@ export async function ProtectedPage({
   allow,
   signInNext,
   allowIncompleteClientProfile = false,
+  allowActing,
 }: {
   children: React.ReactNode;
   allow: Role[];
@@ -19,6 +22,8 @@ export async function ProtectedPage({
   signInNext?: string;
   /** Only `/account` should set this so onboarding can finish before other routes unlock. */
   allowIncompleteClientProfile?: boolean;
+  /** Superadmin may enter this portal only while the view-as cookie matches it. */
+  allowActing?: "partner" | "client";
 }) {
   if (!isSupabaseConfigured) {
     return <AppShell role="client" profile={null}><ConfigurationHint /></AppShell>;
@@ -32,7 +37,14 @@ export async function ProtectedPage({
     .eq("id", user.id)
     .single();
   const profile = data as Profile | null;
-  if (!profile || !allow.includes(profile.role)) redirect("/unauthorized");
+  if (!profile) redirect("/unauthorized");
+
+  const acting = profile.role === "superadmin" ? await readActingTarget() : null;
+  const actingMatches = actingPortalMatches(acting, allowActing ?? "client") && Boolean(allowActing);
+  if (!allow.includes(profile.role) && !actingMatches) {
+    if (profile.role === "superadmin" && allowActing) redirect("/admin");
+    redirect("/unauthorized");
+  }
 
   if (
     !allowIncompleteClientProfile &&
@@ -44,9 +56,11 @@ export async function ProtectedPage({
 
   const onboardingLock =
     profile.role === "client" && profileNeedsPersonalDetails(profile);
+  const shellRole = actingMatches && acting ? acting.role : profile.role;
+  const actingLabel = acting ? await describeActingTarget(acting) : null;
 
   return (
-    <AppShell role={profile.role} profile={profile} onboardingLock={onboardingLock}>
+    <AppShell role={shellRole} profile={profile} onboardingLock={onboardingLock} actingLabel={actingLabel}>
       {children}
     </AppShell>
   );

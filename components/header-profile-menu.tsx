@@ -19,11 +19,13 @@ export function HeaderProfileMenu({
   initials,
   roleLabel,
   setupLock = false,
+  hideAccount = false,
 }: {
   profile: Profile | null;
   initials: string;
   roleLabel: string;
   setupLock?: boolean;
+  hideAccount?: boolean;
 }) {
   const router = useRouter();
   const { user, signOut } = useAuth();
@@ -92,7 +94,7 @@ export function HeaderProfileMenu({
         </DropdownMenuGroup>
 
         <DropdownMenuGroup className="space-y-0.5 p-2">
-          {!setupLock && (
+          {!setupLock && !hideAccount && (
             <DropdownMenuItem
               className={cn(
                 "cursor-pointer gap-3 rounded-xl px-2 py-2.5",

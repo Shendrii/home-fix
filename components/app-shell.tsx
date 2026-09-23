@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { ProfileSetupProgress } from "@/components/profile-setup-progress";
 import { HeaderProfileMenu } from "@/components/header-profile-menu";
+import { ExitViewAsButton } from "@/components/view-as-controls";
 import { NotificationMenu } from "@/components/notification-menu";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -69,17 +70,27 @@ export function AppShell({
   role,
   profile,
   onboardingLock = false,
+  /** Portfolio / marketing previews — highlight nav as if on this path. */
+  navPathname,
+  actingLabel,
 }: {
   children: React.ReactNode;
   role: Role;
   profile: Profile | null;
   /** Client onboarding: hide app nav until profile is complete (server also redirects). */
   onboardingLock?: boolean;
+  navPathname?: string;
+  /** Set while a superadmin is inside someone else's workspace. */
+  actingLabel?: string | null;
 }) {
   const pathname = usePathname();
+  const activePath = navPathname ?? pathname;
   const allItems = role === "superadmin" ? [...nav.admin, { label: "Partners", href: "/admin/partners", icon: Building2 }] : nav[role];
   const setupLock = onboardingLock && role === "client";
-  const items = setupLock ? allItems.filter((item) => item.href === "/account") : allItems;
+  const hideAccount = Boolean(actingLabel) && (role === "client" || role === "partner");
+  const items = (setupLock ? allItems.filter((item) => item.href === "/account") : allItems).filter(
+    (item) => !(hideAccount && item.href === "/account"),
+  );
   const roleLabel = role === "client" ? "Homeowner" : role === "partner" ? "Service partner" : role === "superadmin" ? "Super admin" : "Operations";
   const initials = profile?.full_name?.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase() ?? "HF";
   const brandHref = setupLock ? "/account" : homeHref(role);
@@ -88,23 +99,27 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-[#faf8f3]">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r bg-white/95 p-4 backdrop-blur md:flex">
-        <Link href={brandHref} className="mb-8 flex h-11 items-center gap-2 px-2">
-          <span className="grid size-9 place-items-center rounded-xl bg-teal-600 text-white"><HeartHandshake className="size-5" /></span>
-          <span className="text-xl font-bold tracking-tight text-slate-900">Home<span className="text-teal-600">Fix</span></span>
-        </Link>
-        <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[.16em] text-slate-400">{roleLabel}</p>
-        {showSetupProgress && (
-          <ProfileSetupProgress
-            className="mb-4"
-            fullName={profile.full_name}
-            phone={profile.phone}
-            defaultAddress={profile.default_address}
-          />
-        )}
-        <nav className="flex flex-1 flex-col gap-1"><NavLinks items={items} pathname={pathname} /></nav>
-        {!setupLock && (
-          <div className="space-y-3 border-t pt-4">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden h-svh w-64 flex-col border-r bg-white p-4 md:flex">
+        <div className="flex min-h-0 flex-1 flex-col">
+          <Link href={brandHref} className="mb-8 flex h-11 items-center gap-2 px-2">
+            <span className="grid size-9 place-items-center rounded-xl bg-teal-600 text-white"><HeartHandshake className="size-5" /></span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">Home<span className="text-teal-600">Fix</span></span>
+          </Link>
+          <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[.16em] text-slate-400">{roleLabel}</p>
+          {showSetupProgress && (
+            <ProfileSetupProgress
+              className="mb-4"
+              fullName={profile.full_name}
+              phone={profile.phone}
+              defaultAddress={profile.default_address}
+            />
+          )}
+          <nav className="flex flex-col gap-1 overflow-y-auto">
+            <NavLinks items={items} pathname={activePath} />
+          </nav>
+        </div>
+        {!setupLock && !hideAccount && (
+          <div className="shrink-0 border-t pt-4">
             <Link href="/account" className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50">
               <span className="grid size-9 place-items-center rounded-full bg-slate-900 text-xs font-bold text-white">{initials}</span>
               <div className="min-w-0">
@@ -129,7 +144,7 @@ export function AppShell({
           {!setupLock && (
             <NotificationMenu />
           )}
-          <HeaderProfileMenu profile={profile} initials={initials} roleLabel={roleLabel} setupLock={setupLock} />
+          <HeaderProfileMenu profile={profile} initials={initials} roleLabel={roleLabel} setupLock={setupLock} hideAccount={hideAccount} />
           {!setupLock && (
             <Sheet>
               <SheetTrigger render={<Button variant="ghost" size="icon" className="tap-target md:hidden" aria-label="Open menu" />}><Menu /></SheetTrigger>
@@ -144,6 +159,12 @@ export function AppShell({
 
       <main className={cn("px-4 pt-6 md:ml-64 md:px-8 lg:px-10", setupLock ? "pb-24 md:pb-10" : "pb-28 md:pb-10")}>
         <div className="mx-auto max-w-7xl">
+          {actingLabel && (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-950">
+              <p className="text-sm font-semibold">Viewing as {actingLabel}</p>
+              <ExitViewAsButton />
+            </div>
+          )}
           {showSetupProgress && (
             <ProfileSetupProgress
               className="mb-6 md:hidden"
@@ -161,7 +182,7 @@ export function AppShell({
         style={{ gridTemplateColumns: `repeat(${Math.max(items.length, 1)}, minmax(0, 1fr))` }}
       >
         {items.map(({ label, href, icon: Icon }) => {
-          const active = pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+          const active = activePath === href || (href !== "/" && activePath.startsWith(`${href}/`));
           return (
             <Link
               key={href}

@@ -202,35 +202,37 @@ function PodiumAvatar({
   rank: 1 | 2 | 3;
   size?: "md" | "lg";
 }) {
-  const dim = size === "lg" ? "size-24 sm:size-28" : "size-20 sm:size-24";
+  const dim = size === "lg" ? "size-24 sm:size-28" : "size-[4.5rem] sm:size-20";
   const medal = MEDAL[rank];
   return (
-    <div className="flex flex-col items-center">
-      <div
-        className={cn(
-          "relative grid place-items-center rounded-full bg-teal-600 font-bold text-white shadow-sm",
-          dim,
-          PODIUM_RING[rank],
-        )}
-      >
-        <span className={size === "lg" ? "text-2xl" : "text-lg"}>{companyInitials(row.company_name)}</span>
+    <div className="flex min-w-0 flex-col items-center px-1 text-center sm:px-2">
+      <div className="relative mb-5 shrink-0">
+        <div
+          className={cn(
+            "grid place-items-center rounded-full bg-teal-600 font-bold text-white shadow-sm",
+            dim,
+            PODIUM_RING[rank],
+          )}
+        >
+          <span className={size === "lg" ? "text-2xl" : "text-lg"}>{companyInitials(row.company_name)}</span>
+        </div>
+        <span
+          className={cn(
+            "absolute -bottom-2.5 left-1/2 z-10 grid h-7 min-w-[1.75rem] -translate-x-1/2 place-items-center rounded-full px-2 text-[10px] font-bold uppercase tracking-wide",
+            medal.className,
+          )}
+        >
+          {medal.label}
+        </span>
       </div>
-      <span
-        className={cn(
-          "mt-2 grid size-8 place-items-center rounded-full text-[10px] font-bold uppercase tracking-wide",
-          medal.className,
-        )}
-      >
-        {medal.label}
-      </span>
-      <p className="mt-2 max-w-[7.5rem] text-center text-sm font-bold leading-tight text-slate-900 sm:max-w-[9rem] sm:text-base">
+      <p className="line-clamp-2 w-full text-sm font-bold leading-snug text-slate-900 sm:text-[15px]">
         {row.company_name}
       </p>
-      <p className="mt-1 text-lg font-bold tabular-nums text-slate-900 sm:text-xl">
+      <p className="mt-2 text-lg font-bold tabular-nums text-slate-900 sm:text-xl">
         {performanceScore(row).toLocaleString()}
       </p>
-      <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">Performance score</p>
-      <div className="mt-1">
+      <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-400">Performance score</p>
+      <div className="mt-1.5">
         <StarRow rating={row.average_rating} />
       </div>
     </div>
@@ -301,32 +303,33 @@ export function PartnerLeaderboardPodium({
         </div>
       )}
 
-      <section className="rounded-3xl border border-slate-100 bg-white px-4 pb-8 pt-6 shadow-[0_16px_50px_rgba(30,41,59,.07)] sm:px-8 sm:pb-10 sm:pt-8">
+      <section className="isolate overflow-hidden rounded-3xl border border-slate-100 bg-white px-4 pb-8 pt-6 shadow-[0_16px_50px_rgba(30,41,59,.07)] sm:px-8 sm:pb-10 sm:pt-8">
         <div className="mb-8 border-b border-slate-100 pb-4 text-center">
           <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Top partners</p>
           <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Leaderboard</h2>
         </div>
 
-        <div className="mx-auto flex max-w-2xl items-end justify-center gap-2 sm:gap-6">
+        <div className="mx-auto grid max-w-3xl grid-cols-3 items-end gap-2 sm:gap-8">
           {podiumOrder[0] && (
-            <div className="mb-4 flex flex-1 justify-center pb-2 sm:mb-6">
+            <div className="min-w-0 pb-6 sm:pb-10">
               <PodiumAvatar row={podiumOrder[0]} rank={2} />
             </div>
           )}
           {podiumOrder[1] && (
-            <div className="flex flex-1 justify-center">
+            <div className="min-w-0">
               <PodiumAvatar row={podiumOrder[1]} rank={1} size="lg" />
             </div>
           )}
           {podiumOrder[2] && (
-            <div className="mb-2 flex flex-1 justify-center pb-4 sm:mb-5">
+            <div className="min-w-0 pb-4 sm:pb-8">
               <PodiumAvatar row={podiumOrder[2]} rank={3} />
             </div>
           )}
         </div>
 
         {rest.length > 0 && (
-          <div className="mx-auto mt-8 max-w-xl space-y-2 border-t border-slate-100 pt-6">
+          <div className="relative z-10 mx-auto mt-10 max-w-xl space-y-2 bg-white pt-2 sm:mt-12">
+            <div className="mb-4 border-t border-slate-100" aria-hidden />
             {rest.map((row, i) => (
               <LeaderboardListRow key={row.company_id} row={row} rank={i + 4} />
             ))}

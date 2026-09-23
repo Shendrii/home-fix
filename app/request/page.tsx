@@ -5,7 +5,7 @@ import { bookingPath } from "@/lib/auth-return";
 export default async function RequestPage({ searchParams }: { searchParams: Promise<{ service?: string }> }) {
   const { service } = await searchParams;
   return (
-    <ProtectedPage allow={["client"]} signInNext={bookingPath(service)}>
+    <ProtectedPage allow={["client"]} allowActing="client" signInNext={bookingPath(service)}>
       <RequestForm initialService={service} />
     </ProtectedPage>
   );

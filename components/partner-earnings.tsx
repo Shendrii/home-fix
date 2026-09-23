@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CalendarRange, Clock3, TrendingUp } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
+import { useApp } from "@/components/app-provider";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,6 +63,7 @@ function bucketRows(rows: EarningsRow[], granularity: "day" | "week" | "month") 
  * estimate until real payments exist.
  */
 export function PartnerEarnings() {
+  const { actingAs } = useApp();
   const [rows, setRows] = useState<EarningsRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [granularity, setGranularity] = useState<"day" | "week" | "month">("week");
@@ -73,11 +75,13 @@ export function PartnerEarnings() {
         setLoading(false);
         return;
       }
-      const { data } = await supabase.rpc("partner_job_earnings");
+      const { data } = await supabase.rpc("partner_job_earnings", {
+        p_company_id: actingAs?.role === "partner" ? actingAs.companyId : null,
+      });
       setRows((data ?? []) as EarningsRow[]);
       setLoading(false);
     })();
-  }, []);
+  }, [actingAs]);
 
   const buckets = useMemo(() => bucketRows(rows, granularity), [rows, granularity]);
   const totalJobs = rows.length;

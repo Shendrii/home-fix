@@ -12,6 +12,9 @@ import {
 import { formatOperatingHours } from "@/lib/company-display";
 import { useApp } from "@/components/app-provider";
 import { useAuth } from "@/components/auth-provider";
+import { ViewAsButton } from "@/components/view-as-controls";
+import { canActAsRole } from "@/lib/acting-as";
+import { roleLabel } from "@/lib/profile";
 import { PageHeader } from "@/components/app-shell";
 import { PartnerJobsCalendar } from "@/components/partner-jobs-calendar";
 import { JobPhotosPanel } from "@/components/job-photos-panel";
@@ -91,7 +94,7 @@ function ServiceCard({
 }
 
 export function ClientHome() {
-  const { categories, jobs, companies } = useApp();
+  const { categories, viewerJobs: jobs, companies } = useApp();
   const { profile } = useAuth();
   const [query, setQuery] = useState("");
   const firstName = profile?.full_name?.trim().split(/\s+/)[0];
@@ -127,12 +130,12 @@ export function JobCard({ job, partner = false }: { job: JobRequest; partner?: b
 }
 
 export function ClientJobs() {
-  const { jobs } = useApp();
+  const { viewerJobs: jobs } = useApp();
   return <><PageHeader eyebrow="Your home" title="My jobs" description="Track matching, appointments, and completed service." action={<Button render={<Link href="/request" />} className="h-11">New request</Button>} /><div className="grid gap-4 lg:grid-cols-2">{jobs.map((job) => <JobCard key={job.id} job={job} />)}</div></>;
 }
 
 export function JobDetail({ id }: { id: string }) {
-  const { jobs, companies, updateJobStatus } = useApp();
+  const { viewerJobs: jobs, companies, updateJobStatus } = useApp();
   const job = jobs.find((item) => item.id === id);
   if (!job) return <Card><CardContent><h1 className="text-xl font-bold">Job not found</h1><Button render={<Link href="/jobs" />} className="mt-4">Back to jobs</Button></CardContent></Card>;
   const company = companies.find((item) => item.id === job.companyId);
@@ -359,9 +362,20 @@ export function PartnerCompany() {
 }
 
 type AdminKind = "overview" | "jobs" | "companies" | "services" | "users";
+const ROLE_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "client", label: "Homeowner" },
+  { id: "partner", label: "Service partner" },
+  { id: "admin", label: "Operations" },
+  { id: "superadmin", label: "Super admin" },
+] as const;
+
 export function AdminScreen({ kind }: { kind: AdminKind }) {
   const { jobs, companies, categories, users, setCategoryActive, dataReady } = useApp();
+  const { profile } = useAuth();
+  const isSuperadmin = profile?.role === "superadmin";
   const [adminQuery, setAdminQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<(typeof ROLE_FILTERS)[number]["id"]>("all");
   const query = adminQuery.toLowerCase();
   const categoryName = (id: string) => categories.find((category) => category.id === id)?.name ?? "";
   const filteredJobs = jobs.filter((job) => `${job.referenceCode ?? job.id} ${job.title} ${job.status}`.toLowerCase().includes(query));
@@ -369,7 +383,10 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
     `${company.name} ${company.services.map(categoryName).join(" ")}`.toLowerCase().includes(query),
   );
   const filteredCategories = categories.filter((category) => `${category.name} ${category.description}`.toLowerCase().includes(query));
-  const filteredUsers = users.filter((user) => `${user.name} ${user.email} ${user.role}`.toLowerCase().includes(query));
+  const filteredUsers = users.filter((user) => {
+    const matchesQuery = `${user.name} ${user.email} ${user.role}`.toLowerCase().includes(query);
+    return matchesQuery && (roleFilter === "all" || user.role === roleFilter);
+  });
   if (kind === "overview") {
     const urgentOpen = jobs.filter((job) => job.status === "open" && job.urgency === "urgent").length;
     const clientCount = users.filter((user) => user.role === "client").length;
@@ -419,28 +436,30 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
       {dataReady && kind === "companies" && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredCompanies.map((company) => (
-            <Card key={company.id} className="border-0 bg-white">
-              <CardContent>
-                <div className="flex items-center gap-3">
-                  <span className="grid size-11 place-items-center rounded-xl bg-slate-900 font-bold text-white">{company.initials}</span>
-                  <div className="min-w-0">
-                    <p className="truncate font-bold">{company.name}</p>
-                    <p className="flex items-center gap-1 text-xs text-slate-500"><Star className="size-3 fill-amber-400 text-amber-400" />{company.rating} · {company.reviewCount} reviews</p>
+            <Link key={company.id} href={`/admin/companies/${company.id}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500">
+              <Card className="h-full border-0 bg-white transition-transform hover:-translate-y-0.5">
+                <CardContent>
+                  <div className="flex items-center gap-3">
+                    <span className="grid size-11 place-items-center rounded-xl bg-slate-900 font-bold text-white">{company.initials}</span>
+                    <div className="min-w-0">
+                      <p className="truncate font-bold">{company.name}</p>
+                      <p className="flex items-center gap-1 text-xs text-slate-500"><Star className="size-3 fill-amber-400 text-amber-400" />{company.rating} · {company.reviewCount} reviews</p>
+                    </div>
                   </div>
-                </div>
-                {company.services.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {company.services.slice(0, 3).map((service) => (
-                      <Badge key={service} variant="secondary" className="text-[10px]">{categoryName(service)}</Badge>
-                    ))}
+                  {company.services.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {company.services.slice(0, 3).map((service) => (
+                        <Badge key={service} variant="secondary" className="text-[10px]">{categoryName(service)}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-4 flex items-center justify-between border-t pt-3">
+                    <Badge className={company.verified ? "bg-emerald-50 text-emerald-700" : "bg-orange-50 text-orange-700"}>{company.verified ? "Verified" : "Review needed"}</Badge>
+                    <span className="text-xs text-slate-400">{company.isAvailable ? "On duty" : "Off duty"}</span>
                   </div>
-                )}
-                <div className="mt-4 flex items-center justify-between border-t pt-3">
-                  <Badge className={company.verified ? "bg-emerald-50 text-emerald-700" : "bg-orange-50 text-orange-700"}>{company.verified ? "Verified" : "Review needed"}</Badge>
-                  <span className="text-xs text-slate-400">{company.isAvailable ? "On duty" : "Off duty"}</span>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
@@ -472,25 +491,43 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
         </div>
       )}
       {dataReady && kind === "users" && (
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {filteredUsers.map((user) => (
-            <Card key={user.id} className="border-0 bg-white">
-              <CardContent>
-                <div className="flex items-center gap-3">
-                  <span className="grid size-11 place-items-center rounded-full bg-teal-50 font-bold text-teal-700">{user.name.split(" ").map((part) => part[0]).join("")}</span>
-                  <div className="min-w-0">
-                    <p className="truncate font-bold">{user.name}</p>
-                    <p className="truncate text-xs text-slate-500">{user.email || "No email on file"}</p>
+        <>
+          <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by role">
+            {ROLE_FILTERS.map((filter) => (
+              <button
+                key={filter.id}
+                type="button"
+                aria-pressed={roleFilter === filter.id}
+                onClick={() => setRoleFilter(filter.id)}
+                className={`rounded-full px-3 py-1.5 text-sm font-semibold ${roleFilter === filter.id ? "bg-slate-950 text-white" : "bg-white text-slate-600 ring-1 ring-slate-200"}`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {filteredUsers.map((user) => (
+              <Card key={user.id} className="border-0 bg-white">
+                <CardContent>
+                  <div className="flex items-center gap-3">
+                    <span className="grid size-11 place-items-center rounded-full bg-teal-50 font-bold text-teal-700">{user.name.split(" ").map((part) => part[0]).join("")}</span>
+                    <div className="min-w-0">
+                      <p className="truncate font-bold">{user.name}</p>
+                      <p className="truncate text-xs text-slate-500">{user.email || "No email on file"}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="mt-4 flex justify-between border-t pt-3">
-                  <Badge variant="secondary" className="capitalize">{user.role}</Badge>
-                  {user.phone && <span className="truncate text-xs text-slate-400">{user.phone}</span>}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
+                    <Badge variant="secondary">{roleLabel(user.role)}</Badge>
+                    <div className="flex items-center gap-2">
+                      {user.phone && <span className="truncate text-xs text-slate-400">{user.phone}</span>}
+                      {isSuperadmin && canActAsRole(user.role) && <ViewAsButton userId={user.id} />}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
       {dataReady && ((kind === "jobs" && !filteredJobs.length) || (kind === "companies" && !filteredCompanies.length) || (kind === "services" && !filteredCategories.length) || (kind === "users" && !filteredUsers.length)) && (
         <Card className="mt-4 border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">{emptyMessage}</CardContent></Card>

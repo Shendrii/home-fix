@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "portfolio:screenshots": "node scripts/capture-portfolio-screenshots.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -41,6 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
     "jsdom": "^29.1.1",
+    "playwright": "^1.62.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.10"

@@ -19,9 +19,16 @@ export function authenticatedPortalPath(role: Role | undefined) {
   return "/dashboard";
 }
 
+export type ServicesPageVariant = "client-app" | "public" | "admin-only";
+
 /** Logged-in clients browse services inside the app shell (same as booking). */
-export function resolveServicesPageVariant(profile: Profile | null) {
-  return profile?.role === "client" ? "client-app" : "public";
+export function resolveServicesPageVariant(
+  profile: Profile | null,
+  actingRole?: "partner" | "client" | null,
+): ServicesPageVariant {
+  if (profile?.role === "client") return "client-app";
+  if (profile?.role === "superadmin") return actingRole === "client" ? "client-app" : "admin-only";
+  return "public";
 }
 
 export function canAccessClientBooking(userId: string | null, profile: Profile | null) {
