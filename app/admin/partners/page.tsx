@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfigurationHint } from "@/components/protected-page";
 import { PartnerInvitationForm } from "@/components/partner-invitation-form";
 import { PartnerAccountReset } from "@/components/partner-account-reset";
+import { AdminPartnerList } from "@/components/admin-partner-list";
 import { partnerInvitationStatus } from "@/lib/partner-invitation";
 import { readActingTarget } from "@/lib/acting-as-server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
@@ -58,6 +59,7 @@ export default async function PartnerProvisioningPage() {
           </CardContent>
         </Card>
       </div>
+      <AdminPartnerList />
     </>
   );
 }

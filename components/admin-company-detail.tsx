@@ -24,7 +24,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
       <Card className="border-0 bg-white">
         <CardContent className="py-10">
           <h1 className="text-xl font-bold">Company not found</h1>
-          <Button render={<Link href="/admin/companies" />} className="mt-4">Back to companies</Button>
+          <Button render={<Link href="/admin/partners" />} className="mt-4">Back to partners</Button>
         </CardContent>
       </Card>
     );
@@ -39,7 +39,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
         eyebrow="Service company"
         title={company.name}
         description="People linked to this company, and the workspace you can enter as a superadmin."
-        action={<Button variant="outline" render={<Link href="/admin/companies" />}>All companies</Button>}
+        action={<Button variant="outline" render={<Link href="/admin/partners" />}>All partners</Button>}
       />
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <Badge className={company.verified ? "bg-emerald-50 text-emerald-700" : "bg-orange-50 text-orange-700"}>

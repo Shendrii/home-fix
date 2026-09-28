@@ -1,5 +1,5 @@
-import { AdminScreen } from "@/components/screens";
+import { redirect } from "next/navigation";
 
 export default function AdminCompaniesPage() {
-  return <AdminScreen kind="companies" />;
+  redirect("/admin/partners");
 }

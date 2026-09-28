@@ -35,7 +35,6 @@ const nav = {
   admin: [
     { label: "Overview", href: "/admin", icon: Grid2X2 },
     { label: "Jobs", href: "/admin/jobs", icon: ClipboardList },
-    { label: "Companies", href: "/admin/companies", icon: Building2 },
     { label: "Leaderboard", href: "/admin/leaderboard", icon: Trophy },
     { label: "Coverage map", href: "/admin/heatmap", icon: MapPin },
     { label: "Services", href: "/admin/services", icon: Wrench },
