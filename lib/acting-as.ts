@@ -7,8 +7,8 @@ export { resolveServicesPageVariant } from "@/lib/auth-display";
 export const ACTING_AS_COOKIE = "hf_acting_as";
 
 export type ActingTarget = {
-  type: "company" | "client";
-  role: "partner" | "client";
+  type: "company" | "client" | "admin";
+  role: "partner" | "client" | "admin";
   userId: string;
   companyId: string | null;
 };
@@ -30,6 +30,9 @@ export function parseActingTarget(raw: string | undefined | null): ActingTarget 
     if (value.type === "client" && value.role === "client" && (value.companyId == null || value.companyId === "")) {
       return { type: "client", role: "client", userId: value.userId, companyId: null };
     }
+    if (value.type === "admin" && value.role === "admin" && (value.companyId == null || value.companyId === "")) {
+      return { type: "admin", role: "admin", userId: value.userId, companyId: null };
+    }
     return null;
   } catch {
     return null;
@@ -48,9 +51,9 @@ export function readActingTargetFromDocument() {
   }
 }
 
-/** Homeowner and partner workspaces can be entered. Operations roles stay in the directory. */
+/** Superadmin may preview every non-superadmin workspace. */
 export function canActAsRole(role: Role) {
-  return role === "client" || role === "partner";
+  return role === "client" || role === "partner" || role === "admin";
 }
 
 export function actingPortalMatches(target: ActingTarget | null, portal: "partner" | "client") {

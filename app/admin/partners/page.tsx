@@ -6,6 +6,7 @@ import { ConfigurationHint } from "@/components/protected-page";
 import { PartnerInvitationForm } from "@/components/partner-invitation-form";
 import { PartnerAccountReset } from "@/components/partner-account-reset";
 import { partnerInvitationStatus } from "@/lib/partner-invitation";
+import { readActingTarget } from "@/lib/acting-as-server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export default async function PartnerProvisioningPage() {
@@ -13,7 +14,8 @@ export default async function PartnerProvisioningPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase!.auth.getUser();
   const { data: profile } = await supabase!.from("profiles").select("role").eq("id", user?.id ?? "").single();
-  if (profile?.role !== "superadmin") redirect("/unauthorized");
+  const acting = profile?.role === "superadmin" ? await readActingTarget() : null;
+  if (profile?.role !== "superadmin" || acting?.role === "admin") redirect("/unauthorized");
   const { data: categories } = await supabase!.from("service_categories").select("id, name").eq("is_active", true).order("name");
   const { data: invitations } = await supabase!.from("partner_invitations").select("id, email, company_name, invited_at, accepted_at, revoked_at, expires_at").order("invited_at", { ascending: false }).limit(8);
   return (

@@ -61,7 +61,10 @@ export async function POST(request: Request) {
     if (!company) return NextResponse.json({ error: "This partner has no company yet." }, { status: 404 });
     return withTarget({ type: "company", role: "partner", userId: person.id, companyId: company.id }, "/partner");
   }
-  return NextResponse.json({ error: "Operations accounts stay in the admin directory." }, { status: 400 });
+  if (person.role === "admin") {
+    return withTarget({ type: "admin", role: "admin", userId: person.id, companyId: null }, "/admin");
+  }
+  return NextResponse.json({ error: "Superadmin accounts cannot be viewed as." }, { status: 400 });
 }
 
 export async function DELETE() {

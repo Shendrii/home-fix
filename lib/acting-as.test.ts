@@ -38,13 +38,13 @@ describe("parseActingTarget", () => {
 });
 
 describe("canActAsRole", () => {
-  it("allows homeowners and partners", () => {
+  it("allows homeowners, partners, and operations", () => {
     expect(canActAsRole("client")).toBe(true);
     expect(canActAsRole("partner")).toBe(true);
+    expect(canActAsRole("admin")).toBe(true);
   });
 
-  it("keeps operations roles in the directory", () => {
-    expect(canActAsRole("admin")).toBe(false);
+  it("does not let a superadmin view as another superadmin", () => {
     expect(canActAsRole("superadmin")).toBe(false);
   });
 });

@@ -57,7 +57,7 @@ export async function ProtectedPage({
 
   const onboardingLock =
     !acting && profile.role === "client" && profileNeedsPersonalDetails(profile);
-  const shellRole = actingMatches && acting ? acting.role : profile.role;
+  const shellRole = acting ? acting.role : profile.role;
   const actingLabel = acting ? await describeActingTarget(acting) : null;
 
   return (

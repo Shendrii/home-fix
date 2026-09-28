@@ -10,7 +10,7 @@ import { profileNeedsPersonalDetails } from "@/lib/profile";
 export default async function ServicesPage() {
   const profile = await getOptionalProfile();
   const acting = profile?.role === "superadmin" ? await readActingTarget() : null;
-  const variant = resolveServicesPageVariant(profile, acting?.role ?? null);
+  const variant = resolveServicesPageVariant(profile, acting?.role === "client" ? "client" : null);
 
   if (variant === "admin-only") redirect("/admin");
 

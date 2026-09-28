@@ -372,9 +372,9 @@ const ROLE_FILTERS = [
 ] as const;
 
 export function AdminScreen({ kind }: { kind: AdminKind }) {
-  const { jobs, companies, categories, users, setCategoryActive, dataReady } = useApp();
+  const { jobs, companies, categories, users, setCategoryActive, dataReady, actingAs } = useApp();
   const { profile } = useAuth();
-  const isSuperadmin = profile?.role === "superadmin";
+  const isSuperadmin = profile?.role === "superadmin" && actingAs?.role !== "admin";
   const [adminQuery, setAdminQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<(typeof ROLE_FILTERS)[number]["id"]>("all");
   const query = adminQuery.toLowerCase();
@@ -521,7 +521,10 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
                 {filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-slate-50/70">
                     <td className="px-4 py-3">
-                      <p className="font-semibold text-slate-900">{user.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-slate-900">{user.name}</p>
+                        {profile?.id === user.id && <Badge variant="secondary" className="text-[10px]">You</Badge>}
+                      </div>
                       <p className="mt-0.5 text-xs text-slate-500">{user.email || "No email on file"}</p>
                     </td>
                     <td className="px-4 py-3"><Badge variant="secondary">{roleLabel(user.role)}</Badge></td>
