@@ -53,8 +53,13 @@ export function ExitViewAsButton() {
   }
 
   return (
-    <Button variant="outline" size="sm" className="bg-white" disabled={pending} onClick={() => void exit()}>
+    <button
+      type="button"
+      className="shrink-0 text-sm font-semibold text-teal-700 hover:text-teal-800 disabled:opacity-60"
+      disabled={pending}
+      onClick={() => void exit()}
+    >
       {pending ? "Exiting…" : "Exit"}
-    </Button>
+    </button>
   );
 }

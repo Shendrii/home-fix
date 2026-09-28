@@ -12,6 +12,7 @@ import {
 import { formatOperatingHours } from "@/lib/company-display";
 import { useApp } from "@/components/app-provider";
 import { useAuth } from "@/components/auth-provider";
+import { AdminUserEditor } from "@/components/admin-user-editor";
 import { ViewAsButton } from "@/components/view-as-controls";
 import { canActAsRole } from "@/lib/acting-as";
 import { roleLabel } from "@/lib/profile";
@@ -505,27 +506,39 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
               </button>
             ))}
           </div>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {filteredUsers.map((user) => (
-              <Card key={user.id} className="border-0 bg-white">
-                <CardContent>
-                  <div className="flex items-center gap-3">
-                    <span className="grid size-11 place-items-center rounded-full bg-teal-50 font-bold text-teal-700">{user.name.split(" ").map((part) => part[0]).join("")}</span>
-                    <div className="min-w-0">
-                      <p className="truncate font-bold">{user.name}</p>
-                      <p className="truncate text-xs text-slate-500">{user.email || "No email on file"}</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
-                    <Badge variant="secondary">{roleLabel(user.role)}</Badge>
-                    <div className="flex items-center gap-2">
-                      {user.phone && <span className="truncate text-xs text-slate-400">{user.phone}</span>}
-                      {isSuperadmin && canActAsRole(user.role) && <ViewAsButton userId={user.id} />}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="overflow-x-auto rounded-2xl border bg-white">
+            <table className="w-full min-w-[52rem] text-left text-sm">
+              <thead className="border-b bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">User</th>
+                  <th className="px-4 py-3">Role</th>
+                  <th className="px-4 py-3">Phone</th>
+                  <th className="px-4 py-3">Address</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="hover:bg-slate-50/70">
+                    <td className="px-4 py-3">
+                      <p className="font-semibold text-slate-900">{user.name}</p>
+                      <p className="mt-0.5 text-xs text-slate-500">{user.email || "No email on file"}</p>
+                    </td>
+                    <td className="px-4 py-3"><Badge variant="secondary">{roleLabel(user.role)}</Badge></td>
+                    <td className="px-4 py-3 text-slate-600">{user.phone || "—"}</td>
+                    <td className="max-w-xs truncate px-4 py-3 text-slate-600" title={user.address}>{user.address || "—"}</td>
+                    <td className="px-4 py-3">
+                      {isSuperadmin && (
+                        <div className="flex justify-end gap-2">
+                          <AdminUserEditor user={user} onSaved={() => undefined} />
+                          {canActAsRole(user.role) && <ViewAsButton userId={user.id} />}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </>
       )}

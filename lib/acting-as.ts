@@ -1,3 +1,4 @@
+import { PROFILE_PLACEHOLDER } from "@/lib/profile";
 import type { Role } from "@/lib/types";
 
 export type { ServicesPageVariant } from "@/lib/auth-display";
@@ -54,4 +55,13 @@ export function canActAsRole(role: Role) {
 
 export function actingPortalMatches(target: ActingTarget | null, portal: "partner" | "client") {
   return target?.role === portal;
+}
+
+/** Person being viewed. A placeholder name still resolves so the preview can open. */
+export function actingDisplayName(profile: { full_name?: string | null; email?: string | null } | null) {
+  const name = profile?.full_name?.trim();
+  if (name && name !== PROFILE_PLACEHOLDER) return name;
+  const email = profile?.email?.trim();
+  if (email && email !== PROFILE_PLACEHOLDER) return email;
+  return "this user";
 }

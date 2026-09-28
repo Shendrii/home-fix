@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  actingDisplayName,
   actingPortalMatches,
   canActAsRole,
   parseActingTarget,
@@ -45,6 +46,19 @@ describe("canActAsRole", () => {
   it("keeps operations roles in the directory", () => {
     expect(canActAsRole("admin")).toBe(false);
     expect(canActAsRole("superadmin")).toBe(false);
+  });
+});
+
+describe("actingDisplayName", () => {
+  it("uses the person's name", () => {
+    expect(actingDisplayName({ full_name: "Shendri Kenneth Yamba", email: "sky@example.com" })).toBe(
+      "Shendri Kenneth Yamba",
+    );
+  });
+
+  it("still names someone whose personal details are pending", () => {
+    expect(actingDisplayName({ full_name: "Pending update", email: "sky@example.com" })).toBe("sky@example.com");
+    expect(actingDisplayName({ full_name: "", email: "" })).toBe("this user");
   });
 });
 

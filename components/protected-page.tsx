@@ -47,6 +47,7 @@ export async function ProtectedPage({
   }
 
   if (
+    !acting &&
     !allowIncompleteClientProfile &&
     profile.role === "client" &&
     profileNeedsPersonalDetails(profile)
@@ -55,7 +56,7 @@ export async function ProtectedPage({
   }
 
   const onboardingLock =
-    profile.role === "client" && profileNeedsPersonalDetails(profile);
+    !acting && profile.role === "client" && profileNeedsPersonalDetails(profile);
   const shellRole = actingMatches && acting ? acting.role : profile.role;
   const actingLabel = acting ? await describeActingTarget(acting) : null;
 

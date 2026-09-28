@@ -15,7 +15,7 @@ export default async function ServicesPage() {
   if (variant === "admin-only") redirect("/admin");
 
   if (variant === "client-app" && profile) {
-    if (profile.role === "client" && profileNeedsPersonalDetails(profile)) {
+    if (!acting && profile.role === "client" && profileNeedsPersonalDetails(profile)) {
       redirect("/account");
     }
     const actingLabel = acting ? await describeActingTarget(acting) : null;

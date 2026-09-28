@@ -86,7 +86,7 @@ export function AppShell({
   const pathname = usePathname();
   const activePath = navPathname ?? pathname;
   const allItems = role === "superadmin" ? [...nav.admin, { label: "Partners", href: "/admin/partners", icon: Building2 }] : nav[role];
-  const setupLock = onboardingLock && role === "client";
+  const setupLock = onboardingLock && role === "client" && !actingLabel;
   const hideAccount = Boolean(actingLabel) && (role === "client" || role === "partner");
   const items = (setupLock ? allItems.filter((item) => item.href === "/account") : allItems).filter(
     (item) => !(hideAccount && item.href === "/account"),
@@ -140,7 +140,13 @@ export function AppShell({
           <p className="text-xs font-medium text-slate-500">{roleLabel}</p>
           <p className="font-semibold">{setupLock ? "Finish setting up your account" : "Welcome back"}</p>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="ml-auto flex min-w-0 items-center gap-1.5 sm:gap-3">
+          {actingLabel && (
+            <p className="max-w-[10rem] truncate text-sm text-slate-500 sm:max-w-xs">
+              Viewing as: <span className="font-semibold text-slate-900">{actingLabel}</span>
+            </p>
+          )}
+          {actingLabel && <ExitViewAsButton />}
           {!setupLock && (
             <NotificationMenu />
           )}
@@ -159,12 +165,6 @@ export function AppShell({
 
       <main className={cn("px-4 pt-6 md:ml-64 md:px-8 lg:px-10", setupLock ? "pb-24 md:pb-10" : "pb-28 md:pb-10")}>
         <div className="mx-auto max-w-7xl">
-          {actingLabel && (
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-950">
-              <p className="text-sm font-semibold">Viewing as {actingLabel}</p>
-              <ExitViewAsButton />
-            </div>
-          )}
           {showSetupProgress && (
             <ProfileSetupProgress
               className="mb-6 md:hidden"
