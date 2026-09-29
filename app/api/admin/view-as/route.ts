@@ -57,9 +57,13 @@ export async function POST(request: Request) {
     return withTarget({ type: "client", role: "client", userId: person.id, companyId: null }, "/dashboard");
   }
   if (person.role === "partner") {
-    const { data: company } = await supabase.from("companies").select("id").eq("owner_id", person.id).maybeSingle();
-    if (!company) return NextResponse.json({ error: "This partner has no company yet." }, { status: 404 });
-    return withTarget({ type: "company", role: "partner", userId: person.id, companyId: company.id }, "/partner");
+    const { data: membership } = await supabase
+      .from("company_members")
+      .select("company_id")
+      .eq("user_id", person.id)
+      .maybeSingle();
+    if (!membership?.company_id) return NextResponse.json({ error: "This partner has no company yet." }, { status: 404 });
+    return withTarget({ type: "company", role: "partner", userId: person.id, companyId: membership.company_id }, "/partner");
   }
   if (person.role === "admin") {
     return withTarget({ type: "admin", role: "admin", userId: person.id, companyId: null }, "/admin");

@@ -1,4 +1,5 @@
 export type Role = "client" | "partner" | "admin" | "superadmin";
+export type CompanyMemberRole = "admin" | "staff";
 export type JobStatus =
   | "open"
   | "assigned"

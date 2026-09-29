@@ -82,15 +82,20 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (existingProfile?.id) {
-    const { data: existingCompany } = await admin
-      .from("companies")
-      .select("id, name")
-      .eq("owner_id", existingProfile.id)
+    const { data: membership } = await admin
+      .from("company_members")
+      .select("company_id")
+      .eq("user_id", existingProfile.id)
       .maybeSingle();
-    if (existingCompany) {
+    if (membership?.company_id) {
+      const { data: existingCompany } = await admin
+        .from("companies")
+        .select("name")
+        .eq("id", membership.company_id)
+        .maybeSingle();
       return NextResponse.json(
         {
-          error: `This email is already linked to “${existingCompany.name}”. Use “Remove partner account” below to start over.`,
+          error: `This email already belongs to “${existingCompany?.name ?? "a partner company"}”. Use “Remove partner account” below to start over.`,
         },
         { status: 409 },
       );

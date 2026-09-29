@@ -30,6 +30,7 @@ const nav = {
     { label: "My jobs", href: "/partner/jobs", icon: BriefcaseBusiness },
     { label: "Estimated activity", href: "/partner/earnings", icon: CircleDollarSign },
     { label: "Company", href: "/partner/company", icon: Building2 },
+    { label: "Team", href: "/partner/team", icon: Users },
     { label: "Account", href: "/account", icon: Settings },
   ],
   admin: [

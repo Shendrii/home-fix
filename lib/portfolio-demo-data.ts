@@ -134,6 +134,8 @@ function baseContext(partial: Partial<AppContextValue>): AppContextValue {
     companies: [demoCompany],
     users: demoUsers,
     currentPartnerCompanyId: DEMO_COMPANY_ID,
+    companyMembers: [{ companyId: DEMO_COMPANY_ID, userId: "portfolio-partner", role: "admin" }],
+    companyRole: "admin",
     partnerOnline: true,
     setPartnerOnline: noopAsync,
     createJob: async () => clientJob,

@@ -9,9 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { roleLabel } from "@/lib/profile";
+import type { CompanyMemberRole } from "@/lib/types";
 
 export function AdminCompanyDetail({ companyId }: { companyId: string }) {
-  const { companies, categories, users, dataReady } = useApp();
+  const { companies, categories, users, dataReady, companyMembers } = useApp();
   const { profile } = useAuth();
   const company = companies.find((item) => item.id === companyId);
   const isSuperadmin = profile?.role === "superadmin";
@@ -31,7 +32,12 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
   }
 
   const categoryName = (id: string) => categories.find((category) => category.id === id)?.name ?? "Service";
-  const members = users.filter((user) => user.id === company.ownerId);
+  const companyRoleLabel = (role: CompanyMemberRole) => (role === "admin" ? "Company admin" : "Staff");
+  const members = companyMembers
+    .filter((member) => member.companyId === company.id)
+    .map((member) => ({ member, person: users.find((user) => user.id === member.userId) }))
+    .filter((row) => row.person)
+    .sort((a, b) => Number(b.member.role === "admin") - Number(a.member.role === "admin"));
 
   return (
     <>
@@ -56,15 +62,18 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
         </div>
       )}
       <div className="grid gap-3 md:grid-cols-2">
-        {members.map((member) => (
-          <Card key={member.id} className="border-0 bg-white">
+        {members.map(({ member, person }) => (
+          <Card key={member.userId} className="border-0 bg-white">
             <CardContent>
-              <p className="font-bold">{member.name}</p>
-              <p className="mt-1 truncate text-sm text-slate-500">{member.email || "No email on file"}</p>
+              <p className="font-bold">{person?.name}</p>
+              <p className="mt-1 truncate text-sm text-slate-500">{person?.email || "No email on file"}</p>
               <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
-                <Badge variant="secondary">{roleLabel(member.role)}</Badge>
-                {isSuperadmin && (member.role === "client" || member.role === "partner") && (
-                  <ViewAsButton userId={member.id} label="View as this user" />
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary">{companyRoleLabel(member.role)}</Badge>
+                  {person && <Badge variant="outline">{roleLabel(person.role)}</Badge>}
+                </div>
+                {isSuperadmin && person && (person.role === "client" || person.role === "partner") && (
+                  <ViewAsButton userId={person.id} label="View as this user" />
                 )}
               </div>
             </CardContent>

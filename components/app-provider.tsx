@@ -12,6 +12,7 @@ import type {
   Notification,
   ServiceCategory,
   User,
+  CompanyMemberRole,
 } from "@/lib/types";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { resolveServiceCategoryId } from "@/lib/service-category";
@@ -182,6 +183,9 @@ export interface AppContextValue {
   companies: ReturnType<typeof mapCompany>[];
   users: User[];
   currentPartnerCompanyId: string | null;
+  companyMembers: { companyId: string; userId: string; role: CompanyMemberRole }[];
+  /** Company role for the signed-in partner, or for the person a superadmin is viewing as. */
+  companyRole: CompanyMemberRole | null;
   partnerOnline: boolean;
   setPartnerOnline: (value: boolean) => Promise<void>;
   createJob: (input: NewJobInput) => Promise<JobRequest>;
@@ -211,6 +215,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [serviceCompanies, setServiceCompanies] = useState<ReturnType<typeof mapCompany>[]>([]);
   const [platformUsers, setPlatformUsers] = useState<User[]>([]);
   const [currentPartnerCompanyId, setCurrentPartnerCompanyId] = useState<string | null>(null);
+  const [companyMembers, setCompanyMembers] = useState<AppContextValue["companyMembers"]>([]);
+  const [sessionUserId, setSessionUserId] = useState<string | null>(null);
   const [partnerOnline, setPartnerOnline] = useState(false);
   const [offers, setOffers] = useState<DispatchOffer[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -232,6 +238,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         { data: companyData },
         { data: requestData, error: requestError },
         { data: profileData },
+        { data: memberData },
       ] = await Promise.all([
         supabase
           .from("service_categories")
@@ -252,6 +259,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           .from("profiles")
           .select("id, email, full_name, phone, default_address, role")
           .order("full_name"),
+        supabase.from("company_members").select("company_id, user_id, role"),
       ]);
       if (!categoryError && categoryData) {
         setServiceCategories((categoryData as DatabaseCategory[]).map(mapCategory));
@@ -263,7 +271,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const acting = readActingTargetFromDocument();
         actingRef.current = acting;
         setActingAs(acting);
-        const ownedCompany = rows.find((company) => company.owner_id === user?.id);
+        const memberRows = (memberData ?? []) as { company_id: string; user_id: string; role: CompanyMemberRole }[];
+        setSessionUserId(user?.id ?? null);
+        setCompanyMembers(memberRows.map((member) => ({
+          companyId: member.company_id,
+          userId: member.user_id,
+          role: member.role,
+        })));
+        const membership = memberRows.find((member) => member.user_id === user?.id);
+        const ownedCompany = rows.find((company) => company.id === membership?.company_id);
         ownedCompanyIdRef.current = ownedCompany?.id ?? null;
         if (acting?.role === "partner" && acting.companyId) {
           const company = rows.find((item) => item.id === acting.companyId);
@@ -349,6 +365,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       )
       .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, () => void loadLiveData())
       .on("postgres_changes", { event: "*", schema: "public", table: "companies" }, () => void loadLiveData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "company_members" }, () => void loadLiveData())
       .on("postgres_changes", { event: "*", schema: "public", table: "service_categories" }, () =>
         void loadLiveData(),
       )
@@ -586,6 +603,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     : undefined;
   const partnerCompanyId = actingCompany?.id ?? currentPartnerCompanyId;
   const partnerIsOnline = actingCompany ? Boolean(actingCompany.isAvailable) : partnerOnline;
+  const companyRole = useMemo(() => {
+    const subjectId = actingAs?.role === "partner" ? actingAs.userId : sessionUserId;
+    if (!subjectId || !partnerCompanyId) return null;
+    return companyMembers.find((member) => member.userId === subjectId && member.companyId === partnerCompanyId)?.role ?? null;
+  }, [actingAs, companyMembers, partnerCompanyId, sessionUserId]);
 
   const value = useMemo(
     () => ({
@@ -595,6 +617,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       companies: serviceCompanies,
       users: platformUsers,
       currentPartnerCompanyId: partnerCompanyId,
+      companyMembers,
+      companyRole,
       partnerOnline: partnerIsOnline,
       setPartnerOnline: setAvailability,
       createJob,
@@ -614,6 +638,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       serviceCategories,
       serviceCompanies,
       platformUsers,
+      companyMembers,
+      companyRole,
       partnerCompanyId,
       partnerIsOnline,
       createJob,
