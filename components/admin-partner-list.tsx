@@ -20,13 +20,8 @@ export function AdminPartnerList() {
   }, [companies, query, users]);
 
   return (
-    <section className="mt-10">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[.16em] text-teal-700">Marketplace partners</p>
-          <h2 className="mt-1 text-xl font-bold">Partner companies</h2>
-          <p className="mt-1 text-sm text-slate-500">View active companies and the partner linked to each one.</p>
-        </div>
+    <section>
+      <div className="mb-4 flex justify-end">
         <div className="relative sm:w-64">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
           <Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 bg-white pl-9" placeholder="Search partners…" aria-label="Search partner companies" />
