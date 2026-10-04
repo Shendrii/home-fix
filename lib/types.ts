@@ -100,6 +100,7 @@ export interface Assignment {
 export interface Notification {
   id: string;
   userId: string;
+  jobId?: string;
   title: string;
   body: string;
   read: boolean;

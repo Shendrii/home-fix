@@ -55,7 +55,7 @@ export function ExitViewAsButton() {
   return (
     <button
       type="button"
-      className="shrink-0 text-sm font-semibold text-teal-700 hover:text-teal-800 disabled:opacity-60"
+      className="shrink-0 text-sm font-semibold text-primary hover:text-primary disabled:opacity-60"
       disabled={pending}
       onClick={() => void exit()}
     >

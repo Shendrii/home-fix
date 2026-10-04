@@ -182,13 +182,13 @@ function StarRow({ rating }: { rating: number }) {
 
 /** Top-three emphasis via ring weight and neutral medal tints — aligned with admin teal/slate UI. */
 const PODIUM_RING = {
-  1: "ring-2 ring-teal-600 ring-offset-2 ring-offset-white",
+  1: "ring-2 ring-primary ring-offset-2 ring-offset-white",
   2: "ring-2 ring-slate-300 ring-offset-2 ring-offset-white",
   3: "ring-2 ring-amber-600/40 ring-offset-2 ring-offset-white",
 } as const;
 
 const MEDAL = {
-  1: { label: "1st", className: "border border-teal-200 bg-teal-50 text-teal-800" },
+  1: { label: "1st", className: "border border-primary/25 bg-secondary text-secondary-foreground" },
   2: { label: "2nd", className: "border border-slate-200 bg-slate-100 text-slate-700" },
   3: { label: "3rd", className: "border border-amber-200/80 bg-amber-50 text-amber-900" },
 } as const;
@@ -209,7 +209,7 @@ function PodiumAvatar({
       <div className="relative mb-5 shrink-0">
         <div
           className={cn(
-            "grid place-items-center rounded-full bg-teal-600 font-bold text-white shadow-sm",
+            "grid place-items-center rounded-full bg-primary font-bold text-white shadow-sm",
             dim,
             PODIUM_RING[rank],
           )}
@@ -243,7 +243,7 @@ function LeaderboardListRow({ row, rank }: { row: LeaderboardRow; rank: number }
   return (
     <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5 sm:gap-4 sm:px-4">
       <span className="w-6 shrink-0 text-center text-sm font-bold text-slate-400">{rank}</span>
-      <div className="grid size-10 shrink-0 place-items-center rounded-full bg-teal-50 text-xs font-bold text-teal-700 ring-1 ring-teal-100">
+      <div className="grid size-10 shrink-0 place-items-center rounded-full bg-secondary text-xs font-bold text-primary ring-1 ring-border">
         {companyInitials(row.company_name)}
       </div>
       <div className="min-w-0 flex-1">
@@ -293,7 +293,7 @@ export function PartnerLeaderboardPodium({
               className={cn(
                 "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
                 sortKey === option.id
-                  ? "border-teal-600 bg-teal-50 text-teal-800"
+                  ? "border-primary bg-secondary text-secondary-foreground"
                   : "border-slate-200 text-slate-600 hover:border-slate-300",
               )}
             >
@@ -305,7 +305,7 @@ export function PartnerLeaderboardPodium({
 
       <section className="isolate overflow-hidden rounded-3xl border border-slate-100 bg-white px-4 pb-8 pt-6 shadow-[0_16px_50px_rgba(30,41,59,.07)] sm:px-8 sm:pb-10 sm:pt-8">
         <div className="mb-8 border-b border-slate-100 pb-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">Top partners</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary">Top partners</p>
           <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Leaderboard</h2>
         </div>
 

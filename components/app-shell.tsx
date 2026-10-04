@@ -48,11 +48,16 @@ function NavLinks({ items, pathname }: { items: NavItem[]; pathname: string }) {
   return items.map(({ label, href, icon: Icon }) => {
     const active = pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
     return (
-      <Link key={href} href={href} className={cn(
-        "tap-target flex items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
-        active ? "bg-teal-50 text-teal-800" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-      )}>
-        <Icon className="size-5" strokeWidth={active ? 2.5 : 2} />
+      <Link
+        key={href}
+        href={href}
+        aria-current={active ? "page" : undefined}
+        className={cn(
+          "tap-target flex items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring",
+          active ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+        )}
+      >
+        <Icon className="size-5" strokeWidth={active ? 2.5 : 2} aria-hidden="true" />
         {label}
       </Link>
     );
@@ -98,14 +103,14 @@ export function AppShell({
     setupLock && profile && profileNeedsPersonalDetails(profile);
 
   return (
-    <div className="min-h-dvh bg-[#faf8f3]">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden h-svh w-64 flex-col border-r bg-white p-4 md:flex">
+    <div className="min-h-dvh bg-background">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden h-svh w-64 flex-col border-r border-border bg-card p-4 md:flex">
         <div className="flex min-h-0 flex-1 flex-col">
-          <Link href={brandHref} className="mb-8 flex h-11 items-center gap-2 px-2">
-            <span className="grid size-9 place-items-center rounded-xl bg-teal-600 text-white"><HeartHandshake className="size-5" /></span>
-            <span className="text-xl font-bold tracking-tight text-slate-900">Home<span className="text-teal-600">Fix</span></span>
+          <Link href={brandHref} className="mb-8 flex h-11 items-center gap-2 rounded-xl px-2 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring">
+            <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground"><HeartHandshake className="size-5" aria-hidden="true" /></span>
+            <span translate="no" className="text-xl font-bold tracking-tight text-foreground">Home<span className="text-primary">Fix</span></span>
           </Link>
-          <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[.16em] text-slate-400">{roleLabel}</p>
+          <p className="mb-2 px-3 text-sm font-semibold text-muted-foreground">{roleLabel}</p>
           {showSetupProgress && (
             <ProfileSetupProgress
               className="mb-4"
@@ -120,7 +125,7 @@ export function AppShell({
         </div>
         {!setupLock && !hideAccount && (
           <div className="shrink-0 border-t pt-4">
-            <Link href="/account" className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50">
+            <Link href="/account" className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring">
               <span className="grid size-9 place-items-center rounded-full bg-slate-900 text-xs font-bold text-white">{initials}</span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{profile?.full_name ?? "HomeFix member"}</p>
@@ -131,10 +136,10 @@ export function AppShell({
         )}
       </aside>
 
-      <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-[#faf8f3]/90 px-4 backdrop-blur md:ml-64 md:px-8">
-        <Link href={brandHref} className="flex items-center gap-2 md:hidden">
-          <span className="grid size-8 place-items-center rounded-lg bg-teal-600 text-white"><HeartHandshake className="size-4" /></span>
-          <span className="font-bold">Home<span className="text-teal-600">Fix</span></span>
+      <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur md:ml-64 md:px-8">
+        <Link href={brandHref} className="flex h-11 items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring md:hidden">
+          <span className="grid size-8 place-items-center rounded-lg bg-primary text-primary-foreground"><HeartHandshake className="size-4" aria-hidden="true" /></span>
+          <span translate="no" className="font-bold">Home<span className="text-primary">Fix</span></span>
         </Link>
         <div className="hidden md:block">
           <p className="text-xs font-medium text-slate-500">{roleLabel}</p>
@@ -153,7 +158,7 @@ export function AppShell({
           <HeaderProfileMenu profile={profile} initials={initials} roleLabel={roleLabel} setupLock={setupLock} hideAccount={hideAccount} />
           {!setupLock && (
             <Sheet>
-              <SheetTrigger render={<Button variant="ghost" size="icon" className="tap-target md:hidden" aria-label="Open menu" />}><Menu /></SheetTrigger>
+              <SheetTrigger render={<Button variant="ghost" size="icon" className="tap-target md:hidden" aria-label="Open menu" />}><Menu aria-hidden="true" /></SheetTrigger>
               <SheetContent side="right" className="w-[85vw] p-5">
                 <SheetHeader><SheetTitle>Navigate HomeFix</SheetTitle></SheetHeader>
                 <nav className="mt-6 flex flex-col gap-2"><NavLinks items={items} pathname={pathname} /></nav>
@@ -163,7 +168,7 @@ export function AppShell({
         </div>
       </header>
 
-      <main className={cn("px-4 pt-6 md:ml-64 md:px-8 lg:px-10", setupLock ? "pb-24 md:pb-10" : "pb-28 md:pb-10")}>
+      <main id="main-content" className={cn("px-4 pt-6 md:ml-64 md:px-8 lg:px-10", setupLock ? "pb-24 md:pb-10" : "pb-28 md:pb-10")}>
         <div className="mx-auto max-w-7xl">
           {showSetupProgress && (
             <ProfileSetupProgress
@@ -178,22 +183,25 @@ export function AppShell({
       </main>
 
       <nav
-        className="safe-bottom fixed inset-x-0 bottom-0 z-30 grid border-t bg-white/95 px-2 pt-2 backdrop-blur md:hidden"
-        style={{ gridTemplateColumns: `repeat(${Math.max(items.length, 1)}, minmax(0, 1fr))` }}
+        aria-label="Primary"
+        className="safe-bottom fixed inset-x-0 bottom-0 z-30 flex gap-1 overflow-x-auto border-t border-border bg-card/95 px-2 pt-2 backdrop-blur md:hidden"
       >
         {items.map(({ label, href, icon: Icon }) => {
           const active = activePath === href || (href !== "/" && activePath.startsWith(`${href}/`));
+          const name = setupLock ? "Setup" : label;
           return (
             <Link
               key={href}
               href={href}
+              aria-current={active ? "page" : undefined}
+              aria-label={name}
               className={cn(
-                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-medium",
-                active ? "text-teal-700" : "text-slate-500",
+                "flex min-h-12 min-w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-xl px-2 text-[11px] font-medium focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring",
+                active ? "text-primary" : "text-muted-foreground",
               )}
             >
-              <Icon className="size-5" />
-              <span className="truncate">{setupLock ? "Setup" : label}</span>
+              <Icon className="size-5" aria-hidden="true" />
+              <span className="max-w-20 truncate">{name}</span>
             </Link>
           );
         })}
@@ -203,5 +211,5 @@ export function AppShell({
 }
 
 export function PageHeader({ eyebrow, title, description, action }: { eyebrow?: string; title: string; description?: string; action?: React.ReactNode }) {
-  return <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div>{eyebrow && <p className="mb-1 text-xs font-bold uppercase tracking-[.16em] text-teal-700">{eyebrow}</p>}<h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">{title}</h1>{description && <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">{description}</p>}</div>{action}</div>;
+  return <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div>{eyebrow && <p className="mb-1 text-sm font-semibold text-primary">{eyebrow}</p>}<h1 className="text-2xl font-bold tracking-tight text-balance text-foreground sm:text-3xl">{title}</h1>{description && <p className="mt-1 max-w-2xl text-sm leading-6 text-pretty text-muted-foreground">{description}</p>}</div>{action}</div>;
 }

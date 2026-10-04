@@ -26,9 +26,9 @@ import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 function ReadOnlyRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-slate-50 px-4 py-3">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-900">{value}</p>
+    <div className="rounded-xl bg-muted px-4 py-3">
+      <p className="text-sm font-semibold text-muted-foreground">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-foreground">{value}</p>
     </div>
   );
 }
@@ -163,7 +163,7 @@ export function AccountSettingsScreen() {
 
   if (loading) {
     return (
-      <Card className="mx-auto max-w-2xl border-0 bg-white shadow-[0_16px_50px_rgba(30,41,59,.07)]">
+      <Card className="mx-auto max-w-2xl border-0 bg-card shadow-[0_16px_50px_rgba(30,41,59,.07)]">
         <CardContent className="py-10 text-center text-sm text-slate-500">Loading account…</CardContent>
       </Card>
     );
@@ -171,7 +171,7 @@ export function AccountSettingsScreen() {
 
   if (!profile || !user) {
     return (
-      <Card className="mx-auto max-w-2xl border-0 bg-white">
+      <Card className="mx-auto max-w-2xl border-0 bg-card">
         <CardContent className="py-10 text-center text-sm text-slate-500">Sign in to manage your account.</CardContent>
       </Card>
     );
@@ -213,7 +213,7 @@ export function AccountSettingsScreen() {
         />
       )}
 
-      <Card className="mx-auto max-w-2xl border-0 bg-white shadow-[0_16px_50px_rgba(30,41,59,.07)]">
+      <Card className="mx-auto max-w-2xl border-0 bg-card shadow-[0_16px_50px_rgba(30,41,59,.07)]">
         <CardContent className="space-y-6 py-2 sm:py-4">
           <section className="space-y-3">
             <h2 className="text-sm font-bold text-slate-900">Account information</h2>

@@ -73,9 +73,82 @@ export function formatPreferredWindow(state: PreferredWindowState) {
   return slot ? `${formatDateLabel(state.date)}, ${slot.label}` : "";
 }
 
+type ClockParts = { hour: number; minute: number; meridian: "am" | "pm" | null };
+
+const CUSTOM_RANGE =
+  /^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:–|—|-|to)\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i;
+
+function readClock(hourText: string, minuteText: string | undefined, meridianText: string | undefined): ClockParts | null {
+  const hour = Number(hourText);
+  const minute = minuteText ? Number(minuteText) : 0;
+  if (!Number.isInteger(hour) || !Number.isInteger(minute) || minute > 59) return null;
+  const meridian = meridianText ? (meridianText.toLowerCase() as "am" | "pm") : null;
+  if (meridian && (hour < 1 || hour > 12)) return null;
+  if (!meridian && hour > 23) return null;
+  return { hour, minute, meridian };
+}
+
+function toMinutes(parts: ClockParts, meridian: "am" | "pm" | null) {
+  if (meridian) {
+    if (parts.hour < 1 || parts.hour > 12) return null;
+    return ((parts.hour % 12) + (meridian === "pm" ? 12 : 0)) * 60 + parts.minute;
+  }
+  if (parts.hour > 23) return null;
+  return parts.hour * 60 + parts.minute;
+}
+
+/** Minutes from local midnight. End may pass midnight and can be greater than 24 hours. */
+function parseCustomWindow(range: string) {
+  const text = range.trim().replace(/\s+/g, " ");
+  const single = text.match(/^(after|from|before)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
+  if (single) {
+    const clock = readClock(single[2], single[3], single[4]);
+    if (!clock?.meridian) return null;
+    const minutes = toMinutes(clock, clock.meridian);
+    if (minutes == null) return null;
+    return single[1].toLowerCase() === "before"
+      ? { start: minutes - 180, end: minutes }
+      : { start: minutes, end: minutes + 180 };
+  }
+
+  const match = text.match(CUSTOM_RANGE);
+  if (!match) return null;
+  const startClock = readClock(match[1], match[2], match[3]);
+  const endClock = readClock(match[4], match[5], match[6]);
+  if (!startClock || !endClock) return null;
+
+  let startMeridian = startClock.meridian;
+  let endMeridian = endClock.meridian;
+  if (!startMeridian && !endMeridian) {
+    const looks24Hour = startClock.hour === 0 || endClock.hour === 0 || startClock.hour > 12 || endClock.hour > 12;
+    if (!looks24Hour) return null;
+  } else if (!startMeridian && endMeridian) {
+    startMeridian = endMeridian;
+  } else if (startMeridian && !endMeridian) {
+    const crossesNoon =
+      endClock.hour < startClock.hour || (endClock.hour === startClock.hour && endClock.minute <= startClock.minute);
+    endMeridian = crossesNoon ? (startMeridian === "am" ? "pm" : "am") : startMeridian;
+  }
+
+  const start = toMinutes(startClock, startMeridian);
+  let end = toMinutes(endClock, endMeridian);
+  if (start == null || end == null) return null;
+  if (endClock.hour === 12 && endMeridian === "pm" && start >= 12 * 60 && end <= start) {
+    end = 24 * 60;
+  }
+  if (end <= start) end += 24 * 60;
+  return { start, end };
+}
+
 export function isPreferredWindowValid(state: PreferredWindowState) {
-  if (state.slotId === "custom") return state.customRange.trim().length >= 3;
+  if (state.slotId === "custom") return parseCustomWindow(state.customRange) != null;
   return true;
+}
+
+function atMinutes(date: Date, minutes: number) {
+  const next = startOfDay(date);
+  next.setMinutes(minutes);
+  return next;
 }
 
 /** Converts the picker selection into database timestamps used for dispatch. */
@@ -86,8 +159,15 @@ export function preferredWindowBounds(state: PreferredWindowState) {
     afternoon: [13, 0, 16, 0],
     evening: [16, 0, 19, 0],
   };
-  const [startHour, startMinute, endHour, endMinute] =
-    state.slotId === "custom" ? [9, 0, 17, 0] : starts[state.slotId];
+  if (state.slotId === "custom") {
+    const parsed = parseCustomWindow(state.customRange);
+    if (!parsed) throw new Error("Enter a time range such as 2–4 PM.");
+    return {
+      startAt: atMinutes(state.date, parsed.start).toISOString(),
+      endAt: atMinutes(state.date, parsed.end).toISOString(),
+    };
+  }
+  const [startHour, startMinute, endHour, endMinute] = starts[state.slotId];
   const start = new Date(state.date);
   start.setHours(startHour, startMinute, 0, 0);
   const end = new Date(state.date);

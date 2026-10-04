@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { hasProfileValidationErrors, profileNeedsPersonalDetails, validateProfileUpdate } from "@/lib/profile";
+import {
+  hasProfileValidationErrors,
+  profileFormDefaults,
+  profileNeedsPersonalDetails,
+  roleLabel,
+  validateProfileUpdate,
+} from "@/lib/profile";
 
 describe("validateProfileUpdate", () => {
   it("rejects empty editable fields", () => {
@@ -31,6 +37,25 @@ describe("validateProfileUpdate", () => {
       default_address: "214 Clement St, San Francisco",
     });
     expect(hasProfileValidationErrors(errors)).toBe(false);
+  });
+});
+
+describe("roleLabel", () => {
+  it("names each workspace", () => {
+    expect(roleLabel("client")).toBe("Homeowner");
+    expect(roleLabel("partner")).toBe("Service partner");
+    expect(roleLabel("admin")).toBe("Operations");
+    expect(roleLabel("superadmin")).toBe("Super admin");
+  });
+});
+
+describe("profileFormDefaults", () => {
+  it("clears placeholder phone and address so the person can type real ones", () => {
+    expect(profileFormDefaults({
+      full_name: " Maya ",
+      phone: "Pending update",
+      default_address: "Pending update",
+    })).toEqual({ full_name: "Maya", phone: "", default_address: "" });
   });
 });
 

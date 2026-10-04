@@ -3,12 +3,13 @@ import { Wrench } from "lucide-react";
 export default function Loading() {
   return (
     <main
-      className="grid min-h-dvh place-items-center bg-[#faf8f3] px-5 text-slate-950"
+      id="main-content"
+      className="grid min-h-dvh place-items-center bg-background px-5 text-foreground"
       aria-busy="true"
       aria-live="polite"
     >
       <div className="flex flex-col items-center text-center">
-        <span className="grid size-14 place-items-center rounded-2xl bg-teal-600 text-white shadow-lg shadow-teal-900/10">
+        <span className="grid size-14 place-items-center rounded-2xl bg-primary text-primary-foreground">
           <Wrench className="size-6 animate-spin" aria-hidden="true" />
         </span>
         <p className="mt-4 font-semibold">Loading HomeFix…</p>

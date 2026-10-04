@@ -30,6 +30,25 @@ describe("parseActingTarget", () => {
     expect(parseActingTarget(serializeActingTarget(client))).toEqual(client);
   });
 
+  it("round-trips an operations target", () => {
+    const admin = {
+      type: "admin" as const,
+      role: "admin" as const,
+      userId: "11111111-1111-4111-8111-111111111111",
+      companyId: null,
+    };
+    expect(parseActingTarget(serializeActingTarget(admin))).toEqual(admin);
+  });
+
+  it("rejects a company target that is missing its company", () => {
+    expect(parseActingTarget(JSON.stringify({
+      type: "company",
+      role: "partner",
+      userId: "11111111-1111-4111-8111-111111111111",
+      companyId: null,
+    }))).toBeNull();
+  });
+
   it("rejects a target that is missing ids", () => {
     expect(parseActingTarget(JSON.stringify({ type: "company", role: "partner" }))).toBeNull();
     expect(parseActingTarget("not-json")).toBeNull();

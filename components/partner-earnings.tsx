@@ -101,14 +101,14 @@ export function PartnerEarnings() {
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Card className="border-0 bg-white"><CardContent><p className="text-xs font-medium text-slate-500">Jobs completed</p><p className="mt-2 text-2xl font-bold">{totalJobs}</p></CardContent></Card>
-        <Card className="border-0 bg-white"><CardContent><p className="text-xs font-medium text-slate-500">Hours worked (est.)</p><p className="mt-2 text-2xl font-bold">{totalHours.toFixed(1)}</p></CardContent></Card>
-        <Card className="border-0 bg-white"><CardContent><p className="text-xs font-medium text-slate-500">Estimated value</p><p className="mt-2 text-2xl font-bold">${(totalAmountCents / 100).toFixed(0)}</p></CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-slate-500">Jobs completed</p><p className="mt-2 text-2xl font-bold">{totalJobs}</p></CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-slate-500">Hours worked (est.)</p><p className="mt-2 text-2xl font-bold">{totalHours.toFixed(1)}</p></CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-slate-500">Estimated value</p><p className="mt-2 text-2xl font-bold">${(totalAmountCents / 100).toFixed(0)}</p></CardContent></Card>
       </div>
 
       <div className="mb-3 flex items-center justify-between">
         <p className="flex items-center gap-2 text-sm font-bold text-slate-900">
-          <CalendarRange className="size-4 text-teal-700" /> Breakdown
+          <CalendarRange className="size-4 text-primary" /> Breakdown
         </p>
         <div className="flex h-9 items-center gap-1 rounded-xl border bg-white p-1">
           {(["day", "week", "month"] as const).map((option) => (
@@ -117,7 +117,7 @@ export function PartnerEarnings() {
               type="button"
               onClick={() => setGranularity(option)}
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold capitalize transition-colors ${
-                granularity === option ? "bg-teal-600 text-white" : "text-slate-500 hover:text-slate-900"
+                granularity === option ? "bg-primary text-primary-foreground" : "text-slate-500 hover:text-slate-900"
               }`}
             >
               {option}
@@ -126,7 +126,7 @@ export function PartnerEarnings() {
         </div>
       </div>
 
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardHeader><CardTitle>By {granularity}</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {loading && <p className="text-sm text-slate-400">Loading…</p>}

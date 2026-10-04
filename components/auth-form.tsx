@@ -43,7 +43,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   auth: "Google sign-in could not be completed. Please try again.",
   oauth_retry: "That sign-in session expired or was already used. Please try Google again (don’t refresh the callback page).",
   configuration: "Sign-in is not configured correctly. Contact support if this continues.",
-  [OAUTH_NO_ACCOUNT_ERROR]: "You don't have an account. Please sign up first.",
+  [OAUTH_NO_ACCOUNT_ERROR]: "You don’t have an account. Please sign up first.",
 };
 
 export function AuthForm({
@@ -162,12 +162,22 @@ export function AuthForm({
         return false;
       }
     }
-    if (!EMAIL_PATTERN.test(email)) return false;
+    if (!EMAIL_PATTERN.test(email)) {
+      document.getElementById(emailId)?.focus();
+      return false;
+    }
     if (signUp) {
       const next = passwordChecks(password);
-      if (!next.minLength || !next.hasLetter || !next.hasNumber) return false;
-      if (password !== confirmPassword) return false;
+      if (!next.minLength || !next.hasLetter || !next.hasNumber) {
+        document.getElementById(passwordId)?.focus();
+        return false;
+      }
+      if (password !== confirmPassword) {
+        document.getElementById(confirmId)?.focus();
+        return false;
+      }
     } else if (password.length < 6) {
+      document.getElementById(passwordId)?.focus();
       return false;
     }
     return true;
@@ -210,9 +220,9 @@ export function AuthForm({
 
   if (confirmationEmail) {
     return (
-      <main className="grid min-h-dvh place-items-center bg-[#faf8f3] p-5">
+      <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
         <section className="w-full max-w-md rounded-3xl bg-white p-7 text-center shadow-[0_18px_60px_rgba(15,23,42,.1)]">
-          <span className="mx-auto grid size-14 place-items-center rounded-full bg-teal-100 text-teal-700">
+          <span className="mx-auto grid size-14 place-items-center rounded-full bg-secondary text-secondary-foreground">
             <Mail className="size-6" aria-hidden="true" />
           </span>
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-950">Check your inbox</h1>
@@ -221,18 +231,18 @@ export function AuthForm({
           </p>
           <p className="mt-4 text-sm leading-6 text-slate-500">
             Already registered?{" "}
-            <Link href="/auth/sign-in" className="font-semibold text-teal-700 underline-offset-2 hover:underline">
+            <Link href="/auth/sign-in" className="font-semibold text-primary underline-offset-2 hover:underline">
               Sign in
             </Link>
             {" "}or use{" "}
-            <Link href="/auth/sign-in" className="font-semibold text-teal-700 underline-offset-2 hover:underline">
+            <Link href="/auth/sign-in" className="font-semibold text-primary underline-offset-2 hover:underline">
               Continue with Google
             </Link>
             . Check spam if nothing arrives.
           </p>
           <Link
             href="/auth/sign-in"
-            className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-xl bg-teal-600 font-semibold text-white transition-colors hover:bg-teal-700"
+            className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-xl bg-primary font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
           >
             Back to sign in
           </Link>
@@ -242,13 +252,13 @@ export function AuthForm({
   }
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-[#faf8f3] p-5">
+    <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
       <form
         onSubmit={submit}
         noValidate
         className="w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]"
       >
-        <Link href="/" className="font-bold text-teal-700">← HomeFix</Link>
+        <Link href="/" className="font-bold text-primary">← HomeFix</Link>
         <h1 className="mt-7 text-3xl font-bold tracking-tight text-slate-950">
           {signUp ? "Create your account" : "Welcome back"}
         </h1>
@@ -289,9 +299,9 @@ export function AuthForm({
             </label>
             <Input
               id={emailId}
-              autoFocus
               required
               type="email"
+              spellCheck={false}
               name={signUp ? "email" : "username"}
               autoComplete={signUp ? "email" : "username"}
               inputMode="email"
@@ -312,7 +322,7 @@ export function AuthForm({
                 Password
               </label>
               {!signUp && (
-                <Link href="/auth/forgot-password" className="text-sm font-semibold text-teal-700 underline-offset-2 hover:underline">
+                <Link href="/auth/forgot-password" className="text-sm font-semibold text-primary underline-offset-2 hover:underline">
                   Forgot password?
                 </Link>
               )}
@@ -321,6 +331,7 @@ export function AuthForm({
               <Input
                 id={passwordId}
                 required
+                name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete={signUp ? "new-password" : "current-password"}
                 value={password}
@@ -334,18 +345,18 @@ export function AuthForm({
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-500 transition-colors hover:text-slate-800"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 transition-colors hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                {showPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
               </button>
             </div>
             <FieldError id={passwordErrorId} message={passwordError} />
             {signUp && (
               <ul id={`${passwordId}-hint`} className="mt-2 space-y-1 text-xs text-slate-500">
-                <li className={checks.minLength ? "text-teal-700" : undefined}>At least 8 characters</li>
-                <li className={checks.hasLetter ? "text-teal-700" : undefined}>Contains a letter</li>
-                <li className={checks.hasNumber ? "text-teal-700" : undefined}>Contains a number</li>
+                <li className={checks.minLength ? "text-primary" : undefined}>At least 8 characters</li>
+                <li className={checks.hasLetter ? "text-primary" : undefined}>Contains a letter</li>
+                <li className={checks.hasNumber ? "text-primary" : undefined}>Contains a number</li>
               </ul>
             )}
           </div>
@@ -359,6 +370,7 @@ export function AuthForm({
                 <Input
                   id={confirmId}
                   required
+                  name="confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
                   autoComplete="new-password"
                   value={confirmPassword}
@@ -372,10 +384,10 @@ export function AuthForm({
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((value) => !value)}
-                  className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-500 transition-colors hover:text-slate-800"
-                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
-                >
-                  {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 transition-colors hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+              >
+                {showConfirmPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
                 </button>
               </div>
               <FieldError id={confirmErrorId} message={confirmError} />
@@ -389,29 +401,29 @@ export function AuthForm({
                 type="checkbox"
                 checked={acceptedTerms}
                 onChange={(event) => setAcceptedTerms(event.target.checked)}
-                className="mt-1 size-4 rounded border-slate-300 text-teal-700 focus-visible:ring-2 focus-visible:ring-teal-600/40"
+                className="mt-1 size-4 rounded border-border text-primary focus-visible:ring-2 focus-visible:ring-ring"
               />
               <span>
                 I agree to the{" "}
-                <Link href="/terms" className="font-semibold text-teal-700 underline-offset-2 hover:underline">Terms of Service</Link>
+                <Link href="/terms" className="font-semibold text-primary underline-offset-2 hover:underline">Terms of Service</Link>
                 {" "}and{" "}
-                <Link href="/privacy" className="font-semibold text-teal-700 underline-offset-2 hover:underline">Privacy Policy</Link>.
+                <Link href="/privacy" className="font-semibold text-primary underline-offset-2 hover:underline">Privacy Policy</Link>.
               </span>
             </label>
           )}
         </div>
 
-        <Button
-          type="submit"
-          disabled={busy || (signUp && !acceptedTerms)}
-          className="mt-6 h-12 w-full"
-        >
+          <Button
+            type="submit"
+            disabled={busy}
+            className="mt-6 h-12 w-full"
+          >
           {loading === "email" ? "Please wait…" : signUp ? "Create account" : "Sign in"}
         </Button>
 
         <p className="mt-5 text-center text-sm text-slate-600">
           {signUp ? "Already have an account?" : "New to HomeFix?"}{" "}
-          <Link className="font-semibold text-teal-700 underline-offset-2 hover:underline" href={alternateAuthHref}>
+          <Link className="font-semibold text-primary underline-offset-2 hover:underline" href={alternateAuthHref}>
             {signUp ? "Sign in" : "Create account"}
           </Link>
         </p>
@@ -436,7 +448,10 @@ export function ForgotPasswordForm() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setEmailTouched(true);
-    if (!EMAIL_PATTERN.test(email)) return;
+    if (!EMAIL_PATTERN.test(email)) {
+      document.getElementById(emailId)?.focus();
+      return;
+    }
     const supabase = createClient();
     if (!supabase) return toast.error("Supabase is not configured");
     setLoading(true);
@@ -450,16 +465,16 @@ export function ForgotPasswordForm() {
 
   if (sentTo) {
     return (
-      <main className="grid min-h-dvh place-items-center bg-[#faf8f3] p-5">
+      <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
         <section className="w-full max-w-md rounded-3xl bg-white p-7 text-center shadow-[0_18px_60px_rgba(15,23,42,.1)]">
-          <span className="mx-auto grid size-14 place-items-center rounded-full bg-teal-100 text-teal-700">
+          <span className="mx-auto grid size-14 place-items-center rounded-full bg-secondary text-secondary-foreground">
             <Mail className="size-6" aria-hidden="true" />
           </span>
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-950">Check your inbox</h1>
           <p className="mt-3 text-sm leading-6 text-slate-600">
             If an account exists for <strong className="text-slate-900">{sentTo}</strong>, we sent a password reset link.
           </p>
-          <Link href="/auth/sign-in" className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-xl bg-teal-600 font-semibold text-white transition-colors hover:bg-teal-700">
+          <Link href="/auth/sign-in" className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-xl bg-primary font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring">
             Back to sign in
           </Link>
         </section>
@@ -468,18 +483,19 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-[#faf8f3] p-5">
+    <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
       <form onSubmit={submit} noValidate className="w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]">
-        <Link href="/auth/sign-in" className="font-bold text-teal-700">← Back to sign in</Link>
+        <Link href="/auth/sign-in" className="font-bold text-primary">← Back to sign in</Link>
         <h1 className="mt-7 text-3xl font-bold tracking-tight text-slate-950">Reset your password</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Enter your email and we’ll send a reset link if an account exists.</p>
         <div className="mt-7">
           <label htmlFor={emailId} className="mb-1.5 block text-sm font-semibold text-slate-800">Email address</label>
           <Input
             id={emailId}
-            autoFocus
             required
             type="email"
+            name="email"
+            spellCheck={false}
             autoComplete="email"
             value={email}
             aria-invalid={Boolean(emailError)}
@@ -522,7 +538,14 @@ export function ResetPasswordForm() {
     event.preventDefault();
     setPasswordTouched(true);
     setConfirmTouched(true);
-    if (!checks.minLength || !checks.hasLetter || !checks.hasNumber || password !== confirmPassword) return;
+    if (!checks.minLength || !checks.hasLetter || !checks.hasNumber) {
+      document.getElementById(passwordId)?.focus();
+      return;
+    }
+    if (password !== confirmPassword) {
+      document.getElementById(confirmId)?.focus();
+      return;
+    }
     const supabase = createClient();
     if (!supabase) return toast.error("Supabase is not configured");
     setLoading(true);
@@ -535,9 +558,9 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <main className="grid min-h-dvh place-items-center bg-[#faf8f3] p-5">
+    <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
       <form onSubmit={submit} noValidate className="w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]">
-        <Link href="/auth/sign-in" className="font-bold text-teal-700">← Back to sign in</Link>
+        <Link href="/auth/sign-in" className="font-bold text-primary">← Back to sign in</Link>
         <h1 className="mt-7 text-3xl font-bold tracking-tight text-slate-950">Choose a new password</h1>
         <p className="mt-2 text-sm leading-6 text-slate-600">Create a strong password for your HomeFix account.</p>
         <div className="mt-7 space-y-4">
@@ -547,6 +570,7 @@ export function ResetPasswordForm() {
               <Input
                 id={passwordId}
                 required
+                name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
                 value={password}
@@ -559,17 +583,17 @@ export function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-500 hover:text-slate-800"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                {showPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
               </button>
             </div>
             <FieldError id={passwordErrorId} message={passwordError} />
             <ul id={`${passwordId}-hint`} className="mt-2 space-y-1 text-xs text-slate-500">
-              <li className={checks.minLength ? "text-teal-700" : undefined}>At least 8 characters</li>
-              <li className={checks.hasLetter ? "text-teal-700" : undefined}>Contains a letter</li>
-              <li className={checks.hasNumber ? "text-teal-700" : undefined}>Contains a number</li>
+              <li className={checks.minLength ? "text-primary" : undefined}>At least 8 characters</li>
+              <li className={checks.hasLetter ? "text-primary" : undefined}>Contains a letter</li>
+              <li className={checks.hasNumber ? "text-primary" : undefined}>Contains a number</li>
             </ul>
           </div>
           <div>
@@ -578,6 +602,7 @@ export function ResetPasswordForm() {
               <Input
                 id={confirmId}
                 required
+                name="confirm-password"
                 type={showConfirmPassword ? "text" : "password"}
                 autoComplete="new-password"
                 value={confirmPassword}
@@ -590,10 +615,10 @@ export function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-500 hover:text-slate-800"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
               >
-                {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                {showConfirmPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
               </button>
             </div>
             <FieldError id={confirmErrorId} message={confirmError} />

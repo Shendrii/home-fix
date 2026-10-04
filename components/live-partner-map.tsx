@@ -114,10 +114,10 @@ export function LivePartnerMap({
   }, [ready, location]);
 
   return (
-    <Card className="border-0 bg-white">
+    <Card className="border-0 bg-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Navigation className="size-4 text-teal-700" /> Live location
+          <Navigation className="size-4 text-primary" /> Live location
         </CardTitle>
       </CardHeader>
       <CardContent>

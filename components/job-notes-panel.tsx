@@ -79,10 +79,10 @@ export function JobNotesPanel({ jobId }: { jobId: string }) {
   }
 
   return (
-    <Card className="border-0 bg-white">
+    <Card className="border-0 bg-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <ClipboardList className="size-4 text-teal-700" /> Field notes
+          <ClipboardList className="size-4 text-primary" /> Field notes
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

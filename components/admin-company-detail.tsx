@@ -18,11 +18,11 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
   const isSuperadmin = profile?.role === "superadmin";
 
   if (!dataReady) {
-    return <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">Loading company…</CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading company…</CardContent></Card>;
   }
   if (!company) {
     return (
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardContent className="py-10">
           <h1 className="text-xl font-bold">Company not found</h1>
           <Button render={<Link href="/admin/partners" />} className="mt-4">Back to partners</Button>
@@ -63,7 +63,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
       )}
       <div className="grid gap-3 md:grid-cols-2">
         {members.map(({ member, person }) => (
-          <Card key={member.userId} className="border-0 bg-white">
+          <Card key={member.userId} className="border-0 bg-card">
             <CardContent>
               <p className="font-bold">{person?.name}</p>
               <p className="mt-1 truncate text-sm text-slate-500">{person?.email || "No email on file"}</p>
@@ -80,7 +80,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
           </Card>
         ))}
         {!members.length && (
-          <Card className="border-0 bg-white md:col-span-2">
+          <Card className="border-0 bg-card md:col-span-2">
             <CardContent className="py-10 text-center text-sm text-slate-500">No people are linked to this company yet.</CardContent>
           </Card>
         )}

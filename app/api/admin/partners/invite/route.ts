@@ -95,7 +95,7 @@ export async function POST(request: Request) {
         .maybeSingle();
       return NextResponse.json(
         {
-          error: `This email already belongs to “${existingCompany?.name ?? "a partner company"}”. Use “Remove partner account” below to start over.`,
+          error: `This email already belongs to “${existingCompany?.name ?? "a partner company"}”. Choose Remove partner account under the form to invite them again.`,
         },
         { status: 409 },
       );
@@ -191,7 +191,7 @@ export async function POST(request: Request) {
     await admin.from("partner_invitations").delete().eq("id", invitation.id);
     return NextResponse.json(
       {
-        error: "This email already owns a partner company. Use “Remove partner account” to invite again.",
+        error: "This email already belongs to a partner company. Choose Remove partner account under the form to invite them again.",
       },
       { status: 409 },
     );

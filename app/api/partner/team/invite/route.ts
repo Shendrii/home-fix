@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { readActingTarget } from "@/lib/acting-as-server";
+import { parseTeamInvite } from "@/lib/company-membership";
 import { buildAuthCallbackUrl } from "@/lib/oauth-callback";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -45,11 +46,11 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Authentication required." }, { status: 401 });
 
   const body = (await request.json().catch(() => null)) as InviteBody | null;
-  const email = body?.email?.trim().toLowerCase() ?? "";
-  const role = body?.role === "admin" || body?.role === "staff" ? body.role : null;
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !role) {
+  const invite = parseTeamInvite(body);
+  if (!invite) {
     return NextResponse.json({ error: "Provide a valid email and choose Admin or Staff." }, { status: 400 });
   }
+  const { email, role } = invite;
 
   const { data: caller } = await admin.from("profiles").select("role").eq("id", user.id).maybeSingle();
   const acting = caller?.role === "superadmin" ? await readActingTarget() : null;

@@ -139,10 +139,10 @@ export function JobPhotosPanel({
   }
 
   return (
-    <Card className="border-0 bg-white">
+    <Card className="border-0 bg-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Camera className="size-4 text-teal-700" /> {title}
+          <Camera className="size-4 text-primary" /> {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -151,7 +151,7 @@ export function JobPhotosPanel({
             {uploadKinds.map((kind) => (
               <label
                 key={kind}
-                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-teal-200 px-3 text-sm font-semibold text-teal-700 transition-colors hover:bg-teal-50"
+                className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-primary/25 px-3 text-sm font-semibold text-primary transition-colors hover:bg-secondary"
               >
                 {uploading === kind ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
                 Add {UPLOAD_BUTTON_LABEL[kind]}

@@ -63,6 +63,12 @@ describe("canAccessClientBooking", () => {
   it("blocks booking without a session", () => {
     expect(canAccessClientBooking(null, null)).toBe(false);
   });
+
+  it("blocks booking for a partner account", () => {
+    expect(
+      canAccessClientBooking("user-2", { id: "user-2", full_name: "Alex", role: "partner" }),
+    ).toBe(false);
+  });
 });
 
 describe("auth persistence across booking and services routes", () => {

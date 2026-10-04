@@ -14,6 +14,8 @@ describe("hybrid dispatch helpers", () => {
     expect(dispatchPhaseLabel("exclusive_offers")).toBe("Finding a qualified partner");
     expect(dispatchPhaseLabel("broadcast")).toBe("Available to qualified nearby partners");
     expect(dispatchPhaseLabel("assigned")).toBe("Partner confirmed");
+    expect(dispatchPhaseLabel("qualifying")).toBe("Preparing your request");
+    expect(dispatchPhaseLabel("cancelled")).toBe("Request cancelled");
   });
 
   it("maps transactional claim outcomes to actionable messages", () => {

@@ -17,7 +17,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: "HomeFix", template: "%s · HomeFix" },
-  description: "Trusted help for every corner of your home.",
+  description: "Book a home repair, pick a window, and know who is coming.",
+};
+
+export const viewport = {
+  themeColor: "#faf8f3",
 };
 
 export default function RootLayout({
@@ -31,6 +35,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <AuthProvider>
           <AppProvider>{children}</AppProvider>
         </AuthProvider>

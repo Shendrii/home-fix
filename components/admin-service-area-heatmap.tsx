@@ -70,7 +70,7 @@ export function AdminServiceAreaHeatmap() {
 
       {loading && <p className="text-sm text-slate-400">Loading…</p>}
       {!loading && !cells.length && (
-        <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">No geocoded requests in the last {LOOKBACK_DAYS} days.</CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">No geocoded requests in the last {LOOKBACK_DAYS} days.</CardContent></Card>
       )}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

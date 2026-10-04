@@ -42,7 +42,7 @@ export function AdminDispatchBoard() {
         {active.map((job) => {
           const risk = job.urgency === "urgent" && job.status === "open";
           return (
-            <Card key={job.id} className="border-0 bg-white">
+            <Card key={job.id} className="border-0 bg-card">
               <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">

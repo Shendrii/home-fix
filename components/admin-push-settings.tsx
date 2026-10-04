@@ -52,10 +52,10 @@ export function AdminPushSettings() {
   if (!loaded) return null;
 
   return (
-    <Card className="mt-6 border-0 bg-white">
+    <Card className="mt-6 border-0 bg-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <BellRing className="size-4 text-teal-700" /> Offer push notifications
+          <BellRing className="size-4 text-primary" /> Offer push notifications
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

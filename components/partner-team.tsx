@@ -25,10 +25,10 @@ export function PartnerTeam() {
     .sort((a, b) => Number(b.role === "admin") - Number(a.role === "admin") || (a.person?.name ?? "").localeCompare(b.person?.name ?? ""));
 
   if (!dataReady) {
-    return <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">Loading team…</CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading team…</CardContent></Card>;
   }
   if (!company) {
-    return <Card className="border-0 bg-white"><CardContent className="py-12 text-center"><h1 className="text-xl font-bold">Partner profile unavailable</h1></CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-12 text-center"><h1 className="text-xl font-bold">Partner profile unavailable</h1></CardContent></Card>;
   }
 
   return (
@@ -41,7 +41,7 @@ export function PartnerTeam() {
           : "Everyone at this company works the same job queue."}
         action={companyRole === "admin" ? <Button render={<Link href="/partner/team/invite" />}>Invite</Button> : undefined}
       />
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardContent className="px-0">
           <table className="w-full text-left text-sm">
             <thead className="border-b text-xs uppercase tracking-wide text-slate-400">
@@ -116,7 +116,7 @@ export function PartnerTeamInvite() {
   }
 
   if (!dataReady || companyRole !== "admin") {
-    return <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">Loading…</CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading…</CardContent></Card>;
   }
 
   return (

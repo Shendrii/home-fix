@@ -36,7 +36,7 @@ const journeySteps: {
   },
   {
     label: "Repair",
-    title: "Repair & service",
+    title: "Repair and service",
     description: "The fix is done with clear updates along the way.",
     icon: Wrench,
   },
@@ -48,123 +48,66 @@ const journeySteps: {
   },
 ];
 
+const primaryLink =
+  "inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring active:translate-y-px sm:w-auto";
+const secondaryLink =
+  "inline-flex h-12 w-full items-center justify-center rounded-xl border border-border bg-card px-6 font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring active:translate-y-px sm:w-auto";
+
 export function HomeAppointmentSection() {
   return (
     <section
       id="create-appointment"
       aria-labelledby="appointment-heading"
-      className="relative overflow-hidden border-y border-teal-100 bg-gradient-to-b from-white via-teal-50/40 to-[#faf8f3] py-16 sm:py-20"
+      className="scroll-mt-24 border-y border-border bg-card py-16 sm:py-20"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-24 top-0 size-72 rounded-full bg-teal-200/30 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-16 bottom-0 size-56 rounded-full bg-amber-100/50 blur-3xl"
-      />
-
-      <div className="relative mx-auto max-w-7xl px-5">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
-            Simple, transparent service
-          </p>
+      <div className="mx-auto max-w-7xl px-5">
+        <div className="max-w-2xl">
           <h2
             id="appointment-heading"
-            className="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+            className="text-3xl font-bold tracking-tight text-balance text-foreground sm:text-4xl"
           >
             Create an appointment in minutes
           </h2>
-          <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-            From first click to a finished repair—you always know what happens next.
-            No phone tag, no guesswork.
+          <p className="mt-4 max-w-xl text-base leading-7 text-pretty text-muted-foreground sm:text-lg">
+            From the first request to a finished repair, you always know what happens next.
           </p>
-
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/services"
-              className="inline-flex h-14 w-full min-w-[240px] items-center justify-center gap-2 rounded-2xl bg-teal-600 px-8 text-base font-semibold text-white shadow-lg shadow-teal-600/25 transition-colors hover:bg-teal-700 sm:w-auto"
-            >
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/services" className={primaryLink}>
               Browse services
               <ArrowRight className="size-5" aria-hidden="true" />
             </Link>
-            <Link
-              href="/request"
-              className="inline-flex h-14 w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-8 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-50 sm:w-auto"
-            >
+            <Link href="/request" className={secondaryLink}>
               Book an appointment
             </Link>
           </div>
-          <p className="mt-3 text-sm text-slate-500">
-            Browse without an account · Sign in only when you book
+          <p className="mt-3 text-sm text-muted-foreground">
+            Browse without an account. Sign in only when you book.
           </p>
         </div>
 
-        <div className="mt-14 lg:mt-16">
-          <p className="mb-8 text-center text-sm font-semibold text-slate-700">
-            Your journey with HomeFix
-          </p>
-
-          {/* Desktop & tablet: horizontal step flow */}
-          <ol className="hidden md:grid md:grid-cols-5 md:gap-2">
-            {journeySteps.map((step, index) => {
-              const Icon = step.icon;
-              const isLast = index === journeySteps.length - 1;
-              return (
-                <li key={step.label} className="relative flex flex-col items-center text-center">
-                  {!isLast && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-[calc(50%+2rem)] top-8 h-0.5 w-[calc(100%-4rem)] bg-gradient-to-r from-teal-300 to-teal-200"
-                    />
+        <ol className="mt-14 grid gap-8 md:grid-cols-5 md:gap-4">
+          {journeySteps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <li key={step.label} className="relative flex gap-4 md:flex-col md:items-start">
+                <div
+                  className={cn(
+                    "grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-secondary-foreground",
                   )}
-                  <div className="relative z-10 grid size-16 place-items-center rounded-2xl border border-teal-100 bg-white shadow-md shadow-slate-200/50">
-                    <Icon className="size-7 text-teal-700" strokeWidth={1.75} aria-hidden="true" />
-                  </div>
-                  <span className="mt-4 inline-flex rounded-full bg-teal-100/80 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                    {step.label}
-                  </span>
-                  <h3 className="mt-2 text-sm font-bold text-slate-900">{step.title}</h3>
-                  <p className="mt-1.5 max-w-[11rem] text-xs leading-5 text-slate-600">
-                    {step.description}
+                >
+                  <Icon className="size-5" strokeWidth={1.75} aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-primary tabular-nums">
+                    {index + 1}. {step.label}
                   </p>
-                </li>
-              );
-            })}
-          </ol>
-
-          {/* Mobile: scannable vertical timeline */}
-          <ol className="mx-auto max-w-md space-y-0 md:hidden">
-            {journeySteps.map((step, index) => {
-              const Icon = step.icon;
-              const isLast = index === journeySteps.length - 1;
-              return (
-                <li key={step.label} className="relative flex gap-4 pb-8">
-                  {!isLast && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-8 top-16 bottom-0 w-0.5 bg-teal-200"
-                    />
-                  )}
-                  <div
-                    className={cn(
-                      "relative z-10 grid size-16 shrink-0 place-items-center rounded-2xl border border-teal-100 bg-white shadow-md shadow-slate-200/50",
-                    )}
-                  >
-                    <Icon className="size-7 text-teal-700" strokeWidth={1.75} aria-hidden="true" />
-                  </div>
-                  <div className="pt-1">
-                    <span className="inline-flex rounded-full bg-teal-100/80 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-teal-800">
-                      Step {index + 1} · {step.label}
-                    </span>
-                    <h3 className="mt-2 font-bold text-slate-900">{step.title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-slate-600">{step.description}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
+                  <h3 className="mt-1 font-bold text-foreground">{step.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">{step.description}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

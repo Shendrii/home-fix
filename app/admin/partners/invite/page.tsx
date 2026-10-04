@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfigurationHint } from "@/components/protected-page";
 import { PartnerInvitationForm } from "@/components/partner-invitation-form";
-import { PartnerAccountReset } from "@/components/partner-account-reset";
 import { partnerInvitationStatus } from "@/lib/partner-invitation";
 import { readActingTarget } from "@/lib/acting-as-server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
@@ -23,46 +22,47 @@ export default async function InvitePartnerPage() {
 
   const [{ data: categories }, { data: invitations }] = await Promise.all([
     supabase!.from("service_categories").select("id, name").eq("is_active", true).order("name"),
-    supabase!.from("partner_invitations").select("id, email, company_name, invited_at, accepted_at, revoked_at, expires_at").order("invited_at", { ascending: false }).limit(8),
+    supabase!.from("partner_invitations").select("id, email, company_name, invited_at, accepted_at, revoked_at, expires_at, target_company_id").order("invited_at", { ascending: false }).limit(8),
   ]);
 
   return (
     <>
       <PageHeader
-        eyebrow="Secure provisioning"
+        eyebrow="Partners"
         title="Invite a partner company"
-        description="Create a partner invitation or connect an existing HomeFix account to a company."
+        description="Create the company and invite the person who will run it."
         action={<Button variant="outline" render={<Link href="/admin/partners" />}>Back to partners</Button>}
       />
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(19rem,.75fr)]">
-        <div>
-          <PartnerInvitationForm categories={categories ?? []} />
-          <PartnerAccountReset />
-        </div>
-        <Card className="border-0 bg-white">
+        <PartnerInvitationForm categories={categories ?? []} />
+        <Card className="h-fit border-0 bg-card">
           <CardHeader>
-            <CardTitle>Invitation activity</CardTitle>
-            <p className="text-xs leading-5 text-slate-500">
-              “Company linked” means an existing login was connected to a company.
-            </p>
+            <CardTitle>Recent invitations</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {invitations?.length ? invitations.map((invitation) => {
-              const { label, hint } = partnerInvitationStatus(invitation);
-              return (
-                <div key={invitation.id} className="rounded-2xl bg-slate-50 p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{invitation.company_name}</p>
-                      <p className="truncate text-xs text-slate-500">{invitation.email}</p>
-                    </div>
-                    <Badge variant="secondary">{label}</Badge>
-                  </div>
-                  <p className="mt-2 text-xs text-slate-400">{hint}</p>
-                  <p className="mt-1 text-xs text-slate-400">Sent {new Date(invitation.invited_at).toLocaleDateString()}</p>
-                </div>
-              );
-            }) : <p className="text-sm text-slate-500">No partner invitations have been sent.</p>}
+          <CardContent>
+            {invitations?.length ? (
+              <ul className="divide-y divide-slate-100">
+                {invitations.map((invitation) => {
+                  const { label, hint } = partnerInvitationStatus(invitation);
+                  return (
+                    <li key={invitation.id} className="py-4 first:pt-0 last:pb-0">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold">{invitation.company_name}</p>
+                          <p className="truncate text-sm text-slate-500">{invitation.email}</p>
+                        </div>
+                        <Badge variant="secondary" className="shrink-0">{label}</Badge>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-slate-400">
+                        {hint} · {new Date(invitation.invited_at).toLocaleDateString()}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="text-sm text-slate-500">No invitations yet.</p>
+            )}
           </CardContent>
         </Card>
       </div>

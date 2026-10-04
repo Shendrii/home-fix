@@ -19,6 +19,7 @@ import { roleLabel } from "@/lib/profile";
 import { PageHeader } from "@/components/app-shell";
 import { PartnerJobsCalendar } from "@/components/partner-jobs-calendar";
 import { JobPhotosPanel } from "@/components/job-photos-panel";
+import { ServiceFeedback } from "@/components/service-feedback";
 import { DeclineOfferButton } from "@/components/decline-offer-button";
 import { LivePartnerMap } from "@/components/live-partner-map";
 import { PushOptIn } from "@/components/push-opt-in";
@@ -42,7 +43,7 @@ export function StatusBadge({ status }: { status: JobStatus }) {
     assigned: "bg-sky-50 text-sky-700",
     scheduled: "bg-violet-50 text-violet-700",
     en_route: "bg-cyan-50 text-cyan-700",
-    in_progress: "bg-teal-50 text-teal-700",
+    in_progress: "bg-secondary text-secondary-foreground",
     completed: "bg-emerald-50 text-emerald-700",
     cancelled: "bg-slate-100 text-slate-600",
   };
@@ -63,12 +64,12 @@ function ServiceCard({
 
   if (variant === "quick-book") {
     return (
-      <Link href={bookHref} className="group">
-        <Card className="h-full border-0 bg-white shadow-[0_8px_30px_rgba(30,41,59,.05)] transition-transform hover:-translate-y-0.5">
+      <Link href={bookHref} className="group rounded-xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring">
+        <Card className="h-full border-0 bg-card shadow-[0_8px_30px_rgba(30,41,59,.05)] transition-transform hover:-translate-y-0.5">
           <CardContent className="flex items-start gap-3">
-            <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${color}`}><Icon className="size-5" /></span>
-            <div className="min-w-0"><p className="font-semibold text-slate-900">{name}</p><p className="mt-1 text-xs leading-5 text-slate-500">{description}</p><p className="mt-2 text-xs font-semibold text-teal-700">From ${startingPrice}</p></div>
-            <ChevronRight className="ml-auto mt-2 size-4 text-slate-300 group-hover:text-teal-600" />
+            <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${color}`}><Icon className="size-5" aria-hidden="true" /></span>
+            <div className="min-w-0"><p className="font-semibold text-slate-900">{name}</p><p className="mt-1 text-xs leading-5 text-slate-500">{description}</p><p className="mt-2 text-xs font-semibold text-primary tabular-nums">From ${startingPrice}</p></div>
+            <ChevronRight className="ml-auto mt-2 size-4 shrink-0 text-slate-300 group-hover:text-primary" aria-hidden="true" />
           </CardContent>
         </Card>
       </Link>
@@ -76,18 +77,18 @@ function ServiceCard({
   }
 
   return (
-    <Card className="h-full border-0 bg-white shadow-[0_8px_30px_rgba(30,41,59,.05)]">
+    <Card className="h-full border-0 bg-card shadow-[0_8px_30px_rgba(30,41,59,.05)]">
       <CardContent className="flex h-full flex-col gap-4">
         <div className="flex items-start gap-3">
-          <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${color}`}><Icon className="size-5" /></span>
+            <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${color}`}><Icon className="size-5" aria-hidden="true" /></span>
           <div className="min-w-0">
             <p className="font-semibold text-slate-900">{name}</p>
             <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
-            <p className="mt-2 text-xs font-semibold text-teal-700">From ${startingPrice}</p>
+            <p className="mt-2 text-xs font-semibold text-primary tabular-nums">From ${startingPrice}</p>
           </div>
         </div>
-        <Button render={<Link href={bookHref} />} className="mt-auto h-10 w-full rounded-xl">
-          Book appointment <ArrowRight />
+        <Button render={<Link href={bookHref} />} className="mt-auto h-11 w-full rounded-xl">
+          Book appointment <ArrowRight aria-hidden="true" />
         </Button>
       </CardContent>
     </Card>
@@ -106,37 +107,37 @@ export function ClientHome() {
     .filter((category) => `${category.name} ${category.description}`.toLowerCase().includes(query.toLowerCase()))
     .slice(0, query ? categories.length : 6);
   return <>
-    <section className="relative mb-8 overflow-hidden rounded-3xl bg-slate-950 px-5 py-7 text-white sm:px-8 sm:py-10">
-      <div className="absolute -right-16 -top-16 size-52 rounded-full bg-teal-400/20 blur-2xl" />
-      <p className="text-sm text-teal-300">Welcome back{firstName ? `, ${firstName}` : ""}</p>
-      <h1 className="mt-2 max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">What can we fix for you today?</h1>
-      <div className="relative mt-6 max-w-xl"><Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400" /><Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-12 rounded-2xl border-0 bg-white pl-12 text-slate-900 shadow-xl" placeholder="Search plumbing, cleaning, electrical…" aria-label="Search home services" /></div>
+    <section className="relative mb-8 overflow-hidden rounded-3xl bg-card px-5 py-7 text-foreground shadow-[0_16px_50px_oklch(0.24_0.045_245/0.07)] ring-1 ring-border sm:px-8 sm:py-10">
+      <p className="text-sm font-semibold text-primary">Welcome back{firstName ? `, ${firstName}` : ""}</p>
+      <h1 className="mt-2 max-w-xl text-3xl font-bold leading-tight tracking-tight text-balance sm:text-4xl">What can we fix for you today?</h1>
+      <div className="relative mt-6 max-w-xl"><Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-slate-400" aria-hidden="true" /><Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-12 rounded-2xl border-0 bg-card pl-12 text-slate-900 shadow-xl" placeholder="Search plumbing, cleaning, electrical…" aria-label="Search home services" /></div>
     </section>
-    {active && <section className="mb-8"><div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold">Active visit</h2><Link href={`/jobs/${active.id}`} className="text-sm font-semibold text-teal-700">View details</Link></div><Card className="border-0 bg-gradient-to-br from-teal-600 to-emerald-700 text-white shadow-lg shadow-teal-900/10"><CardContent><div className="flex items-start justify-between"><div><Badge className="border-white/15 bg-white/15 text-white">In progress</Badge><h3 className="mt-3 text-xl font-bold">{active.title}</h3><p className="mt-1 text-sm text-teal-50">{activeCompany?.name ?? "Your assigned partner"}</p></div><span className="grid size-12 place-items-center rounded-2xl bg-white/15"><Wrench /></span></div><div className="mt-5 flex items-center justify-between border-t border-white/15 pt-4 text-sm"><span className="flex items-center gap-2"><MapPin className="size-4" />{active.address}</span><ArrowRight className="size-5" /></div></CardContent></Card></section>}
-    <section className="mb-8"><div className="mb-3 flex items-end justify-between"><div><h2 className="text-lg font-bold">{query ? "Search results" : "Popular services"}</h2><p className="text-sm text-slate-500">{query ? `${visibleCategories.length} matching services` : "Trusted help, right when you need it"}</p></div><Link href="/services" className="text-sm font-semibold text-teal-700">See all</Link></div><div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3">{visibleCategories.map((category) => <ServiceCard key={category.id} {...category} variant="quick-book" />)}</div>{query && !visibleCategories.length && <div className="rounded-2xl border border-dashed bg-white p-8 text-center text-sm text-slate-500">No matching service yet. You can still describe your issue in a custom request.</div>}</section>
-    <section><div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold">Recent jobs</h2><Link href="/jobs" className="text-sm font-semibold text-teal-700">All jobs</Link></div><div className="grid gap-3 lg:grid-cols-2">{jobs.filter((job) => !["open", "in_progress"].includes(job.status)).slice(0, 2).map((job) => <JobCard key={job.id} job={job} />)}</div>{!jobs.length && <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">No jobs yet. Book a service to get started.</CardContent></Card>}</section>
+    {active && <section className="mb-8"><div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold">Active visit</h2><Link href={`/jobs/${active.id}`} className="text-sm font-semibold text-primary">View details</Link></div><Card className="border-0 bg-primary text-primary-foreground shadow-lg shadow-primary/10"><CardContent><div className="flex items-start justify-between"><div><Badge className="border-white/15 bg-white/15 text-white">In progress</Badge><h3 className="mt-3 text-xl font-bold">{active.title}</h3><p className="mt-1 text-sm text-primary-foreground/80">{activeCompany?.name ?? "Your assigned partner"}</p></div><span className="grid size-12 place-items-center rounded-2xl bg-white/15"><Wrench /></span></div><div className="mt-5 flex items-center justify-between border-t border-white/15 pt-4 text-sm"><span className="flex items-center gap-2"><MapPin className="size-4" />{active.address}</span><ArrowRight className="size-5" /></div></CardContent></Card></section>}
+    <section className="mb-8"><div className="mb-3 flex items-end justify-between"><div><h2 className="text-lg font-bold">{query ? "Search results" : "Popular services"}</h2><p className="text-sm text-slate-500">{query ? `${visibleCategories.length} matching services` : "Trusted help, right when you need it"}</p></div><Link href="/services" className="text-sm font-semibold text-primary">See all</Link></div><div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3">{visibleCategories.map((category) => <ServiceCard key={category.id} {...category} variant="quick-book" />)}</div>{query && !visibleCategories.length && <div className="rounded-2xl border border-dashed bg-white p-8 text-center text-sm text-slate-500">No matching service yet. You can still describe your issue in a custom request.</div>}</section>
+    <section><div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold">Recent jobs</h2><Link href="/jobs" className="text-sm font-semibold text-primary">All jobs</Link></div><div className="grid gap-3 lg:grid-cols-2">{jobs.filter((job) => !["open", "in_progress"].includes(job.status)).slice(0, 2).map((job) => <JobCard key={job.id} job={job} />)}</div>{!jobs.length && <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">No jobs yet. Book a service to get started.</CardContent></Card>}</section>
   </>;
 }
 
 export function ServicesScreen() {
   const { categories } = useApp();
-  return <><PageHeader eyebrow="Home services" title="Find the right expert" description="Browse verified categories and starting prices. Sign in only when you’re ready to book." action={<Button render={<Link href={bookingPath()} />} className="h-11 rounded-xl">Book an appointment <ArrowRight /></Button>} /><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{categories.filter((c) => c.active).map((category) => <ServiceCard key={category.id} {...category} variant="browse" />)}</div><Card className="mt-8 border-0 bg-orange-50"><CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold text-orange-950">Not sure what service you need?</p><p className="mt-1 text-sm text-orange-800">Describe the issue and we’ll help route your request.</p></div><Button variant="outline" render={<Link href={bookingPath()} />} className="h-11 bg-white">Describe your issue</Button></CardContent></Card></>;
+  return <><PageHeader eyebrow="Home services" title="Find the right expert" description="Browse verified categories and starting prices. Sign in only when you’re ready to book." action={<Button render={<Link href={bookingPath()} />} className="h-11 rounded-xl">Book an appointment <ArrowRight /></Button>} />{categories.some((category) => category.active) ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{categories.filter((c) => c.active).map((category) => <ServiceCard key={category.id} {...category} variant="browse" />)}</div> : <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-muted-foreground">No services are listed right now. Check back shortly.</CardContent></Card>}<Card className="mt-8 border-0 bg-orange-50"><CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-bold text-orange-950">Not sure what service you need?</p><p className="mt-1 text-sm text-orange-800">Describe the issue and we’ll help route your request.</p></div><Button variant="outline" render={<Link href={bookingPath()} />} className="h-11 bg-white">Describe your issue</Button></CardContent></Card></>;
 }
 
 export function JobCard({ job, partner = false }: { job: JobRequest; partner?: boolean }) {
   const { categories } = useApp();
   const category = categories.find((item) => item.id === job.categoryId);
   const jobLabel = job.referenceCode ?? job.id.slice(0, 8);
-  return <Card className="border-0 bg-white shadow-[0_6px_24px_rgba(30,41,59,.05)]"><CardContent><div className="flex items-start justify-between gap-3"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><StatusBadge status={job.status} /><span className="text-xs text-slate-400">{jobLabel}</span></div><h3 className="mt-3 font-bold text-slate-900">{job.title}</h3><p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-500">{job.description}</p></div><span className={`grid size-10 shrink-0 place-items-center rounded-xl ${category?.color ?? "bg-slate-100"}`}><Wrench className="size-4" /></span></div><div className="mt-4 grid gap-2 text-xs text-slate-500 sm:grid-cols-2"><span className="flex items-center gap-2"><MapPin className="size-4" />{job.address}</span><span className="flex items-center gap-2"><CalendarDays className="size-4" />{job.preferredDate}</span></div><div className="mt-4 flex items-center justify-between border-t pt-3"><p className="font-bold text-slate-900">${job.budget} <span className="text-xs font-normal text-slate-400">estimate</span></p><Button variant="outline" render={<Link href={partner ? `/partner/jobs/${job.id}` : `/jobs/${job.id}`} />} className="h-10 border-teal-200 text-teal-700 hover:bg-teal-50 hover:text-teal-800">Details <ChevronRight /></Button></div></CardContent></Card>;
+  return <Card className="border-0 bg-card shadow-[0_6px_24px_rgba(30,41,59,.05)]"><CardContent><div className="flex items-start justify-between gap-3"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><StatusBadge status={job.status} /><span className="text-xs text-slate-400">{jobLabel}</span></div><h3 className="mt-3 font-bold text-slate-900">{job.title}</h3><p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-500">{job.description}</p></div><span className={`grid size-10 shrink-0 place-items-center rounded-xl ${category?.color ?? "bg-slate-100"}`}><Wrench className="size-4" aria-hidden="true" /></span></div><div className="mt-4 grid gap-2 text-xs text-slate-500 sm:grid-cols-2"><span className="flex min-w-0 items-center gap-2"><MapPin className="size-4 shrink-0" aria-hidden="true" /><span className="truncate">{job.address}</span></span><span className="flex items-center gap-2"><CalendarDays className="size-4 shrink-0" aria-hidden="true" />{job.preferredDate}</span></div><div className="mt-4 flex items-center justify-between border-t pt-3"><p className="font-bold text-slate-900 tabular-nums">${job.budget} <span className="text-xs font-normal text-slate-400">estimate</span></p><Button variant="outline" render={<Link href={partner ? `/partner/jobs/${job.id}` : `/jobs/${job.id}`} />} className="h-11">Details <ChevronRight aria-hidden="true" /></Button></div></CardContent></Card>;
 }
 
 export function ClientJobs() {
   const { viewerJobs: jobs } = useApp();
-  return <><PageHeader eyebrow="Your home" title="My jobs" description="Track matching, appointments, and completed service." action={<Button render={<Link href="/request" />} className="h-11">New request</Button>} /><div className="grid gap-4 lg:grid-cols-2">{jobs.map((job) => <JobCard key={job.id} job={job} />)}</div></>;
+  return <><PageHeader eyebrow="Your home" title="My jobs" description="Track matching, appointments, and completed service." action={<Button render={<Link href="/request" />} className="h-11">New request</Button>} />{jobs.length ? <div className="grid gap-4 lg:grid-cols-2">{jobs.map((job) => <JobCard key={job.id} job={job} />)}</div> : <Card className="border-0 bg-card"><CardContent className="py-10 text-center"><h2 className="font-bold">No jobs yet</h2><p className="mt-2 text-sm text-muted-foreground">Book a service and the request will show up here.</p><Button render={<Link href="/request" />} className="mt-5 h-11">Book a service</Button></CardContent></Card>}</>;
 }
 
 export function JobDetail({ id }: { id: string }) {
   const { viewerJobs: jobs, companies, updateJobStatus } = useApp();
+  const [confirmCancel, setConfirmCancel] = useState(false);
   const job = jobs.find((item) => item.id === id);
   if (!job) return <Card><CardContent><h1 className="text-xl font-bold">Job not found</h1><Button render={<Link href="/jobs" />} className="mt-4">Back to jobs</Button></CardContent></Card>;
   const company = companies.find((item) => item.id === job.companyId);
@@ -150,7 +151,8 @@ export function JobDetail({ id }: { id: string }) {
       <PageHeader eyebrow={job.referenceCode ?? job.id} title={job.title} description={job.description} action={<StatusBadge status={job.status} />} />
       <div className="grid gap-5 lg:grid-cols-[1.45fr_.8fr]">
         <div className="space-y-5">
-          <Card className="border-0 bg-white"><CardHeader><CardTitle>Service progress</CardTitle></CardHeader><CardContent><Progress value={(index + 1) * (100 / steps.length)} className="mb-6" /><div className="space-y-1">{steps.map((step, i) => <div key={step} className="flex gap-3 py-2"><span className={`grid size-7 shrink-0 place-items-center rounded-full ${i <= index ? "bg-teal-600 text-white" : "bg-slate-100 text-slate-400"}`}>{i < index ? <Check className="size-4" /> : <span className="text-xs">{i + 1}</span>}</span><div><p className={`text-sm font-semibold ${i <= index ? "text-slate-900" : "text-slate-400"}`}>{step}</p>{i === index && <p className="mt-1 text-xs text-teal-700">{job.status === "open" ? "We’re matching you with a qualified available professional." : "Current status · updates appear here"}</p>}</div></div>)}</div></CardContent></Card>
+          {job.status === "completed" && job.companyId && <ServiceFeedback jobId={job.id} companyId={job.companyId} />}
+          <Card className="border-0 bg-card"><CardHeader><CardTitle>Service progress</CardTitle></CardHeader><CardContent><Progress value={(index + 1) * (100 / steps.length)} aria-label="Service progress" className="mb-6" /><ol className="space-y-1">{steps.map((step, i) => <li key={step} aria-current={i === index ? "step" : undefined} className="flex gap-3 py-2"><span className={`grid size-7 shrink-0 place-items-center rounded-full ${i <= index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{i < index ? <Check className="size-4" aria-hidden="true" /> : <span className="text-xs tabular-nums">{i + 1}</span>}</span><div><p className={`text-sm font-semibold ${i <= index ? "text-foreground" : "text-muted-foreground"}`}>{step}</p>{i === index && <p className="mt-1 text-xs text-primary">{job.status === "open" ? "We’re matching you with a qualified available professional." : job.status === "cancelled" ? "This request was cancelled." : "This is the current step."}</p>}</div></li>)}</ol></CardContent></Card>
           {job.status === "en_route" && job.companyId && (
             <LivePartnerMap companyId={job.companyId} destinationLat={job.latitude} destinationLng={job.longitude} />
           )}
@@ -161,14 +163,14 @@ export function JobDetail({ id }: { id: string }) {
             emptyLabel="No photos yet. Add photos of the issue, or check back after your visit for before/after shots."
           />
         </div>
-        <div className="space-y-5">{company && <Card className="border-0 bg-slate-950 text-white"><CardContent><div className="flex items-center gap-3"><span className="grid size-12 place-items-center rounded-2xl bg-teal-500 font-bold">{company.initials}</span><div><p className="font-bold">{company.name}</p><p className="flex items-center gap-1 text-xs text-slate-300"><Star className="size-3 fill-amber-400 text-amber-400" />{company.rating} · {company.reviewCount} reviews</p></div></div><Button variant="secondary" className="mt-5 h-11 w-full" render={<a href={`tel:${company.phone}`} />}><Phone /> Call company</Button></CardContent></Card>}<Card className="border-0 bg-white"><CardContent className="space-y-4"><div><p className="text-xs text-slate-400">Appointment</p><p className="mt-1 font-semibold">{job.preferredDate}</p></div><div><p className="text-xs text-slate-400">Service address</p><p className="mt-1 text-sm font-semibold">{job.address}</p></div><div><p className="text-xs text-slate-400">Estimated total</p><p className="mt-1 text-xl font-bold">${job.budget}</p></div>{job.status === "open" && <Button variant="outline" className="w-full" onClick={() => void updateJobStatus(job.id, "cancelled").then(() => toast.success("Request cancelled")).catch((error) => toast.error("Couldn’t cancel request", { description: error.message }))}>Cancel request</Button>}</CardContent></Card></div>
+        <div className="space-y-5">{company && <Card className="border-0 bg-slate-950 text-white"><CardContent><div className="flex items-center gap-3"><span className="grid size-12 place-items-center rounded-2xl bg-primary font-bold">{company.initials}</span><div><p className="font-bold">{company.name}</p><p className="flex items-center gap-1 text-xs text-slate-300"><Star className="size-3 fill-amber-400 text-amber-400" />{company.rating} · {company.reviewCount} reviews</p></div></div><Button variant="secondary" className="mt-5 h-11 w-full" render={<a href={`tel:${company.phone}`} />}><Phone /> Call company</Button></CardContent></Card>}<Card className="border-0 bg-card"><CardContent className="space-y-4"><div><p className="text-xs text-slate-400">Appointment</p><p className="mt-1 font-semibold">{job.preferredDate}</p></div><div><p className="text-xs text-slate-400">Service address</p><p className="mt-1 text-sm font-semibold break-words">{job.address}</p></div><div><p className="text-xs text-slate-400">Estimated total</p><p className="mt-1 text-xl font-bold tabular-nums">${job.budget}</p></div>{job.status === "open" && (confirmCancel ? <div className="grid grid-cols-2 gap-2"><Button variant="outline" className="h-11" onClick={() => setConfirmCancel(false)}>Keep request</Button><Button variant="destructive" className="h-11" onClick={() => void updateJobStatus(job.id, "cancelled").then(() => toast.success("Request cancelled")).catch((error) => toast.error("Couldn’t cancel request", { description: error.message }))}>Confirm cancel</Button></div> : <Button variant="outline" className="h-11 w-full" onClick={() => setConfirmCancel(true)}>Cancel request</Button>)}</CardContent></Card></div>
       </div>
     </>
   );
 }
 
 function Metric({ label, value, detail, icon: Icon }: { label: string; value: string; detail: string; icon: typeof Wrench }) {
-  return <Card className="border-0 bg-white"><CardContent><div className="flex items-start justify-between"><div><p className="text-xs font-medium text-slate-500">{label}</p><p className="mt-2 text-2xl font-bold tracking-tight">{value}</p><p className="mt-1 text-xs text-slate-400">{detail}</p></div><span className="grid size-10 place-items-center rounded-xl bg-teal-50 text-teal-700"><Icon className="size-5" /></span></div></CardContent></Card>;
+  return <Card className="border-0 bg-card"><CardContent><div className="flex items-start justify-between"><div><p className="text-xs font-medium text-slate-500">{label}</p><p className="mt-2 text-2xl font-bold tracking-tight">{value}</p><p className="mt-1 text-xs text-slate-400">{detail}</p></div><span className="grid size-10 place-items-center rounded-xl bg-secondary text-secondary-foreground"><Icon className="size-5" /></span></div></CardContent></Card>;
 }
 
 export function PartnerDashboard() {
@@ -176,7 +178,7 @@ export function PartnerDashboard() {
     jobs, companies, currentPartnerCompanyId, companyRole, partnerOnline, setPartnerOnline, acceptJob, offers, respondToOffer,
   } = useApp();
   const partnerCompany = companies.find((company) => company.id === currentPartnerCompanyId);
-  if (!partnerCompany) return <Card className="border-0 bg-white"><CardContent className="py-12 text-center"><h1 className="text-xl font-bold">Partner profile unavailable</h1><p className="mt-2 text-sm text-slate-500">Your company invitation may still be processing. Refresh in a moment or contact HomeFix operations.</p></CardContent></Card>;
+  if (!partnerCompany) return <Card className="border-0 bg-card"><CardContent className="py-12 text-center"><h1 className="text-xl font-bold">Partner profile unavailable</h1><p className="mt-2 text-sm text-slate-500">Your company invitation may still be processing. Refresh in a moment or contact HomeFix operations.</p></CardContent></Card>;
   const priorityOffers = offers.filter((offer) => offer.companyId === partnerCompany.id);
   const offerJobIds = new Set(priorityOffers.map((offer) => offer.jobId));
   const open = jobs.filter((job) => job.status === "open" && job.dispatchPhase === "broadcast" && partnerCompany.services.includes(job.categoryId));
@@ -195,7 +197,7 @@ export function PartnerDashboard() {
   const completedJobs = companyJobs.filter((job) => job.status === "completed");
   const activeJobs = companyJobs.filter((job) => !["completed", "cancelled", "open"].includes(job.status));
   const completedEarnings = completedJobs.reduce((sum, job) => sum + job.budget, 0);
-  return <><PageHeader eyebrow="Partner workspace" title="Your dispatch queue" description="Priority work is reserved for a short decision window; shared jobs appear when a wave expands." action={<div className="flex items-center gap-3"><PushOptIn /><div className="flex h-12 items-center gap-3 rounded-2xl border bg-white px-4"><span className={`size-2 rounded-full ${partnerOnline ? "bg-emerald-500" : "bg-slate-300"}`} /><span className="text-sm font-semibold">{partnerOnline ? "On duty" : "Off duty"}</span>{companyRole === "admin" && <Switch checked={partnerOnline} onCheckedChange={(value) => void setPartnerOnline(value).catch((error) => toast.error("Couldn’t update availability", { description: error.message }))} aria-label="Set availability" />}</div></div>} /><div className="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4"><Metric label="Priority offers" value={`${priorityOffers.length}`} detail="Reserved for you" icon={BriefcaseBusiness} /><Metric label="Open nearby" value={`${open.length}`} detail="Shared opportunity" icon={BriefcaseBusiness} /><Metric label="Completed earnings" value={`$${completedEarnings}`} detail={`${completedJobs.length} completed jobs`} icon={CircleDollarSign} /><Metric label="Rating" value={`${partnerCompany.rating}`} detail={`${partnerCompany.reviewCount} reviews · ${activeJobs.length} active`} icon={Star} /></div><div className="mb-3 flex items-end justify-between"><div><h2 className="text-xl font-bold">Priority offers</h2><p className="text-sm text-slate-500">These jobs match your verified services, availability, and capacity.</p></div><Badge variant="secondary">{priorityOffers.length} reserved</Badge></div><div className="grid gap-4 xl:grid-cols-2">{priorityOffers.map((offer) => { const job = jobs.find((item) => item.id === offer.jobId); if (!job) return null; const seconds = Math.max(0, Math.ceil((new Date(offer.exclusiveUntil).getTime() - Date.now()) / 1_000)); return <Card key={offer.id} className="border border-teal-200 bg-white"><CardContent><div className="flex items-start justify-between gap-3"><div><Badge className="border-0 bg-teal-50 text-teal-700">Reserved · {seconds}s</Badge><h3 className="mt-3 text-lg font-bold">{job.title}</h3><p className="mt-1 text-sm text-slate-500">{job.description}</p></div><p className="shrink-0 text-xl font-bold">${job.budget}</p></div><div className="mt-4 space-y-2 text-xs text-slate-500"><p className="flex items-center gap-2"><MapPin className="size-4" />{job.address}{offer.distanceKm != null ? ` · ${offer.distanceKm.toFixed(1)} km` : ""}</p><p className="flex items-center gap-2"><Clock3 className="size-4" />{job.preferredDate}</p><p className="text-teal-700">{offer.reason ?? "Qualified match"}</p></div><div className="mt-5 grid grid-cols-2 gap-3"><DeclineOfferButton onDecline={(reason) => respondToOffer(offer.id, "decline", reason)} /><Button disabled={!partnerOnline} onClick={() => void accept(job.id, offer.id)} className="h-11 rounded-xl">Accept job <ArrowRight /></Button></div></CardContent></Card>; })}</div>{!priorityOffers.length && <p className="mb-7 rounded-2xl border border-dashed bg-white p-4 text-sm text-slate-500">{partnerOnline ? "No reserved offers right now. New matches appear when a client request fits your services." : "Go on duty to receive priority offers and claim broadcast jobs."}</p>}<div className="mb-3 flex items-end justify-between"><div><h2 className="text-xl font-bold">Open nearby opportunities</h2><p className="text-sm text-slate-500">These jobs are now available to eligible partners in the area.</p></div><Badge variant="secondary">{open.length} open</Badge></div><div className="grid gap-4 xl:grid-cols-2">{open.filter((job) => !offerJobIds.has(job.id)).map((job) => <Card key={job.id} className="border-0 bg-white"><CardContent><div className="flex items-start justify-between gap-3"><div><div className="flex gap-2"><Badge className={job.urgency === "urgent" ? "border-0 bg-orange-50 text-orange-700" : ""}>{job.urgency}</Badge><span className="text-xs text-slate-400">{job.createdAt}</span></div><h3 className="mt-3 text-lg font-bold">{job.title}</h3><p className="mt-1 text-sm text-slate-500">{job.description}</p></div><p className="shrink-0 text-xl font-bold">${job.budget}</p></div><div className="mt-4 space-y-2 text-xs text-slate-500"><p className="flex items-center gap-2"><MapPin className="size-4" />{job.address}</p><p className="flex items-center gap-2"><Clock3 className="size-4" />{job.preferredDate}</p></div><Button disabled={!partnerOnline} onClick={() => void accept(job.id)} className="mt-5 h-11 w-full rounded-xl">Claim job <ArrowRight /></Button></CardContent></Card>)}</div>{!open.length && <Card><CardContent className="py-12 text-center"><BadgeCheck className="mx-auto size-10 text-teal-600" /><h3 className="mt-3 font-bold">No broadcast work nearby</h3><p className="text-sm text-slate-500">{partnerOnline ? "Open jobs in your service categories will appear here after dispatch moves to broadcast." : "Turn on duty to claim jobs. Matching open requests in your categories should still appear below when broadcast."}</p></CardContent></Card>}</>;
+  return <><PageHeader eyebrow="Partner workspace" title="Your dispatch queue" description="Priority work is reserved for a short decision window; shared jobs appear when a wave expands." action={<div className="flex items-center gap-3"><PushOptIn /><div className="flex h-12 items-center gap-3 rounded-2xl border bg-white px-4"><span className={`size-2 rounded-full ${partnerOnline ? "bg-emerald-500" : "bg-slate-300"}`} /><span className="text-sm font-semibold">{partnerOnline ? "On duty" : "Off duty"}</span>{companyRole === "admin" && <Switch checked={partnerOnline} onCheckedChange={(value) => void setPartnerOnline(value).catch((error) => toast.error("Couldn’t update availability", { description: error.message }))} aria-label="Set availability" />}</div></div>} /><div className="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4"><Metric label="Priority offers" value={`${priorityOffers.length}`} detail="Reserved for you" icon={BriefcaseBusiness} /><Metric label="Open nearby" value={`${open.length}`} detail="Shared opportunity" icon={BriefcaseBusiness} /><Metric label="Completed earnings" value={`$${completedEarnings}`} detail={`${completedJobs.length} completed jobs`} icon={CircleDollarSign} /><Metric label="Rating" value={`${partnerCompany.rating}`} detail={`${partnerCompany.reviewCount} reviews · ${activeJobs.length} active`} icon={Star} /></div><div className="mb-3 flex items-end justify-between"><div><h2 className="text-xl font-bold">Priority offers</h2><p className="text-sm text-slate-500">These jobs match your verified services, availability, and capacity.</p></div><Badge variant="secondary">{priorityOffers.length} reserved</Badge></div><div className="grid gap-4 xl:grid-cols-2">{priorityOffers.map((offer) => { const job = jobs.find((item) => item.id === offer.jobId); if (!job) return null; const seconds = Math.max(0, Math.ceil((new Date(offer.exclusiveUntil).getTime() - Date.now()) / 1_000)); return <Card key={offer.id} className="border border-primary/25 bg-white"><CardContent><div className="flex items-start justify-between gap-3"><div><Badge className="border-0 bg-secondary text-secondary-foreground">Reserved · {seconds}s</Badge><h3 className="mt-3 text-lg font-bold">{job.title}</h3><p className="mt-1 text-sm text-slate-500">{job.description}</p></div><p className="shrink-0 text-xl font-bold">${job.budget}</p></div><div className="mt-4 space-y-2 text-xs text-slate-500"><p className="flex items-center gap-2"><MapPin className="size-4" />{job.address}{offer.distanceKm != null ? ` · ${offer.distanceKm.toFixed(1)} km` : ""}</p><p className="flex items-center gap-2"><Clock3 className="size-4" />{job.preferredDate}</p><p className="text-primary">{offer.reason ?? "Qualified match"}</p></div><div className="mt-5 grid grid-cols-2 gap-3"><DeclineOfferButton onDecline={(reason) => respondToOffer(offer.id, "decline", reason)} /><Button disabled={!partnerOnline} onClick={() => void accept(job.id, offer.id)} className="h-11 rounded-xl">Accept job <ArrowRight /></Button></div></CardContent></Card>; })}</div>{!priorityOffers.length && <p className="mb-7 rounded-2xl border border-dashed bg-white p-4 text-sm text-slate-500">{partnerOnline ? "No reserved offers right now. New matches appear when a client request fits your services." : "Go on duty to receive priority offers and claim broadcast jobs."}</p>}<div className="mb-3 flex items-end justify-between"><div><h2 className="text-xl font-bold">Open nearby opportunities</h2><p className="text-sm text-slate-500">These jobs are now available to eligible partners in the area.</p></div><Badge variant="secondary">{open.length} open</Badge></div><div className="grid gap-4 xl:grid-cols-2">{open.filter((job) => !offerJobIds.has(job.id)).map((job) => <Card key={job.id} className="border-0 bg-card"><CardContent><div className="flex items-start justify-between gap-3"><div><div className="flex gap-2"><Badge className={job.urgency === "urgent" ? "border-0 bg-orange-50 text-orange-700" : ""}>{job.urgency}</Badge><span className="text-xs text-slate-400">{job.createdAt}</span></div><h3 className="mt-3 text-lg font-bold">{job.title}</h3><p className="mt-1 text-sm text-slate-500">{job.description}</p></div><p className="shrink-0 text-xl font-bold">${job.budget}</p></div><div className="mt-4 space-y-2 text-xs text-slate-500"><p className="flex items-center gap-2"><MapPin className="size-4" />{job.address}</p><p className="flex items-center gap-2"><Clock3 className="size-4" />{job.preferredDate}</p></div><Button disabled={!partnerOnline} onClick={() => void accept(job.id)} className="mt-5 h-11 w-full rounded-xl">Claim job <ArrowRight /></Button></CardContent></Card>)}</div>{!open.length && <Card><CardContent className="py-12 text-center"><BadgeCheck className="mx-auto size-10 text-primary" /><h3 className="mt-3 font-bold">No broadcast work nearby</h3><p className="text-sm text-slate-500">{partnerOnline ? "Open jobs in your service categories will appear here after dispatch moves to broadcast." : "Turn on duty to claim jobs. Matching open requests in your categories should still appear below when broadcast."}</p></CardContent></Card>}</>;
 }
 
 export function PartnerJobs() {
@@ -228,15 +230,17 @@ export function PartnerJobs() {
           <div className="flex h-11 items-center gap-1 rounded-xl border bg-white p-1">
             <button
               type="button"
+              aria-pressed={view === "list"}
               onClick={() => setView("list")}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${view === "list" ? "bg-teal-600 text-white" : "text-slate-500 hover:text-slate-900"}`}
+              className={`h-9 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring ${view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               List
             </button>
             <button
               type="button"
+              aria-pressed={view === "calendar"}
               onClick={() => setView("calendar")}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${view === "calendar" ? "bg-teal-600 text-white" : "text-slate-500 hover:text-slate-900"}`}
+              className={`h-9 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring ${view === "calendar" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               Calendar
             </button>
@@ -270,7 +274,7 @@ export function PartnerJobs() {
           })}
         </div>
       )}
-      {!assigned.length && <Card className="border-0 bg-white"><CardContent className="py-12 text-center text-sm text-slate-500">No assigned jobs yet. Accept work from your dispatch queue.</CardContent></Card>}
+      {!assigned.length && <Card className="border-0 bg-card"><CardContent className="py-12 text-center text-sm text-slate-500">No assigned jobs yet. Accept work from your dispatch queue.</CardContent></Card>}
     </>
   );
 }
@@ -280,7 +284,7 @@ export function PartnerCompany() {
   const company = companies.find((item) => item.id === currentPartnerCompanyId);
   if (!company) {
     return (
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardContent className="py-12 text-center">
           <h1 className="text-xl font-bold">Partner profile unavailable</h1>
           <p className="mt-2 text-sm text-slate-500">Your company invitation may still be processing.</p>
@@ -299,14 +303,14 @@ export function PartnerCompany() {
         description="Your public company profile shown to homeowners."
       />
       <div className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
-        <Card className="border-0 bg-white">
+        <Card className="border-0 bg-card">
           <CardContent>
             <div className="flex items-center gap-4">
-              <span className="grid size-16 place-items-center rounded-2xl bg-teal-600 text-xl font-bold text-white">{company.initials}</span>
+              <span className="grid size-16 place-items-center rounded-2xl bg-primary text-xl font-bold text-white">{company.initials}</span>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-bold">{company.name}</h2>
-                  {company.verified && <BadgeCheck className="size-5 text-teal-600" />}
+                  {company.verified && <BadgeCheck className="size-5 text-primary" />}
                 </div>
                 <p className="mt-1 text-sm text-slate-500">{company.description?.trim() || "Add a company description in operations settings."}</p>
               </div>
@@ -329,11 +333,11 @@ export function PartnerCompany() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-white">
+        <Card className="border-0 bg-card">
           <CardHeader><CardTitle>Verification</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
             <p className="flex items-center gap-2">
-              {company.verified ? <Check className="size-4 text-teal-600" /> : <Clock3 className="size-4 text-orange-600" />}
+              {company.verified ? <Check className="size-4 text-primary" /> : <Clock3 className="size-4 text-orange-600" />}
               {verificationLabel}
             </p>
             {company.phone && <p className="text-slate-600"><span className="text-slate-400">Phone</span><br />{company.phone}</p>}
@@ -343,16 +347,16 @@ export function PartnerCompany() {
         </Card>
       </div>
       <div className="mt-5 grid gap-5 md:grid-cols-2">
-        <Card className="border-0 bg-white">
+        <Card className="border-0 bg-card">
           <CardContent>
-            <MapPin className="size-5 text-teal-700" />
+            <MapPin className="size-5 text-primary" />
             <p className="mt-3 font-bold">Coverage area</p>
             <p className="mt-1 text-sm leading-6 text-slate-500">{company.serviceArea?.trim() || "Not set yet"}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-white">
+        <Card className="border-0 bg-card">
           <CardContent>
-            <Clock3 className="size-5 text-teal-700" />
+            <Clock3 className="size-5 text-primary" />
             <p className="mt-3 font-bold">Operating hours</p>
             <p className="mt-1 text-sm leading-6 text-slate-500">{formatOperatingHours(company.operatingHours) ?? "Not set yet"}</p>
           </CardContent>
@@ -401,12 +405,12 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
           <Metric label="Users" value={`${users.length}`} detail={`${clientCount} clients`} icon={Users} />
         </div>
         <div className="mt-6">
-          <Card className="border-0 bg-white">
+          <Card className="border-0 bg-card">
             <CardHeader><CardTitle>Recent requests</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               {jobs.slice(0, 5).map((job) => (
                 <div key={job.id} className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
-                  <span className="grid size-9 place-items-center rounded-xl bg-white text-teal-700"><Wrench className="size-4" /></span>
+                  <span className="grid size-9 place-items-center rounded-xl bg-white text-primary"><Wrench className="size-4" /></span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{job.title}</p>
                     <p className="text-xs text-slate-400">{job.referenceCode ?? job.id.slice(0, 8)} · {job.createdAt}</p>
@@ -432,13 +436,13 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
   return (
     <>
       <PageHeader eyebrow="Administration" title={title} description={description} action={<Input value={adminQuery} onChange={(event) => setAdminQuery(event.target.value)} className="h-11 w-full bg-white sm:w-64" placeholder={`Search ${kind}…`} aria-label={`Search ${kind}`} />} />
-      {!dataReady && kind !== "jobs" && <Card className="border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">Loading live data…</CardContent></Card>}
+      {!dataReady && kind !== "jobs" && <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading live data…</CardContent></Card>}
       {dataReady && kind === "jobs" && <div className="grid gap-3 lg:grid-cols-2">{filteredJobs.map((job) => <JobCard key={job.id} job={job} />)}</div>}
       {dataReady && kind === "companies" && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filteredCompanies.map((company) => (
-            <Link key={company.id} href={`/admin/companies/${company.id}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500">
-              <Card className="h-full border-0 bg-white transition-transform hover:-translate-y-0.5">
+            <Link key={company.id} href={`/admin/companies/${company.id}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              <Card className="h-full border-0 bg-card transition-transform hover:-translate-y-0.5">
                 <CardContent>
                   <div className="flex items-center gap-3">
                     <span className="grid size-11 place-items-center rounded-xl bg-slate-900 font-bold text-white">{company.initials}</span>
@@ -469,7 +473,7 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
           {filteredCategories.map((category) => {
             const Icon = icons[category.icon as keyof typeof icons] ?? Wrench;
             return (
-              <Card key={category.id} className="border-0 bg-white">
+              <Card key={category.id} className="border-0 bg-card">
                 <CardContent className="flex items-center gap-3">
                   <span className={`grid size-11 place-items-center rounded-xl ${category.color}`}><Icon className="size-5" /></span>
                   <div className="min-w-0 flex-1">
@@ -546,7 +550,7 @@ export function AdminScreen({ kind }: { kind: AdminKind }) {
         </>
       )}
       {dataReady && ((kind === "jobs" && !filteredJobs.length) || (kind === "companies" && !filteredCompanies.length) || (kind === "services" && !filteredCategories.length) || (kind === "users" && !filteredUsers.length)) && (
-        <Card className="mt-4 border-0 bg-white"><CardContent className="py-10 text-center text-sm text-slate-500">{emptyMessage}</CardContent></Card>
+        <Card className="mt-4 border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">{emptyMessage}</CardContent></Card>
       )}
     </>
   );

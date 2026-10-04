@@ -1,7 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Bell } from "lucide-react";
 import { useApp } from "@/components/app-provider";
+import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function NotificationMenu() {
-  const { notifications, markNotificationRead } = useApp();
+  const router = useRouter();
+  const { profile } = useAuth();
+  const { notifications, markNotificationRead, actingAs } = useApp();
   const unread = notifications.filter((notification) => !notification.read);
 
   return (
@@ -37,11 +41,17 @@ export function NotificationMenu() {
             <DropdownMenuItem
               key={notification.id}
               className="cursor-pointer items-start rounded-xl px-2 py-2.5"
-              onClick={() => void markNotificationRead(notification.id)}
+              onClick={() => {
+                void markNotificationRead(notification.id);
+                if (!notification.jobId) return;
+                const role = actingAs?.role ?? profile?.role;
+                if (role === "client") router.push(`/jobs/${notification.jobId}`);
+                if (role === "partner") router.push(`/partner/jobs/${notification.jobId}`);
+              }}
             >
               <span className="min-w-0">
                 <span className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                  {!notification.read && <span className="size-1.5 rounded-full bg-teal-600" />}
+                  {!notification.read && <span className="size-1.5 rounded-full bg-primary" />}
                   {notification.title}
                 </span>
                 <span className="mt-1 block whitespace-normal text-xs leading-5 text-slate-500">{notification.body}</span>

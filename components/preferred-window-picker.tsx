@@ -44,10 +44,10 @@ export function PreferredWindowPicker({
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/80 px-4 py-3">
         <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-          <CalendarDays className="size-4 text-teal-700" aria-hidden="true" />
+          <CalendarDays className="size-4 text-primary" aria-hidden="true" />
           Selected window
         </div>
-        <p className={cn("text-sm font-semibold", valid ? "text-teal-800" : "text-slate-400")}>
+        <p className={cn("text-sm font-semibold", valid ? "text-primary" : "text-slate-400")}>
           {display || "Pick a date and time"}
         </p>
       </div>
@@ -57,10 +57,10 @@ export function PreferredWindowPicker({
           <button
             type="button"
             onClick={() => shiftMonth(-1)}
-            className="grid size-9 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100"
+            className="grid size-11 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
             aria-label="Previous month"
           >
-            <ChevronLeft className="size-5" />
+            <ChevronLeft className="size-5" aria-hidden="true" />
           </button>
           <p className="text-sm font-bold text-slate-900">
             {viewMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
@@ -68,10 +68,10 @@ export function PreferredWindowPicker({
           <button
             type="button"
             onClick={() => shiftMonth(1)}
-            className="grid size-9 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100"
+            className="grid size-11 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
             aria-label="Next month"
           >
-            <ChevronRight className="size-5" />
+            <ChevronRight className="size-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -93,12 +93,14 @@ export function PreferredWindowPicker({
                 key={date.toISOString()}
                 type="button"
                 disabled={disabled}
+                aria-pressed={selected}
+                aria-label={date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
                 onClick={() => selectDate(date)}
                 className={cn(
-                  "h-10 rounded-xl text-sm font-semibold transition-colors",
+                  "h-11 rounded-xl text-sm font-semibold tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring",
                   disabled && "cursor-not-allowed text-slate-300",
-                  !disabled && !selected && "text-slate-700 hover:bg-teal-50",
-                  selected && "bg-teal-600 text-white shadow-sm",
+                  !disabled && !selected && "text-foreground hover:bg-secondary",
+                  selected && "bg-primary text-primary-foreground",
                 )}
               >
                 {date.getDate()}
@@ -111,14 +113,14 @@ export function PreferredWindowPicker({
           <button
             type="button"
             onClick={() => selectDate(today)}
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:border-teal-200 hover:text-teal-700"
+            className="h-11 rounded-full border border-border px-4 text-sm font-semibold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
           >
             Today
           </button>
           <button
             type="button"
             onClick={() => selectDate(addDays(today, 1))}
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:border-teal-200 hover:text-teal-700"
+            className="h-11 rounded-full border border-border px-4 text-sm font-semibold text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
           >
             Tomorrow
           </button>
@@ -126,18 +128,19 @@ export function PreferredWindowPicker({
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Time window</p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <p id="time-window-label" className="mb-2 text-sm font-semibold text-foreground">Time window</p>
+        <div role="group" aria-labelledby="time-window-label" className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {TIME_SLOTS.map((slot) => (
             <button
               key={slot.id}
               type="button"
+              aria-pressed={value.slotId === slot.id}
               onClick={() => onChange({ ...value, slotId: slot.id })}
               className={cn(
-                "rounded-xl border-2 px-3 py-3 text-left transition-colors",
+                "min-h-11 rounded-xl border-2 px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring",
                 value.slotId === slot.id
-                  ? "border-teal-600 bg-teal-50"
-                  : "border-slate-100 hover:border-slate-200",
+                  ? "border-primary bg-secondary"
+                  : "border-border hover:bg-muted",
               )}
             >
               <span className="block text-sm font-bold text-slate-900">{slot.description}</span>
@@ -156,11 +159,16 @@ export function PreferredWindowPicker({
           </label>
           <Input
             id="custom-window"
+            name="custom-window"
+            autoComplete="off"
             value={value.customRange}
             onChange={(event) => onChange({ ...value, customRange: event.target.value })}
             placeholder="e.g. 2–4 PM or after 6 PM"
             className="h-12 rounded-xl"
           />
+          {!valid && value.customRange.trim().length > 0 && (
+            <p className="mt-2 text-xs text-slate-500">Use a range like 2–4 PM, or “after 6 PM”.</p>
+          )}
         </div>
       )}
     </div>

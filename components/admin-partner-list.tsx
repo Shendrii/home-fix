@@ -43,7 +43,7 @@ export function AdminPartnerList() {
               return (
                 <tr key={company.id} className="cursor-pointer hover:bg-slate-50/70">
                   <td className="px-4 py-3">
-                    <Link href={`/admin/partners/${company.id}`} className="block font-semibold text-slate-900 focus-visible:outline-none focus-visible:text-teal-700">
+                    <Link href={`/admin/partners/${company.id}`} className="block font-semibold text-slate-900 focus-visible:outline-none focus-visible:text-primary">
                       {company.name}
                     </Link>
                     <p className="mt-0.5 text-xs text-slate-500">{company.email || "No email on file"}</p>

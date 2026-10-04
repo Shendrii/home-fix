@@ -70,7 +70,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
 
   if (!job || job.companyId !== currentPartnerCompanyId) {
     return (
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardContent className="py-12 text-center">
           <h1 className="text-xl font-bold">Job not found</h1>
           <p className="mt-2 text-sm text-slate-500">This job may have been reassigned or is no longer on your schedule.</p>
@@ -130,7 +130,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
 
       <div className="grid gap-5 lg:grid-cols-[1.35fr_.85fr]">
         <div className="space-y-5">
-          <Card className="border-0 bg-white shadow-[0_8px_30px_rgba(30,41,59,.05)]">
+          <Card className="border-0 bg-card shadow-[0_8px_30px_rgba(30,41,59,.05)]">
             <CardHeader>
               <CardTitle>Field progress</CardTitle>
             </CardHeader>
@@ -144,7 +144,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
                     <li key={step.id} className="flex gap-3">
                       <span
                         className={`grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold ${
-                          done ? "bg-teal-600 text-white" : current ? "bg-teal-100 text-teal-800 ring-2 ring-teal-500" : "bg-slate-100 text-slate-400"
+                          done ? "bg-primary text-primary-foreground" : current ? "bg-secondary text-secondary-foreground ring-2 ring-ring" : "bg-slate-100 text-slate-400"
                         }`}
                       >
                         {done ? <Check className="size-4" strokeWidth={3} /> : i + 1}
@@ -153,7 +153,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
                         <p className={`text-sm font-semibold ${done || current ? "text-slate-900" : "text-slate-400"}`}>
                           {step.label}
                         </p>
-                        {current && <p className="mt-1 text-xs leading-5 text-teal-700">{step.hint}</p>}
+                        {current && <p className="mt-1 text-xs leading-5 text-primary">{step.hint}</p>}
                       </div>
                     </li>
                   );
@@ -162,16 +162,16 @@ export function PartnerJobDetail({ id }: { id: string }) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 bg-white">
+          <Card className="border-0 bg-card">
             <CardHeader>
               <CardTitle>Homeowner notes</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-sm leading-6 text-slate-600">
               <p>{job.description || "No additional notes from the homeowner."}</p>
               <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Service category</p>
+                <p className="text-sm font-semibold text-muted-foreground">Service category</p>
                 <p className="mt-1 flex items-center gap-2 font-semibold text-slate-900">
-                  <Sparkles className="size-4 text-teal-600" />
+                  <Sparkles className="size-4 text-primary" />
                   {category?.name ?? "Home service"}
                 </p>
               </div>
@@ -191,10 +191,10 @@ export function PartnerJobDetail({ id }: { id: string }) {
         <div className="space-y-5">
           <Card className="overflow-hidden border-0 bg-slate-950 text-white">
             <CardContent className="p-0">
-              <div className="bg-gradient-to-br from-teal-600 to-emerald-800 px-5 py-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-teal-100">Visit window</p>
+              <div className="bg-primary px-5 py-5">
+                <p className="text-sm font-semibold text-primary-foreground/80">Visit window</p>
                 <p className="mt-2 flex items-start gap-2 text-lg font-bold leading-snug">
-                  <CalendarDays className="mt-0.5 size-5 shrink-0 text-teal-100" />
+                  <CalendarDays className="mt-0.5 size-5 shrink-0 text-primary-foreground/80" />
                   {job.preferredDate}
                 </p>
               </div>
@@ -216,7 +216,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
             </CardContent>
           </Card>
 
-          <Card className="border-0 bg-white">
+          <Card className="border-0 bg-card">
             <CardContent className="space-y-4 pt-6">
               <div className="flex items-end justify-between">
                 <div>
@@ -245,7 +245,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
 
           <Card className="border border-dashed border-slate-200 bg-slate-50/80">
             <CardContent className="flex items-start gap-3 pt-6">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-teal-700" />
+              <MapPin className="mt-0.5 size-5 shrink-0 text-primary" />
               <div className="text-sm leading-6 text-slate-600">
                 <p className="font-semibold text-slate-900">On-site checklist</p>
                 <p className="mt-1">Confirm access, review scope with the client, then update status as you go so the homeowner stays informed.</p>
@@ -256,7 +256,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
       </div>
 
       {next && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200/80 bg-[#faf8f3]/95 p-4 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200/80 bg-background/95 p-4 backdrop-blur lg:hidden">
           <Button onClick={() => void advanceStatus()} className="h-12 w-full rounded-xl text-base">
             {ACTION_LABELS[job.status] ?? "Update status"} <ChevronRight />
           </Button>

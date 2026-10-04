@@ -59,10 +59,10 @@ export function InviteFriendsPanel({ referralCode }: { referralCode: string }) {
   }
 
   return (
-    <Card className="mx-auto mt-6 max-w-2xl border-0 bg-white shadow-[0_16px_50px_rgba(30,41,59,.07)]">
+    <Card className="mx-auto mt-6 max-w-2xl border-0 bg-card shadow-[0_16px_50px_rgba(30,41,59,.07)]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Gift className="size-4 text-teal-700" /> Invite friends
+          <Gift className="size-4 text-primary" /> Invite friends
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

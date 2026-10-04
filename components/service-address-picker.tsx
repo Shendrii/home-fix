@@ -155,11 +155,12 @@ export function ServiceAddressPicker({
   return (
     <div className="space-y-3">
       <label htmlFor="service-address" className="flex items-center gap-2 text-sm font-semibold">
-        <MapPin className="size-4 text-teal-700" aria-hidden="true" />
+        <MapPin className="size-4 text-primary" aria-hidden="true" />
         Service address
       </label>
       <input
         id="service-address"
+        name="street-address"
         ref={inputRef}
         defaultValue={value.address}
         onChange={handleManualInput}

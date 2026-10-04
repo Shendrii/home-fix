@@ -50,8 +50,8 @@ export function HeaderProfileMenu({
           "bg-gradient-to-br from-slate-800 to-slate-950 text-xs font-bold tracking-wide text-white",
           "shadow-[0_4px_14px_rgba(15,23,42,0.25)] ring-2 ring-white",
           "transition-all duration-200 hover:shadow-[0_6px_20px_rgba(15,23,42,0.28)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf8f3]",
-          "data-popup-open:ring-teal-400/60 data-popup-open:shadow-[0_0_0_3px_rgba(45,212,191,0.25)]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "data-popup-open:ring-primary/40 data-popup-open:shadow-[0_0_0_3px_rgba(45,212,191,0.25)]",
         )}
         aria-label="Open account menu"
       >
@@ -67,13 +67,13 @@ export function HeaderProfileMenu({
         )}
       >
         <DropdownMenuGroup className="p-0">
-          <div className="border-b border-slate-100 bg-gradient-to-br from-teal-50/90 via-white to-[#faf8f3] px-4 py-4">
+          <div className="border-b border-slate-100 bg-gradient-to-br from-secondary via-card to-background px-4 py-4">
             <div className="flex items-start gap-3">
               <span
                 className={cn(
                   "grid size-11 shrink-0 place-items-center rounded-full",
-                  "bg-gradient-to-br from-teal-600 to-emerald-700 text-sm font-bold text-white",
-                  "shadow-inner shadow-teal-900/20 ring-2 ring-white",
+                  "bg-primary text-sm font-bold text-primary-foreground",
+                  "shadow-inner shadow-primary/15 ring-2 ring-white",
                 )}
               >
                 {initials}
@@ -85,7 +85,7 @@ export function HeaderProfileMenu({
                 {email && (
                   <p className="mt-0.5 truncate text-xs text-slate-500">{email}</p>
                 )}
-                <span className="mt-2 inline-flex rounded-full bg-white/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-teal-800 ring-1 ring-teal-100">
+                <span className="mt-2 inline-flex rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
                   {roleLabel}
                 </span>
               </div>
@@ -98,7 +98,7 @@ export function HeaderProfileMenu({
             <DropdownMenuItem
               className={cn(
                 "cursor-pointer gap-3 rounded-xl px-2 py-2.5",
-                "text-slate-800 focus:bg-teal-50/80 focus:text-teal-950",
+                "text-slate-800 focus:bg-secondary focus:text-foreground",
               )}
               onClick={() => router.push("/account")}
             >

@@ -49,7 +49,7 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardContent>
           <div className="mb-3 flex items-center justify-between">
             <button
@@ -90,9 +90,9 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
                   onClick={() => setSelectedDay(startOfDay(date))}
                   className={cn(
                     "flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-sm font-semibold transition-colors",
-                    !selected && "text-slate-700 hover:bg-teal-50",
-                    selected && "bg-teal-600 text-white shadow-sm",
-                    !selected && isToday && "ring-2 ring-teal-200",
+                    !selected && "text-slate-700 hover:bg-secondary",
+                    selected && "bg-primary text-primary-foreground shadow-sm",
+                    !selected && isToday && "ring-2 ring-primary/25",
                   )}
                 >
                   {date.getDate()}
@@ -100,7 +100,7 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
                     <span
                       className={cn(
                         "size-1.5 rounded-full",
-                        selected ? "bg-white" : "bg-teal-600",
+                        selected ? "bg-white" : "bg-primary",
                       )}
                     />
                   )}
@@ -111,7 +111,7 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
         </CardContent>
       </Card>
 
-      <Card className="border-0 bg-white">
+      <Card className="border-0 bg-card">
         <CardContent>
           <p className="mb-4 text-sm font-bold text-slate-900">
             {selectedDay.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
@@ -126,7 +126,7 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
               <Link
                 key={job.id}
                 href={`/partner/jobs/${job.id}`}
-                className="block rounded-xl border border-slate-100 p-3 transition-colors hover:border-teal-200"
+                className="block rounded-xl border border-slate-100 p-3 transition-colors hover:border-primary/30"
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-semibold text-slate-900">{job.title}</p>

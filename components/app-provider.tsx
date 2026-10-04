@@ -20,6 +20,7 @@ import { formatRelativeTimestamp } from "@/lib/format-timestamp";
 import { formatOperatingHours } from "@/lib/company-display";
 import { formatStoredPreferredWindow } from "@/lib/preferred-window";
 import { readActingTargetFromDocument, type ActingTarget } from "@/lib/acting-as";
+import { resolveCompanyRole } from "@/lib/company-membership";
 
 type DatabaseCategory = {
   id: string;
@@ -603,11 +604,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     : undefined;
   const partnerCompanyId = actingCompany?.id ?? currentPartnerCompanyId;
   const partnerIsOnline = actingCompany ? Boolean(actingCompany.isAvailable) : partnerOnline;
-  const companyRole = useMemo(() => {
-    const subjectId = actingAs?.role === "partner" ? actingAs.userId : sessionUserId;
-    if (!subjectId || !partnerCompanyId) return null;
-    return companyMembers.find((member) => member.userId === subjectId && member.companyId === partnerCompanyId)?.role ?? null;
-  }, [actingAs, companyMembers, partnerCompanyId, sessionUserId]);
+  const companyRole = useMemo(
+    () => resolveCompanyRole(companyMembers, { sessionUserId, partnerCompanyId, acting: actingAs }),
+    [actingAs, companyMembers, partnerCompanyId, sessionUserId],
+  );
 
   const value = useMemo(
     () => ({

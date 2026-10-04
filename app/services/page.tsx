@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
-import { PublicSiteHeader } from "@/components/public-site-header";
+import { PublicSiteFooter, PublicSiteHeader } from "@/components/public-site-header";
 import { ServicesScreen } from "@/components/screens";
 import { resolveServicesPageVariant } from "@/lib/auth-display";
 import { describeActingTarget, readActingTarget } from "@/lib/acting-as-server";
@@ -27,11 +27,12 @@ export default async function ServicesPage() {
   }
 
   return (
-    <main className="min-h-dvh bg-[#faf8f3] text-slate-950">
+    <div className="min-h-dvh bg-background text-foreground">
       <PublicSiteHeader />
-      <div className="mx-auto max-w-7xl px-5 py-10">
+      <main id="main-content" className="mx-auto max-w-7xl px-5 py-10">
         <ServicesScreen />
-      </div>
-    </main>
+      </main>
+      <PublicSiteFooter />
+    </div>
   );
 }
