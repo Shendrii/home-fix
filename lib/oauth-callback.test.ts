@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  authErrorToSignInParam,
   buildAuthCallbackUrl,
   isRecentlyCreatedAuthUser,
+  oauthNoAccountSignInPath,
   oauthPkceCallbackUrl,
   parseOAuthIntent,
 } from "@/lib/oauth-callback";
@@ -36,6 +38,25 @@ describe("oauthPkceCallbackUrl", () => {
   });
 });
 
+describe("oauth sign-in failures", () => {
+  it("asks the person to retry when the OAuth code was already used", () => {
+    expect(authErrorToSignInParam("flow_state_already_used")).toBe("oauth_retry");
+    expect(authErrorToSignInParam("access_denied")).toBe("auth");
+    expect(authErrorToSignInParam(null)).toBe("auth");
+  });
+
+  it("sends someone without an account to sign-in and keeps only an in-app return path", () => {
+    const url = oauthNoAccountSignInPath("https://homefix.example", "/request?service=cleaning");
+    expect(url.toString()).toBe(
+      "https://homefix.example/auth/sign-in?error=no_account&next=%2Frequest%3Fservice%3Dcleaning",
+    );
+
+    const unsafe = oauthNoAccountSignInPath("https://homefix.example", "/\\evil.example");
+    expect(unsafe.searchParams.get("error")).toBe("no_account");
+    expect(unsafe.searchParams.get("next")).toBeNull();
+  });
+});
+
 describe("isRecentlyCreatedAuthUser", () => {
   it("detects users created within the window", () => {
     const now = Date.parse("2026-07-26T08:00:30.000Z");
@@ -56,6 +77,18 @@ describe("isRecentlyCreatedAuthUser", () => {
         now,
         30_000,
       ),
+    ).toBe(false);
+  });
+
+  it("treats a missing or unreadable created time as an existing account", () => {
+    expect(isRecentlyCreatedAuthUser({})).toBe(false);
+    expect(isRecentlyCreatedAuthUser({ created_at: "not-a-date" })).toBe(false);
+  });
+
+  it("treats an account created exactly at the window edge as existing", () => {
+    const now = Date.parse("2026-07-26T08:00:30.000Z");
+    expect(
+      isRecentlyCreatedAuthUser({ created_at: "2026-07-26T08:00:00.000Z" }, now, 30_000),
     ).toBe(false);
   });
 });

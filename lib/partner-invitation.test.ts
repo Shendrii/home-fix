@@ -51,6 +51,25 @@ describe("partnerInvitationStatus", () => {
     expect(status.hint).toContain("company is created");
   });
 
+  it("treats acceptance at 15 seconds as a completed signup", () => {
+    expect(partnerInvitationStatus({
+      ...base,
+      accepted_at: "2026-07-26T12:00:15.000Z",
+    }).label).toBe("Accepted signup");
+    expect(partnerInvitationStatus({
+      ...base,
+      accepted_at: "2026-07-26T12:00:14.999Z",
+    }).label).toBe("Company linked");
+  });
+
+  it("keeps a cancelled invite revoked even after it was accepted", () => {
+    expect(partnerInvitationStatus({
+      ...base,
+      accepted_at: "2026-07-26T12:00:01.000Z",
+      revoked_at: "2026-07-27T12:00:00.000Z",
+    }).label).toBe("Revoked");
+  });
+
   it("describes a team invite as joining the existing company", () => {
     const status = partnerInvitationStatus({
       ...base,

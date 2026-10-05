@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatProfileTimestamp,
   hasProfileValidationErrors,
   profileFormDefaults,
   profileNeedsPersonalDetails,
@@ -68,6 +69,19 @@ describe("profileNeedsPersonalDetails", () => {
         default_address: "Pending update",
       }),
     ).toBe(true);
+  });
+
+  it("asks again when the name is only whitespace", () => {
+    expect(profileNeedsPersonalDetails({
+      full_name: "   ",
+      phone: "(415) 555-0142",
+      default_address: "214 Clement St",
+    })).toBe(true);
+  });
+
+  it("shows a dash when there is no timestamp", () => {
+    expect(formatProfileTimestamp(null)).toBe("—");
+    expect(formatProfileTimestamp("")).toBe("—");
   });
 
   it("passes when profile fields are complete", () => {

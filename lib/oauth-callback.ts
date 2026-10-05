@@ -1,3 +1,5 @@
+import { safeReturnTo } from "@/lib/auth-return";
+
 export type OAuthIntent = "signin" | "signup";
 
 export const OAUTH_INTENT_COOKIE = "hf_oauth_intent";
@@ -61,6 +63,7 @@ export const OAUTH_NO_ACCOUNT_ERROR = "no_account";
 export function oauthNoAccountSignInPath(origin: string, returnTo?: string | null) {
   const url = new URL("/auth/sign-in", origin);
   url.searchParams.set("error", OAUTH_NO_ACCOUNT_ERROR);
-  if (returnTo) url.searchParams.set("next", returnTo);
+  const next = safeReturnTo(returnTo);
+  if (next) url.searchParams.set("next", next);
   return url;
 }

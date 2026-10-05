@@ -16,5 +16,7 @@ describe("getAppOrigin", () => {
   it("uses the browser origin when the site is not configured", () => {
     delete process.env.NEXT_PUBLIC_APP_URL;
     expect(getAppOrigin("http://127.0.0.1:3000")).toBe(window.location.origin);
+    process.env.NEXT_PUBLIC_APP_URL = "";
+    expect(getAppOrigin()).toBe(window.location.origin);
   });
 });

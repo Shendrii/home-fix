@@ -26,6 +26,20 @@ describe("safeReturnTo", () => {
     expect(safeReturnTo("//evil.example")).toBeNull();
     expect(safeReturnTo("/auth/sign-in")).toBeNull();
     expect(safeReturnTo(null)).toBeNull();
+    expect(safeReturnTo("")).toBeNull();
+  });
+
+  it("drops paths the browser treats as another site", () => {
+    expect(safeReturnTo("/\\evil.example")).toBeNull();
+    expect(safeReturnTo("/\tevil.example")).toBeNull();
+    expect(safeReturnTo("/\nevil.example")).toBeNull();
+    expect(safeReturnTo("/\revil.example")).toBeNull();
+  });
+
+  it("canonicalizes a dot path so a partner return cannot leave the partner app", () => {
+    expect(safeReturnTo("/partner/../admin")).toBe("/admin");
+    expect(postAuthDestination({ ...client, role: "partner" }, "/partner/../admin")).toBe("/partner");
+    expect(postAuthDestination({ ...client, role: "client" }, "/partner/../dashboard")).toBe("/dashboard");
   });
 });
 
@@ -59,6 +73,12 @@ describe("postAuthDestination", () => {
     expect(postAuthDestination({ ...client, role: "superadmin" }, "/admin/partners")).toBe("/admin/partners");
     expect(postAuthDestination({ ...client, role: "admin" }, "/partner")).toBe("/admin");
   });
+
+  it("sends a missing profile to account setup and unknown roles home", () => {
+    expect(postAuthDestination(null, "/dashboard")).toBe("/account");
+    expect(roleHome(null)).toBe("/dashboard");
+    expect(roleHome(undefined)).toBe("/dashboard");
+  });
 });
 
 describe("booking paths", () => {
@@ -72,5 +92,8 @@ describe("booking paths", () => {
   it("appends a safe return path to sign-in", () => {
     expect(authPathWithReturn("/auth/sign-in", "/request")).toBe("/auth/sign-in?next=%2Frequest");
     expect(authPathWithReturn("/auth/sign-up", "https://evil.example")).toBe("/auth/sign-up");
+    expect(authPathWithReturn("/auth/sign-in", "/\\evil.example")).toBe("/auth/sign-in");
+    expect(isClientBookingPath("/request")).toBe(true);
+    expect(isClientBookingPath("/requests")).toBe(false);
   });
 });

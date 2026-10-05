@@ -67,5 +67,21 @@ describe("parseTeamInvite", () => {
     expect(parseTeamInvite({ email: "sam@shop.com", role: "superadmin" })).toBeNull();
     expect(parseTeamInvite({ email: "not-an-email", role: "staff" })).toBeNull();
     expect(parseTeamInvite(null)).toBeNull();
+    expect(parseTeamInvite({ email: "sam@shop.com", role: " client " })).toBeNull();
+  });
+});
+
+describe("resolveCompanyRole without a company", () => {
+  it("returns nothing when the partner is not in a company", () => {
+    expect(resolveCompanyRole(members, {
+      sessionUserId: adminId,
+      partnerCompanyId: null,
+      acting: null,
+    })).toBeNull();
+    expect(resolveCompanyRole(members, {
+      sessionUserId: null,
+      partnerCompanyId: companyA,
+      acting: null,
+    })).toBeNull();
   });
 });

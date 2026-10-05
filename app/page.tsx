@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { HomeAppointmentSection } from "@/components/home-appointment-section";
 import { PublicSiteFooter, PublicSiteHeader } from "@/components/public-site-header";
-import { postAuthDestination } from "@/lib/auth-return";
+import { authPathWithReturn, postAuthDestination } from "@/lib/auth-return";
 import { authErrorToSignInParam } from "@/lib/oauth-callback";
 import { createClient } from "@/lib/supabase/server";
 
@@ -53,7 +53,7 @@ export default async function Home({
               <Link href="/services" className={primaryLink}>
                 Browse services <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
-              <Link href="/auth/sign-in" className={secondaryLink}>
+              <Link href={authPathWithReturn("/auth/sign-in", "/request")} className={secondaryLink}>
                 Sign in to book
               </Link>
             </div>

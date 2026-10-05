@@ -139,9 +139,11 @@ export function AuthForm({
     const supabase = createClient();
     if (!supabase) return toast.error("Supabase is not configured");
     setLoading("google");
-    const origin = getAppOrigin();
+    // The PKCE verifier cookie is stored on this page's origin. A configured
+    // NEXT_PUBLIC_APP_URL on another host or port (for example another local app)
+    // would send Google back somewhere this session cannot finish.
+    const redirectTo = oauthPkceCallbackUrl(window.location.origin);
     setOAuthResumeCookies(signUp ? "signup" : "signin", resumePath);
-    const redirectTo = oauthPkceCallbackUrl(origin);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },

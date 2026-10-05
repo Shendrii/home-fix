@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  authenticatedPortalPath,
   canAccessClientBooking,
   resolveServicesPageVariant,
   shouldShowPublicSignIn,
@@ -46,6 +47,18 @@ describe("resolveServicesPageVariant", () => {
     ).toBe("client-app");
   });
 
+  it("keeps partners and operations on the public services page", () => {
+    expect(resolveServicesPageVariant({ id: "p", full_name: "Alex", role: "partner" })).toBe("public");
+    expect(resolveServicesPageVariant({ id: "a", full_name: "Jordan", role: "admin" })).toBe("public");
+  });
+
+  it("sends each role to its signed-in home", () => {
+    expect(authenticatedPortalPath("partner")).toBe("/partner");
+    expect(authenticatedPortalPath("admin")).toBe("/admin");
+    expect(authenticatedPortalPath("superadmin")).toBe("/admin");
+    expect(authenticatedPortalPath(undefined)).toBe("/dashboard");
+  });
+
   it("sends a superadmin who is not acting as a homeowner back to admin", () => {
     expect(resolveServicesPageVariant({ id: "admin-1", full_name: "Sky", role: "superadmin" }, null)).toBe(
       "admin-only",
@@ -62,6 +75,11 @@ describe("canAccessClientBooking", () => {
 
   it("blocks booking without a session", () => {
     expect(canAccessClientBooking(null, null)).toBe(false);
+  });
+
+  it("blocks booking for operations and for a session with no profile", () => {
+    expect(canAccessClientBooking("user-3", { id: "user-3", full_name: "Jordan", role: "admin" })).toBe(false);
+    expect(canAccessClientBooking("user-4", null)).toBe(false);
   });
 
   it("blocks booking for a partner account", () => {

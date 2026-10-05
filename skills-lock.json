@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "browser-testing-with-devtools": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/browser-testing-with-devtools/SKILL.md",
+      "computedHash": "639950ea71851d9c4919608cba8b6276cd1ba30cd82acdc4949c701537eed661"
+    },
     "design-mobile-apps": {
       "source": "designed-by-ai/skills",
       "sourceType": "github",
@@ -43,11 +49,29 @@
       "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
       "computedHash": "ec56a54fba0e97bee52c7f244ba603bb284bf8d1b739c66a5cc84ec3df709d9d"
     },
+    "test-driven-development": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/test-driven-development/SKILL.md",
+      "computedHash": "efb654aa37612ab1e7470e547b06a322c5e1837b6879525e32aa432d1281692b"
+    },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
       "skillPath": "skills/web-design-guidelines/SKILL.md",
       "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    },
+    "webapp-testing": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "computedHash": "ad5b1fc52807e9afa4635e59218a026b164dc58b6c3f41b0f7c644dcd6ccf572"
+    },
+    "webapp-testing-copilot": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/webapp-testing/SKILL.md",
+      "computedHash": "e386cf78f5a002c8fa684066f933c670571f3cfb43b0d66bfc82050d74d6ea64"
     }
   }
 }

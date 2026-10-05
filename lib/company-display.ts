@@ -16,8 +16,12 @@ export function formatOperatingHours(value: unknown): string | null {
       .sort()
       .map((key) => {
         const slot = record[key];
+        if (typeof slot === "string") {
+          const trimmed = slot.trim();
+          if (!trimmed) return null;
+          return `${key}: ${trimmed}`;
+        }
         if (slot == null || slot === "") return null;
-        if (typeof slot === "string") return `${key}: ${slot}`;
         return `${key}: ${JSON.stringify(slot)}`;
       })
       .filter(Boolean) as string[];

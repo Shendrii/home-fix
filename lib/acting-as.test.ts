@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  ACTING_AS_COOKIE,
   actingDisplayName,
   actingPortalMatches,
   canActAsRole,
   parseActingTarget,
+  readActingTargetFromDocument,
   resolveServicesPageVariant,
   serializeActingTarget,
 } from "@/lib/acting-as";
@@ -47,6 +49,18 @@ describe("parseActingTarget", () => {
       userId: "11111111-1111-4111-8111-111111111111",
       companyId: null,
     }))).toBeNull();
+  });
+
+  it("rejects a mismatched role and a broken cookie", () => {
+    expect(parseActingTarget(JSON.stringify({
+      type: "client",
+      role: "partner",
+      userId: "11111111-1111-4111-8111-111111111111",
+      companyId: null,
+    }))).toBeNull();
+    document.cookie = `${ACTING_AS_COOKIE}=${encodeURIComponent(serializeActingTarget(companyTarget))}`;
+    expect(readActingTargetFromDocument()).toEqual(companyTarget);
+    document.cookie = `${ACTING_AS_COOKIE}=; max-age=0`;
   });
 
   it("rejects a target that is missing ids", () => {

@@ -21,5 +21,11 @@ describe("resolveServiceCategoryId", () => {
   it("maps legacy booking slugs to the live category ID", () => {
     expect(resolveServiceCategoryId(categories, "cleaning")).toBe(categories[0].id);
     expect(resolveServiceCategoryId(categories, "heating-and-ac")).toBe(categories[1].id);
+    expect(resolveServiceCategoryId(categories, " Heating & AC ")).toBe(categories[1].id);
+  });
+
+  it("returns nothing for a blank or unknown service", () => {
+    expect(resolveServiceCategoryId(categories, "  ")).toBeNull();
+    expect(resolveServiceCategoryId(categories, "roofing")).toBeNull();
   });
 });

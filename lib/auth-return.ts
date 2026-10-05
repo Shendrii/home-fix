@@ -1,11 +1,26 @@
 import { profileNeedsPersonalDetails, type Profile } from "@/lib/profile";
 
+const RETURN_ORIGIN = "https://homefix.local";
+
 /** Relative in-app paths only — safe for post-auth redirects. */
 export function safeReturnTo(path: string | null | undefined): string | null {
   if (!path) return null;
   if (!path.startsWith("/") || path.startsWith("//")) return null;
-  if (path.startsWith("/auth")) return null;
-  return path;
+  // Browsers treat "\" and some control characters as "/", which can turn
+  // "/\evil.example" into a navigation to another site.
+  if (/[\\\u0000-\u001F\u007F]/.test(path)) return null;
+
+  let resolved: URL;
+  try {
+    resolved = new URL(path, RETURN_ORIGIN);
+  } catch {
+    return null;
+  }
+  if (resolved.origin !== RETURN_ORIGIN || resolved.username || resolved.password) return null;
+
+  const pathname = resolved.pathname;
+  if (!pathname.startsWith("/") || pathname.startsWith("//") || pathname.startsWith("/auth")) return null;
+  return `${pathname}${resolved.search}${resolved.hash}`;
 }
 
 export function roleHome(role: string | null | undefined) {

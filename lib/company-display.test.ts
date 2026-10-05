@@ -15,4 +15,10 @@ describe("formatOperatingHours", () => {
   it("lists day slots when there is no summary", () => {
     expect(formatOperatingHours({ mon: "8–5", tue: "8–5" })).toBe("mon: 8–5 · tue: 8–5");
   });
+
+  it("skips blank slots and ignores values that are not hours", () => {
+    expect(formatOperatingHours({ summary: "  ", mon: "8–5" })).toBe("mon: 8–5");
+    expect(formatOperatingHours({ mon: "", tue: "8–5" })).toBe("tue: 8–5");
+    expect(formatOperatingHours(4)).toBeNull();
+  });
 });
