@@ -126,10 +126,10 @@ export function AppShell({
         {!setupLock && !hideAccount && (
           <div className="shrink-0 border-t pt-4">
             <Link href="/account" className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring">
-              <span className="grid size-9 place-items-center rounded-full bg-slate-900 text-xs font-bold text-white">{initials}</span>
+              <span className="grid size-9 place-items-center rounded-full bg-foreground text-xs font-bold text-white">{initials}</span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold">{profile?.full_name ?? "HomeFix member"}</p>
-                <p className="text-xs text-slate-500">{roleLabel} · Account settings</p>
+                <p className="text-xs text-muted-foreground">{roleLabel} · Account settings</p>
               </div>
             </Link>
           </div>
@@ -142,13 +142,13 @@ export function AppShell({
           <span translate="no" className="font-bold">Home<span className="text-primary">Fix</span></span>
         </Link>
         <div className="hidden md:block">
-          <p className="text-xs font-medium text-slate-500">{roleLabel}</p>
+          <p className="text-xs font-medium text-muted-foreground">{roleLabel}</p>
           <p className="font-semibold">{setupLock ? "Finish setting up your account" : "Welcome back"}</p>
         </div>
         <div className="ml-auto flex min-w-0 items-center gap-1.5 sm:gap-3">
           {actingLabel && (
-            <p className="max-w-[10rem] truncate text-sm text-slate-500 sm:max-w-xs">
-              Viewing as: <span className="font-semibold text-slate-900">{actingLabel}</span>
+            <p className="max-w-[10rem] truncate text-sm text-muted-foreground sm:max-w-xs">
+              Viewing as: <span className="font-semibold text-foreground">{actingLabel}</span>
             </p>
           )}
           {actingLabel && <ExitViewAsButton />}

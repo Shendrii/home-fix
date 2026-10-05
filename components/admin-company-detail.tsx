@@ -18,7 +18,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
   const isSuperadmin = profile?.role === "superadmin";
 
   if (!dataReady) {
-    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading company…</CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-muted-foreground">Loading company…</CardContent></Card>;
   }
   if (!company) {
     return (
@@ -51,7 +51,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
         <Badge className={company.verified ? "bg-emerald-50 text-emerald-700" : "bg-orange-50 text-orange-700"}>
           {company.verified ? "Verified" : "Review needed"}
         </Badge>
-        <span className="text-sm text-slate-500">{company.isAvailable ? "On duty" : "Off duty"}</span>
+        <span className="text-sm text-muted-foreground">{company.isAvailable ? "On duty" : "Off duty"}</span>
         {company.services.map((service) => (
           <Badge key={service} variant="secondary">{categoryName(service)}</Badge>
         ))}
@@ -66,7 +66,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
           <Card key={member.userId} className="border-0 bg-card">
             <CardContent>
               <p className="font-bold">{person?.name}</p>
-              <p className="mt-1 truncate text-sm text-slate-500">{person?.email || "No email on file"}</p>
+              <p className="mt-1 truncate text-sm text-muted-foreground">{person?.email || "No email on file"}</p>
               <div className="mt-4 flex items-center justify-between gap-3 border-t pt-3">
                 <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary">{companyRoleLabel(member.role)}</Badge>
@@ -81,7 +81,7 @@ export function AdminCompanyDetail({ companyId }: { companyId: string }) {
         ))}
         {!members.length && (
           <Card className="border-0 bg-card md:col-span-2">
-            <CardContent className="py-10 text-center text-sm text-slate-500">No people are linked to this company yet.</CardContent>
+            <CardContent className="py-10 text-center text-sm text-muted-foreground">No people are linked to this company yet.</CardContent>
           </Card>
         )}
       </div>

@@ -55,24 +55,24 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
             <button
               type="button"
               onClick={() => shiftMonth(-1)}
-              className="grid size-9 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100"
+              className="grid size-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted"
               aria-label="Previous month"
             >
               <ChevronLeft className="size-5" />
             </button>
-            <p className="text-sm font-bold text-slate-900">
+            <p className="text-sm font-bold text-foreground">
               {viewMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
             </p>
             <button
               type="button"
               onClick={() => shiftMonth(1)}
-              className="grid size-9 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100"
+              className="grid size-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted"
               aria-label="Next month"
             >
               <ChevronRight className="size-5" />
             </button>
           </div>
-          <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400">
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground">
             {WEEKDAYS.map((day) => (
               <span key={day} className="py-1">{day}</span>
             ))}
@@ -90,7 +90,7 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
                   onClick={() => setSelectedDay(startOfDay(date))}
                   className={cn(
                     "flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-sm font-semibold transition-colors",
-                    !selected && "text-slate-700 hover:bg-secondary",
+                    !selected && "text-foreground hover:bg-secondary",
                     selected && "bg-primary text-primary-foreground shadow-sm",
                     !selected && isToday && "ring-2 ring-primary/25",
                   )}
@@ -100,7 +100,7 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
                     <span
                       className={cn(
                         "size-1.5 rounded-full",
-                        selected ? "bg-white" : "bg-primary",
+                        selected ? "bg-card" : "bg-primary",
                       )}
                     />
                   )}
@@ -113,11 +113,11 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
 
       <Card className="border-0 bg-card">
         <CardContent>
-          <p className="mb-4 text-sm font-bold text-slate-900">
+          <p className="mb-4 text-sm font-bold text-foreground">
             {selectedDay.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
           {selectedJobs.length === 0 && (
-            <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+            <p className="rounded-xl bg-muted p-4 text-sm text-muted-foreground">
               No scheduled jobs this day.
             </p>
           )}
@@ -126,16 +126,16 @@ export function PartnerJobsCalendar({ jobs }: { jobs: JobRequest[] }) {
               <Link
                 key={job.id}
                 href={`/partner/jobs/${job.id}`}
-                className="block rounded-xl border border-slate-100 p-3 transition-colors hover:border-primary/30"
+                className="block rounded-xl border border-border p-3 transition-colors hover:border-primary/30"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-semibold text-slate-900">{job.title}</p>
+                  <p className="font-semibold text-foreground">{job.title}</p>
                   <StatusBadge status={job.status} />
                 </div>
-                <p className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock3 className="size-3.5" /> {job.preferredDate}
                 </p>
-                <p className="mt-1 flex items-center gap-2 text-xs text-slate-500">
+                <p className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                   <MapPin className="size-3.5" /> {job.address}
                 </p>
               </Link>

@@ -46,10 +46,10 @@ export function HeaderProfileMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "group flex size-10 shrink-0 items-center justify-center rounded-full",
-          "bg-gradient-to-br from-slate-800 to-slate-950 text-xs font-bold tracking-wide text-white",
-          "shadow-[0_4px_14px_rgba(15,23,42,0.25)] ring-2 ring-white",
-          "transition-all duration-200 hover:shadow-[0_6px_20px_rgba(15,23,42,0.28)]",
+          "group flex size-11 shrink-0 items-center justify-center rounded-full",
+          "bg-primary text-xs font-bold text-primary-foreground",
+          "shadow-[0_4px_14px_oklch(0.24_0.045_245/0.18)] ring-2 ring-card",
+          "transition-[box-shadow,background-color] duration-200 hover:bg-primary/90",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "data-popup-open:ring-primary/40 data-popup-open:shadow-[0_0_0_3px_rgba(45,212,191,0.25)]",
         )}
@@ -62,12 +62,12 @@ export function HeaderProfileMenu({
         align="end"
         sideOffset={10}
         className={cn(
-          "w-[min(100vw-2rem,17.5rem)] overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-0",
+          "w-[min(100vw-2rem,17.5rem)] overflow-hidden rounded-2xl border border-border bg-card p-0",
           "shadow-[0_24px_60px_rgba(15,23,42,0.14)]",
         )}
       >
         <DropdownMenuGroup className="p-0">
-          <div className="border-b border-slate-100 bg-gradient-to-br from-secondary via-card to-background px-4 py-4">
+          <div className="border-b border-border bg-gradient-to-br from-secondary via-card to-background px-4 py-4">
             <div className="flex items-start gap-3">
               <span
                 className={cn(
@@ -79,11 +79,11 @@ export function HeaderProfileMenu({
                 {initials}
               </span>
               <div className="min-w-0 flex-1 pt-0.5">
-                <p className="truncate text-[15px] font-semibold leading-tight text-slate-900">
+                <p className="truncate text-[15px] font-semibold leading-tight text-foreground">
                   {displayName}
                 </p>
                 {email && (
-                  <p className="mt-0.5 truncate text-xs text-slate-500">{email}</p>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">{email}</p>
                 )}
                 <span className="mt-2 inline-flex rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
                   {roleLabel}
@@ -98,16 +98,16 @@ export function HeaderProfileMenu({
             <DropdownMenuItem
               className={cn(
                 "cursor-pointer gap-3 rounded-xl px-2 py-2.5",
-                "text-slate-800 focus:bg-secondary focus:text-foreground",
+                "text-foreground focus:bg-secondary focus:text-foreground",
               )}
               onClick={() => router.push("/account")}
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-600 ring-1 ring-slate-200/60">
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground ring-1 ring-border/60">
                 <User className="size-4" strokeWidth={2} />
               </span>
               <span className="min-w-0 flex-1 text-left">
                 <span className="block text-sm font-semibold leading-tight">My profile</span>
-                <span className="mt-0.5 block text-xs font-normal text-slate-500">
+                <span className="mt-0.5 block text-xs font-normal text-muted-foreground">
                   Account & preferences
                 </span>
               </span>
@@ -115,7 +115,7 @@ export function HeaderProfileMenu({
           )}
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator className="mx-2 my-0 bg-slate-100" />
+        <DropdownMenuSeparator className="mx-2 my-0 bg-muted" />
 
         <DropdownMenuGroup className="p-2 pt-1">
           <DropdownMenuItem

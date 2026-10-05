@@ -42,40 +42,40 @@ export function PreferredWindowPicker({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/80 px-4 py-3">
-        <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted px-4 py-3">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <CalendarDays className="size-4 text-primary" aria-hidden="true" />
           Selected window
         </div>
-        <p className={cn("text-sm font-semibold", valid ? "text-primary" : "text-slate-400")}>
+        <p className={cn("text-sm font-semibold", valid ? "text-primary" : "text-muted-foreground")}>
           {display || "Pick a date and time"}
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-100 p-4">
+      <div className="rounded-2xl border border-border p-4">
         <div className="mb-3 flex items-center justify-between">
           <button
             type="button"
             onClick={() => shiftMonth(-1)}
-            className="grid size-11 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+            className="grid size-11 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
             aria-label="Previous month"
           >
             <ChevronLeft className="size-5" aria-hidden="true" />
           </button>
-          <p className="text-sm font-bold text-slate-900">
+          <p className="text-sm font-bold text-foreground">
             {viewMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
           </p>
           <button
             type="button"
             onClick={() => shiftMonth(1)}
-            className="grid size-11 place-items-center rounded-lg text-slate-600 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+            className="grid size-11 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
             aria-label="Next month"
           >
             <ChevronRight className="size-5" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400">
+        <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-muted-foreground">
           {WEEKDAYS.map((day) => (
             <span key={day} className="py-1">
               {day}
@@ -98,7 +98,7 @@ export function PreferredWindowPicker({
                 onClick={() => selectDate(date)}
                 className={cn(
                   "h-11 rounded-xl text-sm font-semibold tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring",
-                  disabled && "cursor-not-allowed text-slate-300",
+                  disabled && "cursor-not-allowed text-muted-foreground",
                   !disabled && !selected && "text-foreground hover:bg-secondary",
                   selected && "bg-primary text-primary-foreground",
                 )}
@@ -143,8 +143,8 @@ export function PreferredWindowPicker({
                   : "border-border hover:bg-muted",
               )}
             >
-              <span className="block text-sm font-bold text-slate-900">{slot.description}</span>
-              <span className="mt-0.5 block text-xs text-slate-500">
+              <span className="block text-sm font-bold text-foreground">{slot.description}</span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">
                 {slot.id === "custom" ? "Enter your own" : slot.label}
               </span>
             </button>
@@ -154,7 +154,7 @@ export function PreferredWindowPicker({
 
       {value.slotId === "custom" && (
         <div>
-          <label htmlFor="custom-window" className="mb-2 block text-sm font-semibold text-slate-800">
+          <label htmlFor="custom-window" className="mb-2 block text-sm font-semibold text-foreground">
             Custom time range for {formatDateLabel(value.date)}
           </label>
           <Input
@@ -167,7 +167,7 @@ export function PreferredWindowPicker({
             className="h-12 rounded-xl"
           />
           {!valid && value.customRange.trim().length > 0 && (
-            <p className="mt-2 text-xs text-slate-500">Use a range like 2–4 PM, or “after 6 PM”.</p>
+            <p className="mt-2 text-xs text-muted-foreground">Use a range like 2–4 PM, or “after 6 PM”.</p>
           )}
         </div>
       )}

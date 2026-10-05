@@ -167,25 +167,25 @@ export function JobPhotosPanel({
             ))}
           </div>
         )}
-        {loading && <p className="text-sm text-slate-400">Loading photos…</p>}
+        {loading && <p className="text-sm text-muted-foreground">Loading photos…</p>}
         {!loading && !items.length && (
-          <div className="flex items-center gap-2 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+          <div className="flex items-center gap-2 rounded-xl bg-muted p-4 text-sm text-muted-foreground">
             <ImageOff className="size-4" /> {emptyLabel}
           </div>
         )}
         {items.length > 0 && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {items.map((item) => (
-              <div key={item.id} className="overflow-hidden rounded-xl border border-slate-100">
+              <div key={item.id} className="overflow-hidden rounded-xl border border-border">
                 {item.url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={item.url} alt={item.file_name} className="aspect-square w-full object-cover" />
                 ) : (
-                  <div className="grid aspect-square place-items-center bg-slate-100 text-xs text-slate-400">
+                  <div className="grid aspect-square place-items-center bg-muted text-xs text-muted-foreground">
                     Unavailable
                   </div>
                 )}
-                <p className="border-t border-slate-100 bg-slate-50 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                <p className="border-t border-border bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
                   {KIND_LABELS[item.kind]}
                 </p>
               </div>

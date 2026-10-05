@@ -68,9 +68,9 @@ export function AdminServiceAreaHeatmap() {
         </div>
       )}
 
-      {loading && <p className="text-sm text-slate-400">Loading…</p>}
+      {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
       {!loading && !cells.length && (
-        <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">No geocoded requests in the last {LOOKBACK_DAYS} days.</CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-muted-foreground">No geocoded requests in the last {LOOKBACK_DAYS} days.</CardContent></Card>
       )}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -79,14 +79,14 @@ export function AdminServiceAreaHeatmap() {
             key={`${cell.cell_lat}-${cell.cell_lng}`}
             className={cn("rounded-2xl p-4 transition-colors", intensityClass(cell.request_count, maxCount))}
           >
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide opacity-80">
+            <p className="flex items-center gap-2 text-sm font-semibold">
               <MapPin className="size-3.5" /> {cell.cell_lat.toFixed(2)}, {cell.cell_lng.toFixed(2)}
             </p>
             <p className="mt-2 text-2xl font-bold">{cell.request_count}</p>
             <p className="text-xs opacity-80">request{cell.request_count === 1 ? "" : "s"}</p>
             <Badge
               variant="secondary"
-              className={cn("mt-3", cell.partner_coverage_count === 0 && "bg-white/80 text-red-700")}
+              className={cn("mt-3", cell.partner_coverage_count === 0 && "bg-card/80 text-red-700")}
             >
               {cell.partner_coverage_count} partner{cell.partner_coverage_count === 1 ? "" : "s"} in reach
             </Badge>

@@ -73,7 +73,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
       <Card className="border-0 bg-card">
         <CardContent className="py-12 text-center">
           <h1 className="text-xl font-bold">Job not found</h1>
-          <p className="mt-2 text-sm text-slate-500">This job may have been reassigned or is no longer on your schedule.</p>
+          <p className="mt-2 text-sm text-muted-foreground">This job may have been reassigned or is no longer on your schedule.</p>
           <Button render={<Link href="/partner/jobs" />} className="mt-6 h-11 rounded-xl">
             <ArrowLeft /> Back to My jobs
           </Button>
@@ -108,7 +108,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
         <Button
           variant="ghost"
           render={<Link href="/partner/jobs" />}
-          className="h-10 rounded-xl text-slate-600 hover:text-slate-900"
+          className="h-10 rounded-xl text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" /> My jobs
         </Button>
@@ -144,13 +144,13 @@ export function PartnerJobDetail({ id }: { id: string }) {
                     <li key={step.id} className="flex gap-3">
                       <span
                         className={`grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold ${
-                          done ? "bg-primary text-primary-foreground" : current ? "bg-secondary text-secondary-foreground ring-2 ring-ring" : "bg-slate-100 text-slate-400"
+                          done ? "bg-primary text-primary-foreground" : current ? "bg-secondary text-secondary-foreground ring-2 ring-ring" : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {done ? <Check className="size-4" strokeWidth={3} /> : i + 1}
                       </span>
                       <div className="min-w-0 pt-0.5">
-                        <p className={`text-sm font-semibold ${done || current ? "text-slate-900" : "text-slate-400"}`}>
+                        <p className={`text-sm font-semibold ${done || current ? "text-foreground" : "text-muted-foreground"}`}>
                           {step.label}
                         </p>
                         {current && <p className="mt-1 text-xs leading-5 text-primary">{step.hint}</p>}
@@ -166,11 +166,11 @@ export function PartnerJobDetail({ id }: { id: string }) {
             <CardHeader>
               <CardTitle>Homeowner notes</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-sm leading-6 text-slate-600">
+            <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
               <p>{job.description || "No additional notes from the homeowner."}</p>
-              <div className="rounded-2xl bg-slate-50 p-4">
+              <div className="rounded-2xl bg-muted p-4">
                 <p className="text-sm font-semibold text-muted-foreground">Service category</p>
-                <p className="mt-1 flex items-center gap-2 font-semibold text-slate-900">
+                <p className="mt-1 flex items-center gap-2 font-semibold text-foreground">
                   <Sparkles className="size-4 text-primary" />
                   {category?.name ?? "Home service"}
                 </p>
@@ -189,7 +189,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
         </div>
 
         <div className="space-y-5">
-          <Card className="overflow-hidden border-0 bg-slate-950 text-white">
+          <Card className="overflow-hidden border-0 bg-foreground text-white">
             <CardContent className="p-0">
               <div className="bg-primary px-5 py-5">
                 <p className="text-sm font-semibold text-primary-foreground/80">Visit window</p>
@@ -200,12 +200,12 @@ export function PartnerJobDetail({ id }: { id: string }) {
               </div>
               <div className="space-y-4 px-5 py-5">
                 <div>
-                  <p className="text-xs text-slate-400">Service address</p>
+                  <p className="text-xs text-primary-foreground/70">Service address</p>
                   <p className="mt-1 text-sm font-medium leading-6">{job.address}</p>
                 </div>
                 <Button
                   variant="secondary"
-                  className="h-11 w-full rounded-xl bg-white text-slate-900 hover:bg-slate-100"
+                  className="h-11 w-full rounded-xl bg-card text-foreground hover:bg-muted"
                   render={
                     <a href={mapsUrl(job)} target="_blank" rel="noopener noreferrer">
                       <Navigation className="size-4" /> Open in Maps
@@ -220,14 +220,14 @@ export function PartnerJobDetail({ id }: { id: string }) {
             <CardContent className="space-y-4 pt-6">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-xs text-slate-400">Estimated payout</p>
-                  <p className="mt-1 text-3xl font-bold tracking-tight text-slate-900">${job.budget}</p>
+                  <p className="text-xs text-muted-foreground">Estimated payout</p>
+                  <p className="mt-1 text-3xl font-bold tracking-tight text-foreground">${job.budget}</p>
                 </div>
                 <Badge variant="secondary" className="capitalize">
                   {job.status.replace("_", " ")}
                 </Badge>
               </div>
-              <p className="text-xs leading-5 text-slate-500">
+              <p className="text-xs leading-5 text-muted-foreground">
                 Final amount may change after scope confirmation with the homeowner.
               </p>
               {next && (
@@ -243,11 +243,11 @@ export function PartnerJobDetail({ id }: { id: string }) {
             </CardContent>
           </Card>
 
-          <Card className="border border-dashed border-slate-200 bg-slate-50/80">
+          <Card className="border border-dashed border-border bg-muted">
             <CardContent className="flex items-start gap-3 pt-6">
               <MapPin className="mt-0.5 size-5 shrink-0 text-primary" />
-              <div className="text-sm leading-6 text-slate-600">
-                <p className="font-semibold text-slate-900">On-site checklist</p>
+              <div className="text-sm leading-6 text-muted-foreground">
+                <p className="font-semibold text-foreground">On-site checklist</p>
                 <p className="mt-1">Confirm access, review scope with the client, then update status as you go so the homeowner stays informed.</p>
               </div>
             </CardContent>
@@ -256,7 +256,7 @@ export function PartnerJobDetail({ id }: { id: string }) {
       </div>
 
       {next && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200/80 bg-background/95 p-4 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-4 backdrop-blur lg:hidden">
           <Button onClick={() => void advanceStatus()} className="h-12 w-full rounded-xl text-base">
             {ACTION_LABELS[job.status] ?? "Update status"} <ChevronRight />
           </Button>

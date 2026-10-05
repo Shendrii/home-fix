@@ -34,13 +34,13 @@ export function ProfileSetupProgress({
             key={step.id}
             className={cn(
               "flex flex-1 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium",
-              step.done ? "bg-white text-foreground ring-1 ring-border" : "bg-white/60 text-slate-600",
+              step.done ? "bg-card text-foreground ring-1 ring-border" : "bg-white/60 text-muted-foreground",
             )}
           >
             <span
               className={cn(
                 "grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-bold",
-                step.done ? "bg-primary text-primary-foreground" : "bg-slate-200 text-slate-600",
+                step.done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
               )}
               aria-hidden
             >

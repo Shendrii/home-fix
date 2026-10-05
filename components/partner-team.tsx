@@ -25,7 +25,7 @@ export function PartnerTeam() {
     .sort((a, b) => Number(b.role === "admin") - Number(a.role === "admin") || (a.person?.name ?? "").localeCompare(b.person?.name ?? ""));
 
   if (!dataReady) {
-    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading team…</CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-muted-foreground">Loading team…</CardContent></Card>;
   }
   if (!company) {
     return <Card className="border-0 bg-card"><CardContent className="py-12 text-center"><h1 className="text-xl font-bold">Partner profile unavailable</h1></CardContent></Card>;
@@ -44,7 +44,7 @@ export function PartnerTeam() {
       <Card className="border-0 bg-card">
         <CardContent className="px-0">
           <table className="w-full text-left text-sm">
-            <thead className="border-b text-xs uppercase tracking-wide text-slate-400">
+            <thead className="border-b text-xs font-semibold text-muted-foreground">
               <tr>
                 <th className="px-6 py-3 font-semibold">Person</th>
                 <th className="px-6 py-3 font-semibold">Company role</th>
@@ -55,14 +55,14 @@ export function PartnerTeam() {
                 <tr key={member.userId} className="border-b last:border-0">
                   <td className="px-6 py-4">
                     <p className="font-semibold">{member.person?.name ?? "HomeFix user"}</p>
-                    <p className="text-slate-500">{member.person?.email || "No email on file"}</p>
+                    <p className="text-muted-foreground">{member.person?.email || "No email on file"}</p>
                   </td>
                   <td className="px-6 py-4 font-medium">{roleLabel(member.role)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {!members.length && <p className="px-6 py-10 text-center text-sm text-slate-500">No people are on this team yet.</p>}
+          {!members.length && <p className="px-6 py-10 text-center text-sm text-muted-foreground">No people are on this team yet.</p>}
         </CardContent>
       </Card>
     </>
@@ -116,7 +116,7 @@ export function PartnerTeamInvite() {
   }
 
   if (!dataReady || companyRole !== "admin") {
-    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-slate-500">Loading…</CardContent></Card>;
+    return <Card className="border-0 bg-card"><CardContent className="py-10 text-center text-sm text-muted-foreground">Loading…</CardContent></Card>;
   }
 
   return (
@@ -127,7 +127,7 @@ export function PartnerTeamInvite() {
         description="They join this company only. An existing HomeFix login is attached immediately. A new email gets a signup invite."
         action={<Button variant="outline" render={<Link href="/partner/team" />}>Back to team</Button>}
       />
-      <form onSubmit={(event) => void submit(event)} className="max-w-xl space-y-4 rounded-3xl bg-white p-6 shadow-sm">
+      <form onSubmit={(event) => void submit(event)} className="max-w-xl space-y-4 rounded-3xl bg-card p-6 shadow-sm">
         <div>
           <label className="text-sm font-semibold" htmlFor="team-email">Email</label>
           <Input id="team-email" required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 h-11" />

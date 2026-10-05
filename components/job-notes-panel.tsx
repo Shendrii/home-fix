@@ -103,16 +103,16 @@ export function JobNotesPanel({ jobId }: { jobId: string }) {
           </Button>
         </div>
         <div className="space-y-3">
-          {loading && <p className="text-sm text-slate-400">Loading notes…</p>}
+          {loading && <p className="text-sm text-muted-foreground">Loading notes…</p>}
           {!loading && !notes.length && (
-            <p className="rounded-xl bg-slate-50 p-3 text-sm text-slate-500">
+            <p className="rounded-xl bg-muted p-3 text-sm text-muted-foreground">
               No field notes yet.
             </p>
           )}
           {notes.map((note) => (
-            <div key={note.id} className="rounded-xl border border-slate-100 p-3">
-              <p className="whitespace-pre-wrap text-sm leading-6 text-slate-700">{note.body}</p>
-              <p className="mt-2 text-xs text-slate-400">{formatRelativeTimestamp(note.created_at)}</p>
+            <div key={note.id} className="rounded-xl border border-border p-3">
+              <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">{note.body}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{formatRelativeTimestamp(note.created_at)}</p>
             </div>
           ))}
         </div>

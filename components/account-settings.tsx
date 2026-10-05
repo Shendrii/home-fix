@@ -164,7 +164,7 @@ export function AccountSettingsScreen() {
   if (loading) {
     return (
       <Card className="mx-auto max-w-2xl border-0 bg-card shadow-[0_16px_50px_rgba(30,41,59,.07)]">
-        <CardContent className="py-10 text-center text-sm text-slate-500">Loading account…</CardContent>
+        <CardContent className="py-10 text-center text-sm text-muted-foreground">Loading account…</CardContent>
       </Card>
     );
   }
@@ -172,7 +172,7 @@ export function AccountSettingsScreen() {
   if (!profile || !user) {
     return (
       <Card className="mx-auto max-w-2xl border-0 bg-card">
-        <CardContent className="py-10 text-center text-sm text-slate-500">Sign in to manage your account.</CardContent>
+        <CardContent className="py-10 text-center text-sm text-muted-foreground">Sign in to manage your account.</CardContent>
       </Card>
     );
   }
@@ -216,7 +216,7 @@ export function AccountSettingsScreen() {
       <Card className="mx-auto max-w-2xl border-0 bg-card shadow-[0_16px_50px_rgba(30,41,59,.07)]">
         <CardContent className="space-y-6 py-2 sm:py-4">
           <section className="space-y-3">
-            <h2 className="text-sm font-bold text-slate-900">Account information</h2>
+            <h2 className="text-sm font-bold text-foreground">Account information</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <ReadOnlyRow label="Email" value={(profile.email?.trim() || user.email) ?? "—"} />
               <ReadOnlyRow label="Role" value={roleLabel(profile.role)} />
@@ -226,12 +226,12 @@ export function AccountSettingsScreen() {
           </section>
 
           <form onSubmit={save} noValidate className="space-y-5 border-t pt-6">
-            <h2 className="text-sm font-bold text-slate-900">Profile details</h2>
+            <h2 className="text-sm font-bold text-foreground">Profile details</h2>
 
             <div>
               {editing ? (
                 <>
-                  <label htmlFor={nameId} className="mb-2 block text-sm font-semibold text-slate-800">
+                  <label htmlFor={nameId} className="mb-2 block text-sm font-semibold text-foreground">
                     Full name
                   </label>
                   <Input
@@ -253,7 +253,7 @@ export function AccountSettingsScreen() {
             <div>
               {editing ? (
                 <>
-                  <label htmlFor={phoneId} className="mb-2 block text-sm font-semibold text-slate-800">
+                  <label htmlFor={phoneId} className="mb-2 block text-sm font-semibold text-foreground">
                     Phone
                   </label>
                   <Input
@@ -278,7 +278,7 @@ export function AccountSettingsScreen() {
             <div>
               {editing ? (
                 <>
-                  <label htmlFor={addressId} className="mb-2 block text-sm font-semibold text-slate-800">
+                  <label htmlFor={addressId} className="mb-2 block text-sm font-semibold text-foreground">
                     Default service address
                   </label>
                   <Input

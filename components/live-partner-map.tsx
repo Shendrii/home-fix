@@ -122,12 +122,12 @@ export function LivePartnerMap({
       </CardHeader>
       <CardContent>
         {!mapsApiKey && (
-          <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+          <p className="rounded-xl bg-muted p-4 text-sm text-muted-foreground">
             Live map unavailable — Maps API key not configured.
           </p>
         )}
         {mapsApiKey && !location && (
-          <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+          <p className="rounded-xl bg-muted p-4 text-sm text-muted-foreground">
             Waiting for your professional to share their location…
           </p>
         )}
@@ -135,7 +135,7 @@ export function LivePartnerMap({
           <div ref={mapContainerRef} className="h-64 w-full overflow-hidden rounded-xl" />
         )}
         {location && (
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-muted-foreground">
             Updated {new Date(location.updated_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
           </p>
         )}

@@ -23,13 +23,13 @@ export function AdminPartnerList() {
     <section>
       <div className="mb-4 flex justify-end">
         <div className="relative sm:w-64">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 bg-white pl-9" placeholder="Search partners…" aria-label="Search partner companies" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-10 bg-card pl-9" placeholder="Search partners…" aria-label="Search partner companies" />
         </div>
       </div>
-      <div className="overflow-x-auto rounded-2xl border bg-white">
+      <div className="overflow-x-auto rounded-2xl border bg-card">
         <table className="w-full min-w-[44rem] text-left text-sm">
-          <thead className="border-b bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <thead className="border-b bg-muted text-sm font-semibold text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Partner</th>
@@ -41,28 +41,28 @@ export function AdminPartnerList() {
             {dataReady && visible.map((company) => {
               const owner = users.find((user) => user.id === company.ownerId);
               return (
-                <tr key={company.id} className="cursor-pointer hover:bg-slate-50/70">
+                <tr key={company.id} className="cursor-pointer hover:bg-muted">
                   <td className="px-4 py-3">
-                    <Link href={`/admin/partners/${company.id}`} className="block font-semibold text-slate-900 focus-visible:outline-none focus-visible:text-primary">
+                    <Link href={`/admin/partners/${company.id}`} className="block font-semibold text-foreground focus-visible:outline-none focus-visible:text-primary">
                       {company.name}
                     </Link>
-                    <p className="mt-0.5 text-xs text-slate-500">{company.email || "No email on file"}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{company.email || "No email on file"}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-slate-800">{owner?.name ?? "Partner pending"}</p>
-                    <p className="mt-0.5 text-xs text-slate-500">{owner?.email || "—"}</p>
+                    <p className="font-medium text-foreground">{owner?.name ?? "Partner pending"}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{owner?.email || "—"}</p>
                   </td>
                   <td className="px-4 py-3">
                     <Badge className={company.verified ? "bg-emerald-50 text-emerald-700" : "bg-orange-50 text-orange-700"}>
                       {company.verified ? "Verified" : "Review needed"}
                     </Badge>
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{company.isAvailable ? "On duty" : "Off duty"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{company.isAvailable ? "On duty" : "Off duty"}</td>
                 </tr>
               );
             })}
-            {!dataReady && <tr><td colSpan={4} className="px-4 py-10 text-center text-slate-500">Loading partners…</td></tr>}
-            {dataReady && !visible.length && <tr><td colSpan={4} className="px-4 py-10 text-center text-slate-500">No partner companies found.</td></tr>}
+            {!dataReady && <tr><td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">Loading partners…</td></tr>}
+            {dataReady && !visible.length && <tr><td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">No partner companies found.</td></tr>}
           </tbody>
         </table>
       </div>

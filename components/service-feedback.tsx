@@ -70,8 +70,8 @@ export function ServiceFeedback({ jobId, companyId }: { jobId: string; companyId
     return (
       <Card className="border-0 bg-card">
         <CardContent className="py-6">
-          <p className="font-semibold text-slate-900">Thanks for the note</p>
-          <p className="mt-1 text-sm text-slate-500">Your feedback is saved with this job.</p>
+          <p className="font-semibold text-foreground">Thanks for the note</p>
+          <p className="mt-1 text-sm text-muted-foreground">Your feedback is saved with this job.</p>
         </CardContent>
       </Card>
     );
@@ -82,11 +82,11 @@ export function ServiceFeedback({ jobId, companyId }: { jobId: string; companyId
       <CardContent>
         <form onSubmit={(event) => void submit(event)} className="space-y-5">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">How was the visit?</h2>
-            <p className="mt-1 text-sm text-slate-500">Four quick answers. We already know the job.</p>
+            <h2 className="text-lg font-bold text-foreground">How was the visit?</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Four quick answers. We already know the job.</p>
           </div>
           <fieldset>
-            <legend className="text-sm font-medium text-slate-700">Overall experience</legend>
+            <legend className="text-sm font-medium text-foreground">Overall experience</legend>
             <div className="mt-2 flex gap-1">
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
@@ -97,13 +97,13 @@ export function ServiceFeedback({ jobId, companyId }: { jobId: string; companyId
                   onClick={() => setRating(value)}
                   className="grid size-11 place-items-center rounded-xl hover:bg-amber-50"
                 >
-                  <Star className={cn("size-6", value <= rating ? "fill-amber-400 text-amber-400" : "text-slate-300")} />
+                  <Star className={cn("size-6", value <= rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground")} />
                 </button>
               ))}
             </div>
           </fieldset>
           <fieldset>
-            <legend className="text-sm font-medium text-slate-700">Would you recommend HomeFix?</legend>
+            <legend className="text-sm font-medium text-foreground">Would you recommend HomeFix?</legend>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {([
                 [true, "Yes"],
@@ -113,7 +113,7 @@ export function ServiceFeedback({ jobId, companyId }: { jobId: string; companyId
                   key={label}
                   className={cn(
                     "flex cursor-pointer items-center justify-center rounded-xl border px-3 py-2.5 text-sm font-semibold",
-                    recommend === value ? "border-primary bg-secondary text-foreground" : "border-slate-200 text-slate-700",
+                    recommend === value ? "border-primary bg-secondary text-foreground" : "border-border text-foreground",
                   )}
                 >
                   <input
@@ -129,11 +129,11 @@ export function ServiceFeedback({ jobId, companyId }: { jobId: string; companyId
             </div>
           </fieldset>
           <div>
-            <label className="text-sm font-medium text-slate-700" htmlFor="went-well">What did we do well?</label>
+            <label className="text-sm font-medium text-foreground" htmlFor="went-well">What did we do well?</label>
             <Textarea id="went-well" value={wentWell} onChange={(event) => setWentWell(event.target.value)} className="mt-2" placeholder="Optional" />
           </div>
           <div>
-            <label className="text-sm font-medium text-slate-700" htmlFor="improve">What should we improve?</label>
+            <label className="text-sm font-medium text-foreground" htmlFor="improve">What should we improve?</label>
             <Textarea id="improve" value={improve} onChange={(event) => setImprove(event.target.value)} className="mt-2" placeholder="Optional" />
           </div>
           <Button type="submit" className="h-11 w-full" disabled={saving || !rating || recommend === null}>

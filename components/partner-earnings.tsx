@@ -101,23 +101,23 @@ export function PartnerEarnings() {
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-slate-500">Jobs completed</p><p className="mt-2 text-2xl font-bold">{totalJobs}</p></CardContent></Card>
-        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-slate-500">Hours worked (est.)</p><p className="mt-2 text-2xl font-bold">{totalHours.toFixed(1)}</p></CardContent></Card>
-        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-slate-500">Estimated value</p><p className="mt-2 text-2xl font-bold">${(totalAmountCents / 100).toFixed(0)}</p></CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-muted-foreground">Jobs completed</p><p className="mt-2 text-2xl font-bold">{totalJobs}</p></CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-muted-foreground">Hours worked (est.)</p><p className="mt-2 text-2xl font-bold">{totalHours.toFixed(1)}</p></CardContent></Card>
+        <Card className="border-0 bg-card"><CardContent><p className="text-xs font-medium text-muted-foreground">Estimated value</p><p className="mt-2 text-2xl font-bold">${(totalAmountCents / 100).toFixed(0)}</p></CardContent></Card>
       </div>
 
       <div className="mb-3 flex items-center justify-between">
-        <p className="flex items-center gap-2 text-sm font-bold text-slate-900">
+        <p className="flex items-center gap-2 text-sm font-bold text-foreground">
           <CalendarRange className="size-4 text-primary" /> Breakdown
         </p>
-        <div className="flex h-9 items-center gap-1 rounded-xl border bg-white p-1">
+        <div className="flex h-9 items-center gap-1 rounded-xl border bg-card p-1">
           {(["day", "week", "month"] as const).map((option) => (
             <button
               key={option}
               type="button"
               onClick={() => setGranularity(option)}
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold capitalize transition-colors ${
-                granularity === option ? "bg-primary text-primary-foreground" : "text-slate-500 hover:text-slate-900"
+                granularity === option ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {option}
@@ -129,17 +129,17 @@ export function PartnerEarnings() {
       <Card className="border-0 bg-card">
         <CardHeader><CardTitle>By {granularity}</CardTitle></CardHeader>
         <CardContent className="space-y-2">
-          {loading && <p className="text-sm text-slate-400">Loading…</p>}
+          {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
           {!loading && !buckets.length && (
-            <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+            <p className="rounded-xl bg-muted p-4 text-sm text-muted-foreground">
               No completed jobs yet. Estimated activity appears here once jobs are marked complete.
             </p>
           )}
           {buckets.map((bucket) => (
-            <div key={bucket.label} className="flex items-center justify-between rounded-xl border border-slate-100 px-3 py-3">
+            <div key={bucket.label} className="flex items-center justify-between rounded-xl border border-border px-3 py-3">
               <div>
-                <p className="text-sm font-semibold text-slate-900">{bucket.label}</p>
-                <p className="mt-1 flex items-center gap-3 text-xs text-slate-500">
+                <p className="text-sm font-semibold text-foreground">{bucket.label}</p>
+                <p className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1"><TrendingUp className="size-3.5" /> {bucket.jobs} jobs</span>
                   <span className="flex items-center gap-1"><Clock3 className="size-3.5" /> {bucket.hours.toFixed(1)} hrs</span>
                 </p>

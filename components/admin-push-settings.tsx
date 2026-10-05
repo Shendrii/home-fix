@@ -59,12 +59,12 @@ export function AdminPushSettings() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           Leave blank to keep the offer-push trigger disabled (safe default — it silently no-ops otherwise). Set
           both once this app is deployed at a URL Supabase can reach.
         </p>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-slate-500">Push send endpoint</label>
+          <label className="mb-1 block text-xs font-semibold text-muted-foreground">Push send endpoint</label>
           <Input
             value={endpointUrl}
             onChange={(event) => setEndpointUrl(event.target.value)}
@@ -73,7 +73,7 @@ export function AdminPushSettings() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-semibold text-slate-500">Shared secret (matches PUSH_INTERNAL_SECRET)</label>
+          <label className="mb-1 block text-xs font-semibold text-muted-foreground">Shared secret (matches PUSH_INTERNAL_SECRET)</label>
           <Input
             value={secret}
             onChange={(event) => setSecret(event.target.value)}

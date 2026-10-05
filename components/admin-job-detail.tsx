@@ -60,14 +60,14 @@ export function AdminJobDetail({ id }: { id: string }) {
         <Card className="border-0 bg-card">
           <CardHeader><CardTitle>Dispatch timeline</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-xl bg-slate-50 p-4 text-sm"><span className="font-semibold">Current phase: </span>{job.dispatchPhase?.replace("_", " ") ?? "matching"}</div>
-            {history.map((event) => <div key={event.id} className="border-l-2 border-primary/25 pl-4"><p className="font-semibold capitalize">{event.status.replace("_", " ")}</p><p className="mt-1 text-sm text-slate-600">{event.note ?? "Status updated"}</p><p className="mt-1 text-xs text-slate-400">{new Date(event.created_at).toLocaleString()}</p></div>)}
-            {!history.length && <p className="text-sm text-slate-500">History will appear as matching and field-work events occur.</p>}
+            <div className="rounded-xl bg-muted p-4 text-sm"><span className="font-semibold">Current phase: </span>{job.dispatchPhase?.replace("_", " ") ?? "matching"}</div>
+            {history.map((event) => <div key={event.id} className="border-l-2 border-primary/25 pl-4"><p className="font-semibold capitalize">{event.status.replace("_", " ")}</p><p className="mt-1 text-sm text-muted-foreground">{event.note ?? "Status updated"}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(event.created_at).toLocaleString()}</p></div>)}
+            {!history.length && <p className="text-sm text-muted-foreground">History will appear as matching and field-work events occur.</p>}
           </CardContent>
         </Card>
         <div className="space-y-5">
           <Card className="border-0 bg-card"><CardHeader><CardTitle>Operations actions</CardTitle></CardHeader><CardContent className="space-y-3"><Button variant="outline" className="w-full" onClick={() => void manage("restart")}><RotateCcw /> Restart qualified wave</Button><Button variant="outline" className="w-full" onClick={() => void manage("broadcast")}><Radio /> Open broadcast queue</Button><AdminReassignDialog jobId={job.id} categoryId={job.categoryId} triggerLabel="Manually reassign" triggerVariant="outline" triggerClassName="w-full" /><Button variant="destructive" className="w-full" onClick={() => void manage("cancel")}>Cancel request</Button></CardContent></Card>
-          <Card className="border-0 bg-card"><CardContent className="space-y-2 text-sm"><p><span className="text-slate-400">Preferred window</span><br />{job.preferredDate}</p><p><span className="text-slate-400">Estimated value</span><br />${job.budget}</p><p><span className="text-slate-400">Assigned company</span><br />{job.companyId ?? "Not assigned"}</p></CardContent></Card>
+          <Card className="border-0 bg-card"><CardContent className="space-y-2 text-sm"><p><span className="text-muted-foreground">Preferred window</span><br />{job.preferredDate}</p><p><span className="text-muted-foreground">Estimated value</span><br />${job.budget}</p><p><span className="text-muted-foreground">Assigned company</span><br />{job.companyId ?? "Not assigned"}</p></CardContent></Card>
           <JobNotesPanel jobId={job.id} />
         </div>
       </div>

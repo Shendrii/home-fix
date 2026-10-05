@@ -66,7 +66,7 @@ export function DeclineOfferButton({
               onClick={() => setReason(item.id)}
               className={cn(
                 "rounded-xl border-2 px-3 py-3 text-left text-sm font-semibold transition-colors",
-                reason === item.id ? "border-primary bg-secondary text-foreground" : "border-slate-100 text-slate-700 hover:border-slate-200",
+                reason === item.id ? "border-primary bg-secondary text-foreground" : "border-border text-foreground hover:border-border",
               )}
             >
               {item.label}

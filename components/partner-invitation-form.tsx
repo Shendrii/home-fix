@@ -140,18 +140,18 @@ export function PartnerInvitationForm({ categories }: { categories: { id: string
   }
 
   return (
-    <form onSubmit={(event) => void submit(event)} className="space-y-8 rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+    <form onSubmit={(event) => void submit(event)} className="space-y-8 rounded-3xl bg-card p-6 shadow-sm sm:p-8">
       <section className="space-y-4">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">Company</h2>
-          <p className="mt-1 text-sm text-slate-500">The business homeowners will see.</p>
+          <h2 className="text-sm font-semibold text-foreground">Company</h2>
+          <p className="mt-1 text-sm text-muted-foreground">The business homeowners will see.</p>
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-700" htmlFor="company-name">Company name</label>
+          <label className="text-sm font-medium text-foreground" htmlFor="company-name">Company name</label>
           <Input id="company-name" required value={companyName} onChange={(event) => setCompanyName(event.target.value)} className="mt-2 h-11" />
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-700" htmlFor="company-description">Description</label>
+          <label className="text-sm font-medium text-foreground" htmlFor="company-description">Description</label>
           <Textarea
             id="company-description"
             value={description}
@@ -164,11 +164,11 @@ export function PartnerInvitationForm({ categories }: { categories: { id: string
 
       <section className="space-y-4">
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">Partner</h2>
-          <p className="mt-1 text-sm text-slate-500">This person becomes the company’s first admin.</p>
+          <h2 className="text-sm font-semibold text-foreground">Partner</h2>
+          <p className="mt-1 text-sm text-muted-foreground">This person becomes the company’s first admin.</p>
         </div>
         <div>
-          <label className="text-sm font-medium text-slate-700" htmlFor="partner-email">Email</label>
+          <label className="text-sm font-medium text-foreground" htmlFor="partner-email">Email</label>
           <Input
             id="partner-email"
             required
@@ -178,17 +178,17 @@ export function PartnerInvitationForm({ categories }: { categories: { id: string
             className="mt-2 h-11"
             placeholder="name@company.com"
           />
-          <p className="mt-2 text-xs leading-5 text-slate-500">
+          <p className="mt-2 text-xs leading-5 text-muted-foreground">
             A new address gets a signup email. An existing HomeFix login is linked right away.
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="text-sm font-medium text-slate-700" htmlFor="partner-phone">Phone</label>
+            <label className="text-sm font-medium text-foreground" htmlFor="partner-phone">Phone</label>
             <Input id="partner-phone" value={phone} onChange={(event) => setPhone(event.target.value)} className="mt-2 h-11" placeholder="Optional" />
           </div>
           <div>
-            <label className="text-sm font-medium text-slate-700" htmlFor="partner-area">Service area</label>
+            <label className="text-sm font-medium text-foreground" htmlFor="partner-area">Service area</label>
             <Input
               id="partner-area"
               value={serviceArea}
@@ -201,8 +201,8 @@ export function PartnerInvitationForm({ categories }: { categories: { id: string
       </section>
 
       <fieldset>
-        <legend className="text-sm font-semibold text-slate-900">Services</legend>
-        <p className="mt-1 text-sm text-slate-500">Choose the work this company is verified to accept.</p>
+        <legend className="text-sm font-semibold text-foreground">Services</legend>
+        <p className="mt-1 text-sm text-muted-foreground">Choose the work this company is verified to accept.</p>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {categories.map((category) => {
             const active = selected.includes(category.id);
@@ -211,7 +211,7 @@ export function PartnerInvitationForm({ categories }: { categories: { id: string
                 key={category.id}
                 className={cn(
                   "flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm transition-colors",
-                  active ? "border-primary bg-secondary text-foreground" : "border-slate-200 text-slate-700 hover:border-slate-300",
+                  active ? "border-primary bg-secondary text-foreground" : "border-border text-foreground hover:border-foreground/20",
                 )}
               >
                 <input
@@ -231,15 +231,15 @@ export function PartnerInvitationForm({ categories }: { categories: { id: string
         </div>
       </fieldset>
 
-      <div className="space-y-4 border-t border-slate-100 pt-6">
+      <div className="space-y-4 border-t border-border pt-6">
         <Button type="submit" disabled={sending || removing || !selected.length} className="h-11 w-full">
           {sending ? "Sending…" : "Send invitation"}
         </Button>
-        <p className="text-center text-sm text-slate-500">
+        <p className="text-center text-sm text-muted-foreground">
           Need to invite this email again?{" "}
           <button
             type="button"
-            className="font-semibold text-slate-800 underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline"
+            className="font-semibold text-foreground underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
             disabled={removing || sending || !email.trim()}
             onClick={() => void removeAccount()}
           >

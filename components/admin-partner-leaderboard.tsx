@@ -172,7 +172,7 @@ function StarRow({ rating }: { rating: number }) {
           key={i}
           className={cn(
             "size-3.5",
-            i < full ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200",
+            i < full ? "fill-amber-400 text-amber-400" : "fill-muted text-muted",
           )}
         />
       ))}
@@ -182,14 +182,14 @@ function StarRow({ rating }: { rating: number }) {
 
 /** Top-three emphasis via ring weight and neutral medal tints — aligned with admin teal/slate UI. */
 const PODIUM_RING = {
-  1: "ring-2 ring-primary ring-offset-2 ring-offset-white",
-  2: "ring-2 ring-slate-300 ring-offset-2 ring-offset-white",
-  3: "ring-2 ring-amber-600/40 ring-offset-2 ring-offset-white",
+  1: "ring-2 ring-primary ring-offset-2 ring-offset-background",
+  2: "ring-2 ring-border ring-offset-2 ring-offset-background",
+  3: "ring-2 ring-amber-600/40 ring-offset-2 ring-offset-background",
 } as const;
 
 const MEDAL = {
   1: { label: "1st", className: "border border-primary/25 bg-secondary text-secondary-foreground" },
-  2: { label: "2nd", className: "border border-slate-200 bg-slate-100 text-slate-700" },
+  2: { label: "2nd", className: "border border-border bg-muted text-foreground" },
   3: { label: "3rd", className: "border border-amber-200/80 bg-amber-50 text-amber-900" },
 } as const;
 
@@ -218,20 +218,20 @@ function PodiumAvatar({
         </div>
         <span
           className={cn(
-            "absolute -bottom-2.5 left-1/2 z-10 grid h-7 min-w-[1.75rem] -translate-x-1/2 place-items-center rounded-full px-2 text-[10px] font-bold uppercase tracking-wide",
+            "absolute -bottom-2.5 left-1/2 z-10 grid h-7 min-w-[1.75rem] -translate-x-1/2 place-items-center rounded-full px-2 text-xs font-bold",
             medal.className,
           )}
         >
           {medal.label}
         </span>
       </div>
-      <p className="line-clamp-2 w-full text-sm font-bold leading-snug text-slate-900 sm:text-[15px]">
+      <p className="line-clamp-2 w-full text-sm font-bold leading-snug text-foreground sm:text-[15px]">
         {row.company_name}
       </p>
-      <p className="mt-2 text-lg font-bold tabular-nums text-slate-900 sm:text-xl">
+      <p className="mt-2 text-lg font-bold tabular-nums text-foreground sm:text-xl">
         {performanceScore(row).toLocaleString()}
       </p>
-      <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-400">Performance score</p>
+      <p className="mt-0.5 text-xs font-medium text-muted-foreground">Performance score</p>
       <div className="mt-1.5">
         <StarRow rating={row.average_rating} />
       </div>
@@ -241,16 +241,16 @@ function PodiumAvatar({
 
 function LeaderboardListRow({ row, rank }: { row: LeaderboardRow; rank: number }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2.5 sm:gap-4 sm:px-4">
-      <span className="w-6 shrink-0 text-center text-sm font-bold text-slate-400">{rank}</span>
+    <div className="flex items-center gap-3 rounded-xl bg-muted px-3 py-2.5 sm:gap-4 sm:px-4">
+      <span className="w-6 shrink-0 text-center text-sm font-bold text-muted-foreground">{rank}</span>
       <div className="grid size-10 shrink-0 place-items-center rounded-full bg-secondary text-xs font-bold text-primary ring-1 ring-border">
         {companyInitials(row.company_name)}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-slate-900">{row.company_name}</p>
+        <p className="truncate text-sm font-semibold text-foreground">{row.company_name}</p>
         <StarRow rating={row.average_rating} />
       </div>
-      <p className="shrink-0 text-sm font-bold tabular-nums text-slate-800 sm:text-base">
+      <p className="shrink-0 text-sm font-bold tabular-nums text-foreground sm:text-base">
         {performanceScore(row).toLocaleString()}
       </p>
     </div>
@@ -276,7 +276,7 @@ export function PartnerLeaderboardPodium({
 
   if (sorted.length < 3) {
     return (
-      <p className="text-sm text-slate-500">Need at least three partners for the podium view.</p>
+      <p className="text-sm text-muted-foreground">Need at least three partners for the podium view.</p>
     );
   }
 
@@ -284,7 +284,7 @@ export function PartnerLeaderboardPodium({
     <>
       {showSort && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <ArrowDownUp className="size-4 text-slate-400" />
+          <ArrowDownUp className="size-4 text-muted-foreground" />
           {SORTS.map((option) => (
             <button
               key={option.id}
@@ -294,7 +294,7 @@ export function PartnerLeaderboardPodium({
                 "rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors",
                 sortKey === option.id
                   ? "border-primary bg-secondary text-secondary-foreground"
-                  : "border-slate-200 text-slate-600 hover:border-slate-300",
+                  : "border-border text-muted-foreground hover:border-foreground/20",
               )}
             >
               {option.label}
@@ -303,10 +303,10 @@ export function PartnerLeaderboardPodium({
         </div>
       )}
 
-      <section className="isolate overflow-hidden rounded-3xl border border-slate-100 bg-white px-4 pb-8 pt-6 shadow-[0_16px_50px_rgba(30,41,59,.07)] sm:px-8 sm:pb-10 sm:pt-8">
-        <div className="mb-8 border-b border-slate-100 pb-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">Top partners</p>
-          <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">Leaderboard</h2>
+      <section className="isolate overflow-hidden rounded-3xl border border-border bg-card px-4 pb-8 pt-6 shadow-[0_16px_50px_rgba(30,41,59,.07)] sm:px-8 sm:pb-10 sm:pt-8">
+        <div className="mb-8 border-b border-border pb-4 text-center">
+          <p className="text-sm font-semibold text-primary">Top partners</p>
+          <h2 className="mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">Leaderboard</h2>
         </div>
 
         <div className="mx-auto grid max-w-3xl grid-cols-3 items-end gap-2 sm:gap-8">
@@ -328,8 +328,8 @@ export function PartnerLeaderboardPodium({
         </div>
 
         {rest.length > 0 && (
-          <div className="relative z-10 mx-auto mt-10 max-w-xl space-y-2 bg-white pt-2 sm:mt-12">
-            <div className="mb-4 border-t border-slate-100" aria-hidden />
+          <div className="relative z-10 mx-auto mt-10 max-w-xl space-y-2 bg-card pt-2 sm:mt-12">
+            <div className="mb-4 border-t border-border" aria-hidden />
             {rest.map((row, i) => (
               <LeaderboardListRow key={row.company_id} row={row} rank={i + 4} />
             ))}
@@ -382,7 +382,7 @@ export function AdminPartnerLeaderboard({
         }
       />
 
-      {loading && <p className="text-sm text-slate-400">Loading…</p>}
+      {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
       {!loading && <PartnerLeaderboardPodium rows={displayRows} />}
     </>
   );

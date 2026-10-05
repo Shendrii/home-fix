@@ -13,7 +13,7 @@ export default function Loading() {
           <Wrench className="size-6 animate-spin" aria-hidden="true" />
         </span>
         <p className="mt-4 font-semibold">Loading HomeFix…</p>
-        <p className="mt-1 text-sm text-slate-500">Getting your workspace ready.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Getting your workspace ready.</p>
       </div>
     </main>
   );

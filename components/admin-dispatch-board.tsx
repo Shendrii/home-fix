@@ -47,13 +47,13 @@ export function AdminDispatchBoard() {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={job.status} />
-                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+                    <span className="rounded-full bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
                       {job.dispatchPhase?.replace("_", " ") ?? "matching"}
                     </span>
                     {risk && <span className="inline-flex items-center gap-1 text-xs font-bold text-orange-700"><AlertTriangle className="size-3.5" /> Urgent SLA risk</span>}
                   </div>
-                  <p className="mt-3 font-bold text-slate-900">{job.title}</p>
-                  <p className="mt-1 truncate text-sm text-slate-500">{job.referenceCode ?? job.id} · {job.address} · created {new Date(job.createdAt).toLocaleString()}</p>
+                  <p className="mt-3 font-bold text-foreground">{job.title}</p>
+                  <p className="mt-1 truncate text-sm text-muted-foreground">{job.referenceCode ?? job.id} · {job.address} · created {new Date(job.createdAt).toLocaleString()}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   <Button variant="outline" size="sm" onClick={() => void runAction(job.id, "restart")}><RotateCcw /> Restart</Button>
@@ -65,7 +65,7 @@ export function AdminDispatchBoard() {
             </Card>
           );
         })}
-        {!active.length && <Card><CardContent className="py-12 text-center text-sm text-slate-500">No active dispatches right now.</CardContent></Card>}
+        {!active.length && <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">No active dispatches right now.</CardContent></Card>}
       </div>
     </>
   );

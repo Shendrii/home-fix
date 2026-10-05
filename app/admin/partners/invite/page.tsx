@@ -41,7 +41,7 @@ export default async function InvitePartnerPage() {
           </CardHeader>
           <CardContent>
             {invitations?.length ? (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-border">
                 {invitations.map((invitation) => {
                   const { label, hint } = partnerInvitationStatus(invitation);
                   return (
@@ -49,11 +49,11 @@ export default async function InvitePartnerPage() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">{invitation.company_name}</p>
-                          <p className="truncate text-sm text-slate-500">{invitation.email}</p>
+                          <p className="truncate text-sm text-muted-foreground">{invitation.email}</p>
                         </div>
                         <Badge variant="secondary" className="shrink-0">{label}</Badge>
                       </div>
-                      <p className="mt-2 text-xs leading-5 text-slate-400">
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
                         {hint} · {new Date(invitation.invited_at).toLocaleDateString()}
                       </p>
                     </li>
@@ -61,7 +61,7 @@ export default async function InvitePartnerPage() {
                 })}
               </ul>
             ) : (
-              <p className="text-sm text-slate-500">No invitations yet.</p>
+              <p className="text-sm text-muted-foreground">No invitations yet.</p>
             )}
           </CardContent>
         </Card>

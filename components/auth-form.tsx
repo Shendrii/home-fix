@@ -223,15 +223,15 @@ export function AuthForm({
   if (confirmationEmail) {
     return (
       <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
-        <section className="w-full max-w-md rounded-3xl bg-white p-7 text-center shadow-[0_18px_60px_rgba(15,23,42,.1)]">
+        <section className="w-full max-w-md rounded-3xl bg-card p-7 text-center shadow-[0_18px_60px_rgba(15,23,42,.1)]">
           <span className="mx-auto grid size-14 place-items-center rounded-full bg-secondary text-secondary-foreground">
             <Mail className="size-6" aria-hidden="true" />
           </span>
-          <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-950">Check your inbox</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            If an account can be created for <strong className="text-slate-900">{confirmationEmail}</strong>, we sent a confirmation link there.
+          <h1 className="mt-6 text-3xl font-bold tracking-tight text-foreground">Check your inbox</h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            If an account can be created for <strong className="text-foreground">{confirmationEmail}</strong>, we sent a confirmation link there.
           </p>
-          <p className="mt-4 text-sm leading-6 text-slate-500">
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">
             Already registered?{" "}
             <Link href="/auth/sign-in" className="font-semibold text-primary underline-offset-2 hover:underline">
               Sign in
@@ -258,13 +258,13 @@ export function AuthForm({
       <form
         onSubmit={submit}
         noValidate
-        className="w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]"
+        className="w-full max-w-md rounded-3xl bg-card p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]"
       >
         <Link href="/" className="font-bold text-primary">← HomeFix</Link>
-        <h1 className="mt-7 text-3xl font-bold tracking-tight text-slate-950">
+        <h1 className="mt-7 text-3xl font-bold tracking-tight text-foreground">
           {signUp ? "Create your account" : "Welcome back"}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
           {resumePath && isClientBookingPath(resumePath)
             ? "Sign in to continue booking your appointment."
             : signUp
@@ -277,26 +277,26 @@ export function AuthForm({
           variant="outline"
           disabled={busy}
           onClick={signInWithGoogle}
-          className="mt-7 h-12 w-full gap-3 bg-white text-slate-800"
+          className="mt-7 h-12 w-full gap-3 bg-card text-foreground"
         >
           <GoogleMark />
           {loading === "google" ? "Connecting to Google…" : "Continue with Google"}
         </Button>
         {signUp && (
-          <p className="mt-2 text-center text-xs text-slate-500">
+          <p className="mt-2 text-center text-xs text-muted-foreground">
             Google sign-up will ask you to complete phone and address under Account settings.
           </p>
         )}
 
-        <div className="my-6 flex items-center gap-3 text-xs font-medium text-slate-500">
-          <span className="h-px flex-1 bg-slate-200" />
+        <div className="my-6 flex items-center gap-3 text-xs font-medium text-muted-foreground">
+          <span className="h-px flex-1 bg-muted" />
           or continue with email
-          <span className="h-px flex-1 bg-slate-200" />
+          <span className="h-px flex-1 bg-muted" />
         </div>
 
         <div className="space-y-4">
           <div>
-            <label htmlFor={emailId} className="mb-1.5 block text-sm font-semibold text-slate-800">
+            <label htmlFor={emailId} className="mb-1.5 block text-sm font-semibold text-foreground">
               Email address
             </label>
             <Input
@@ -320,7 +320,7 @@ export function AuthForm({
 
           <div>
             <div className="mb-1.5 flex items-center justify-between gap-3">
-              <label htmlFor={passwordId} className="block text-sm font-semibold text-slate-800">
+              <label htmlFor={passwordId} className="block text-sm font-semibold text-foreground">
                 Password
               </label>
               {!signUp && (
@@ -347,7 +347,7 @@ export function AuthForm({
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 transition-colors hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
@@ -355,7 +355,7 @@ export function AuthForm({
             </div>
             <FieldError id={passwordErrorId} message={passwordError} />
             {signUp && (
-              <ul id={`${passwordId}-hint`} className="mt-2 space-y-1 text-xs text-slate-500">
+              <ul id={`${passwordId}-hint`} className="mt-2 space-y-1 text-xs text-muted-foreground">
                 <li className={checks.minLength ? "text-primary" : undefined}>At least 8 characters</li>
                 <li className={checks.hasLetter ? "text-primary" : undefined}>Contains a letter</li>
                 <li className={checks.hasNumber ? "text-primary" : undefined}>Contains a number</li>
@@ -365,7 +365,7 @@ export function AuthForm({
 
           {signUp && (
             <div>
-              <label htmlFor={confirmId} className="mb-1.5 block text-sm font-semibold text-slate-800">
+              <label htmlFor={confirmId} className="mb-1.5 block text-sm font-semibold text-foreground">
                 Confirm password
               </label>
               <div className="relative">
@@ -386,7 +386,7 @@ export function AuthForm({
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 transition-colors hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
               >
                 {showConfirmPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
@@ -397,7 +397,7 @@ export function AuthForm({
           )}
 
           {signUp && (
-            <label htmlFor={termsId} className="flex cursor-pointer items-start gap-3 rounded-2xl bg-slate-50 p-3 text-sm leading-6 text-slate-600">
+            <label htmlFor={termsId} className="flex cursor-pointer items-start gap-3 rounded-2xl bg-muted p-3 text-sm leading-6 text-muted-foreground">
               <input
                 id={termsId}
                 type="checkbox"
@@ -423,7 +423,7 @@ export function AuthForm({
           {loading === "email" ? "Please wait…" : signUp ? "Create account" : "Sign in"}
         </Button>
 
-        <p className="mt-5 text-center text-sm text-slate-600">
+        <p className="mt-5 text-center text-sm text-muted-foreground">
           {signUp ? "Already have an account?" : "New to HomeFix?"}{" "}
           <Link className="font-semibold text-primary underline-offset-2 hover:underline" href={alternateAuthHref}>
             {signUp ? "Sign in" : "Create account"}
@@ -468,13 +468,13 @@ export function ForgotPasswordForm() {
   if (sentTo) {
     return (
       <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
-        <section className="w-full max-w-md rounded-3xl bg-white p-7 text-center shadow-[0_18px_60px_rgba(15,23,42,.1)]">
+        <section className="w-full max-w-md rounded-3xl bg-card p-7 text-center shadow-[0_18px_60px_rgba(15,23,42,.1)]">
           <span className="mx-auto grid size-14 place-items-center rounded-full bg-secondary text-secondary-foreground">
             <Mail className="size-6" aria-hidden="true" />
           </span>
-          <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-950">Check your inbox</h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            If an account exists for <strong className="text-slate-900">{sentTo}</strong>, we sent a password reset link.
+          <h1 className="mt-6 text-3xl font-bold tracking-tight text-foreground">Check your inbox</h1>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            If an account exists for <strong className="text-foreground">{sentTo}</strong>, we sent a password reset link.
           </p>
           <Link href="/auth/sign-in" className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-xl bg-primary font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring">
             Back to sign in
@@ -486,12 +486,12 @@ export function ForgotPasswordForm() {
 
   return (
     <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
-      <form onSubmit={submit} noValidate className="w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]">
+      <form onSubmit={submit} noValidate className="w-full max-w-md rounded-3xl bg-card p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]">
         <Link href="/auth/sign-in" className="font-bold text-primary">← Back to sign in</Link>
-        <h1 className="mt-7 text-3xl font-bold tracking-tight text-slate-950">Reset your password</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Enter your email and we’ll send a reset link if an account exists.</p>
+        <h1 className="mt-7 text-3xl font-bold tracking-tight text-foreground">Reset your password</h1>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">Enter your email and we’ll send a reset link if an account exists.</p>
         <div className="mt-7">
-          <label htmlFor={emailId} className="mb-1.5 block text-sm font-semibold text-slate-800">Email address</label>
+          <label htmlFor={emailId} className="mb-1.5 block text-sm font-semibold text-foreground">Email address</label>
           <Input
             id={emailId}
             required
@@ -561,13 +561,13 @@ export function ResetPasswordForm() {
 
   return (
     <main id="main-content" className="grid min-h-dvh place-items-center bg-background p-5">
-      <form onSubmit={submit} noValidate className="w-full max-w-md rounded-3xl bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]">
+      <form onSubmit={submit} noValidate className="w-full max-w-md rounded-3xl bg-card p-7 shadow-[0_18px_60px_rgba(15,23,42,.1)]">
         <Link href="/auth/sign-in" className="font-bold text-primary">← Back to sign in</Link>
-        <h1 className="mt-7 text-3xl font-bold tracking-tight text-slate-950">Choose a new password</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">Create a strong password for your HomeFix account.</p>
+        <h1 className="mt-7 text-3xl font-bold tracking-tight text-foreground">Choose a new password</h1>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">Create a strong password for your HomeFix account.</p>
         <div className="mt-7 space-y-4">
           <div>
-            <label htmlFor={passwordId} className="mb-1.5 block text-sm font-semibold text-slate-800">New password</label>
+            <label htmlFor={passwordId} className="mb-1.5 block text-sm font-semibold text-foreground">New password</label>
             <div className="relative">
               <Input
                 id={passwordId}
@@ -585,21 +585,21 @@ export function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
               </button>
             </div>
             <FieldError id={passwordErrorId} message={passwordError} />
-            <ul id={`${passwordId}-hint`} className="mt-2 space-y-1 text-xs text-slate-500">
+            <ul id={`${passwordId}-hint`} className="mt-2 space-y-1 text-xs text-muted-foreground">
               <li className={checks.minLength ? "text-primary" : undefined}>At least 8 characters</li>
               <li className={checks.hasLetter ? "text-primary" : undefined}>Contains a letter</li>
               <li className={checks.hasNumber ? "text-primary" : undefined}>Contains a number</li>
             </ul>
           </div>
           <div>
-            <label htmlFor={confirmId} className="mb-1.5 block text-sm font-semibold text-slate-800">Confirm password</label>
+            <label htmlFor={confirmId} className="mb-1.5 block text-sm font-semibold text-foreground">Confirm password</label>
             <div className="relative">
               <Input
                 id={confirmId}
@@ -617,7 +617,7 @@ export function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((value) => !value)}
-                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-slate-500 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
+                className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-lg text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring"
                 aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
               >
                 {showConfirmPassword ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}

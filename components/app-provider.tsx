@@ -101,7 +101,7 @@ type DatabaseNotification = {
 const CATEGORY_COLORS = [
   "bg-sky-100 text-sky-700",
   "bg-amber-100 text-amber-700",
-  "bg-teal-100 text-teal-700",
+  "bg-violet-100 text-violet-700",
   "bg-orange-100 text-orange-700",
 ] as const;
 

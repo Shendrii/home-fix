@@ -66,7 +66,7 @@ export function InviteFriendsPanel({ referralCode }: { referralCode: string }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           Share your link. We track who signs up through it — there’s no reward program yet, but we’ll let you know
           if that changes.
         </p>
@@ -77,18 +77,18 @@ export function InviteFriendsPanel({ referralCode }: { referralCode: string }) {
           </Button>
         </div>
         <div className="border-t pt-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="mb-2 text-sm font-semibold text-muted-foreground">
             {referrals.length} referral{referrals.length === 1 ? "" : "s"}
           </p>
-          {loading && <p className="text-sm text-slate-400">Loading…</p>}
+          {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
           {!loading && !referrals.length && (
-            <p className="rounded-xl bg-slate-50 p-3 text-sm text-slate-500">No one has signed up with your link yet.</p>
+            <p className="rounded-xl bg-muted p-3 text-sm text-muted-foreground">No one has signed up with your link yet.</p>
           )}
           <div className="space-y-2">
             {referrals.map((referral) => (
-              <div key={referral.id} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm">
-                <span className="font-semibold text-slate-800">{referral.name}</span>
-                <span className="text-xs text-slate-400">{new Date(referral.created_at).toLocaleDateString()}</span>
+              <div key={referral.id} className="flex items-center justify-between rounded-xl bg-muted px-3 py-2 text-sm">
+                <span className="font-semibold text-foreground">{referral.name}</span>
+                <span className="text-xs text-muted-foreground">{new Date(referral.created_at).toLocaleDateString()}</span>
               </div>
             ))}
           </div>
